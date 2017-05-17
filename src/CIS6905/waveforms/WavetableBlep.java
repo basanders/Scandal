@@ -1,18 +1,17 @@
-package CIS6905;
+package CIS6905.waveforms;
 
 public class WavetableBlep extends Wavetable {
 	
-	private static int ripples;
+	private static int ripples = 2;
 	private static WavetableBlep sharedInstance;
 	
 	public static WavetableBlep getSharedInstance() {
-		if (sharedInstance == null) sharedInstance = new WavetableBlep(4096, 2);
+		if (sharedInstance == null) sharedInstance = new WavetableBlep(4096);
 		return sharedInstance;
 	}
 		
-	protected WavetableBlep(int size, int ripples) {
+	private WavetableBlep(int size) {
 		super(size);
-		WavetableBlep.ripples = ripples;
 		fillTable();
 	}
 

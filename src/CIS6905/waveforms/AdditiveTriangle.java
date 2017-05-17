@@ -1,12 +1,12 @@
-package CIS6905;
+package CIS6905.waveforms;
 
 public class AdditiveTriangle extends AdditiveWavetable {
 
-	AdditiveTriangle() {
+	public AdditiveTriangle() {
 		super(4096, 10);
 	}
 	
-	AdditiveTriangle(int tableSize, int harmonicCount) {
+	public AdditiveTriangle(int tableSize, int harmonicCount) {
 		super(tableSize, harmonicCount);
 	}
 

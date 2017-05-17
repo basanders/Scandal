@@ -1,12 +1,12 @@
-package CIS6905;
+package CIS6905.waveforms;
 
-public class AdditiveSquare extends AdditiveWavetable {
+public class AdditiveSawtooth extends AdditiveWavetable {
 
-	AdditiveSquare() {
+	public AdditiveSawtooth() {
 		super(4096, 10);
 	}
 	
-	AdditiveSquare(int tableSize, int harmonicCount) {
+	public AdditiveSawtooth(int tableSize, int harmonicCount) {
 		super(tableSize, harmonicCount);
 	}
 
@@ -16,9 +16,8 @@ public class AdditiveSquare extends AdditiveWavetable {
 		double maximum = 0;
 		for (int i = 0; i < tableSize; i++) {
 			radians = i * twoPi / tableSize;
-			for (int j = 0; j < harmonicCount; j++) {
-				double oddIndex = 2 * j + 1;
-				wavetable[i] += Math.sin(oddIndex * radians) / oddIndex;
+			for (int j = 1; j <= harmonicCount; j++) {
+				wavetable[i] += Math.sin(radians * j) / j;
 			}
 			if (wavetable[i] >= maximum) maximum = wavetable[i];
 		}

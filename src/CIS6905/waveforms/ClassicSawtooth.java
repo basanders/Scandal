@@ -1,4 +1,4 @@
-package CIS6905;
+package CIS6905.waveforms;
 
 public class ClassicSawtooth extends AliasedSawtooth implements ClassicWaveform {
 	
@@ -21,6 +21,19 @@ public class ClassicSawtooth extends AliasedSawtooth implements ClassicWaveform 
 			return wavetable[(int) (phase * tableSize)] + residual;
 		}
 		return wavetable[(int) (phase * tableSize)];
+	}
+	
+	@Override
+	public void plot(double frequency, int samples) {
+		double[] array = new double[samples];
+		double oscFreq = frequency / samples;
+		double oscPhase = 0;
+		for (int i = 0; i < samples; i++) {
+			array[i] = getSample(oscPhase, oscFreq);
+			oscPhase += oscFreq;
+			if (oscPhase >= 1) oscPhase -= 1;
+		}
+		new PlotUtility(this.getClass().getSimpleName(), array);
 	}
 
 }

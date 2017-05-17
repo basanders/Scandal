@@ -1,21 +1,19 @@
-package CIS6905;
+package CIS6905.waveforms;
 
-public class WavetableCosine extends Wavetable {
-
-	WavetableCosine() {
+public class AliasedSquare extends AliasedWavetable {
+	
+	public AliasedSquare() {
 		super(4096);
-		fillTable();
 	}
 	
-	WavetableCosine(int tableSize) {
+	public AliasedSquare(int tableSize) {
 		super(tableSize);
-		fillTable();
 	}
 
 	@Override
 	public void fillTable() {
 		for (int i = 0; i < tableSize; i++) {
-			wavetable[i] = Math.cos(i * twoPi / tableSize);
+			wavetable[i] = i < tableSize / 2 ? 1 : -1;
 		}
 	}
 
@@ -23,5 +21,5 @@ public class WavetableCosine extends Wavetable {
 	public double getSample(double phase) {
 		return wavetable[(int) phase];
 	}
-	
+
 }

@@ -1,4 +1,4 @@
-package CIS6905;
+package CIS6905.waveforms;
 
 public interface ClassicWaveform {
 	

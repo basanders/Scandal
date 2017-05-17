@@ -1,12 +1,12 @@
-package CIS6905;
+package CIS6905.waveforms;
 
 public class AliasedSawtooth extends AliasedWavetable {
 
-	AliasedSawtooth() {
+	public AliasedSawtooth() {
 		super(4096);
 	}
 	
-	AliasedSawtooth(int size) {
+	public AliasedSawtooth(int size) {
 		super(size);
 	}
 

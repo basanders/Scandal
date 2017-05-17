@@ -5,11 +5,20 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.ByteBuffer;
-import javax.sound.sampled.*;
-import org.jfree.ui.RefineryUtilities;
+
+import javax.sound.sampled.AudioFileFormat;
+import javax.sound.sampled.AudioFormat;
+import javax.sound.sampled.AudioInputStream;
+import javax.sound.sampled.AudioSystem;
+import javax.sound.sampled.Clip;
+import javax.sound.sampled.Mixer;
+import javax.sound.sampled.SourceDataLine;
+import javax.sound.sampled.TargetDataLine;
+
+import CIS6905.waveforms.WavetableNoise;
 
 public class Playground {
-	
+
 	public static final int samplingRate = 44100;
 	public static final int bitDepth = 16;
 	static final int vectorSize = 512;
@@ -29,9 +38,13 @@ public class Playground {
 		//playBuffer(buffer);
 		//noiseGenerator(1, 0.1);
 		//oscillator(2, 0.1, 440, new NaiveCosine());
-		//wavetableOscillator(2, 0.1, 440, new ClassicSquare());
-		//plotWavetableOscillator("Classic Square", 440, 441, new ClassicSquare());
-		//plotWavetable("Blep Residual", WavetableBlep.getSharedInstance().wavetable);
+		//wavetableOscillator(2, 0.1, 1024, new ClassicSquare());
+		//new ClassicSquare().plot(2, 441);
+		//new AudioThread(oscillator(440, 2), mono).start();
+		//new AudioThread(sweep(0, 22050, 5), mono).start();
+		//new AudioThread(decayPulse(880, 5), mono).start();
+		//new AudioThread(stereoPanning(880, 2), stereo).start();
+		//new AudioThread(stereoPingPong(880, 5), stereo).start();
 	}
 
 	static void printActiveThreads() {
@@ -122,7 +135,7 @@ public class Playground {
 		targetDataLine.close();
 		return buffer;
 	}
-	
+
 	static void playBuffer(ByteArrayOutputStream buffer) throws Exception {
 		SourceDataLine sourceDataLine = AudioSystem.getSourceDataLine(mono);
 		sourceDataLine.open();
@@ -142,6 +155,50 @@ public class Playground {
 		sourceDataLine.stop();
 		sourceDataLine.drain();
 		sourceDataLine.close();
+	}
+
+	static ByteBuffer decayPulse(double freq, int duration){
+		int samples = duration * samplingRate;
+		ByteBuffer byteBuffer = ByteBuffer.allocate(samples * bitDepth / 8); // mono
+		for (int i = 0; i < samples; i++) {
+			double scale = 2 * (double) i;
+			if (scale > samples) scale = samples;
+			double gain = amplitudeScale * (samples - scale) / samples;
+			double time = (double) i / samplingRate;
+			byteBuffer.putShort((short) (gain * Math.sin(twoPi * freq * time)));
+		}
+		return byteBuffer;
+	}
+
+	static ByteBuffer stereoPanning(double freq, int duration) {
+		int samples = duration * samplingRate;
+		ByteBuffer byteBuffer = ByteBuffer.allocate(samples * bitDepth / 4); // stereo
+		for (int i = 0; i < samples; i++) {
+			double rightGain = amplitudeScale * i / samples; // 0 -> 1
+			double leftGain = amplitudeScale - rightGain; // 1 -> 0
+			double time = (double) i / samplingRate;
+			byteBuffer.putShort((short) (leftGain * Math.sin(twoPi * freq * time)));
+			byteBuffer.putShort((short) (rightGain * Math.sin(twoPi * freq * time)));
+		}
+		return byteBuffer;
+	}
+
+	static ByteBuffer stereoPingPong(double freq, int duration) {
+		int samples = duration * samplingRate;
+		ByteBuffer byteBuffer = ByteBuffer.allocate(samples * bitDepth / 4); // stereo
+		double leftGain = 0;
+		double rightGain = amplitudeScale;
+		for (int i = 0; i < samples; i++) {
+			if (i % (samples / 8) == 0) {
+				double temp = leftGain;
+				leftGain = rightGain;
+				rightGain = temp;
+			}
+			double time = (double) i / samplingRate;
+			byteBuffer.putShort((short) (leftGain * Math.sin(twoPi * freq * time)));
+			byteBuffer.putShort((short) (rightGain * Math.sin(twoPi * freq * time)));
+		}
+		return byteBuffer;
 	}
 	
 	static void noiseGenerator(int duration, double amplitude) throws Exception {
@@ -164,8 +221,9 @@ public class Playground {
 		line.stop();
 		line.close();
 	}
-
-	static void oscillator(int duration, double amplitude, double frequency, NaiveWaveform waveform) throws Exception {
+	
+	/*
+	void naiveOscillator(int duration, int amplitude, int frequency, NaiveWaveform waveform) {
 		int totalSamples = duration * samplingRate;
 		double oscAmp = amplitude * amplitudeScale;
 		double oscFreq = frequency * frequencyScale;
@@ -188,69 +246,5 @@ public class Playground {
 		line.stop();
 		line.close();
 	}
-	
-	// TODO This is a mess right now.
-	static void wavetableOscillator(int duration, double amplitude, double frequency, Wavetable wavetable) throws Exception {
-		boolean normalizedPhase = false;
-		ClassicSquare table = null;
-		if (wavetable instanceof ClassicSquare) {
-			normalizedPhase = true;
-			table = (ClassicSquare) wavetable;
-		}
-		int totalSamples = duration * samplingRate;
-		double oscAmp = amplitude * amplitudeScale;
-		double oscFreq = 0;
-		if (normalizedPhase) {
-			oscFreq = frequency / samplingRate;
-		} else {
-			oscFreq = frequency * wavetable.tableSize / samplingRate;
-		}
-		double oscPhase = 0;
-		ByteBuffer buffer = ByteBuffer.allocate(4096);
-		SourceDataLine line = AudioSystem.getSourceDataLine(mono);
-		line.open();
-		line.start();
-		while (totalSamples > 0) {
-			buffer.clear();
-			for (int i = 0; i < vectorSize; i++) {
-				if (normalizedPhase) {
-					buffer.putShort((short) (oscAmp * table.getSample(oscPhase, oscFreq)));
-					oscPhase += oscFreq;
-					if (oscPhase >= 1) oscPhase -= 1;
-				} else {
-					buffer.putShort((short) (oscAmp * wavetable.getSample(oscPhase)));
-					oscPhase += oscFreq;
-					if (oscPhase >= wavetable.tableSize) oscPhase -= wavetable.tableSize;
-				}
-			}
-			totalSamples -= vectorSize;
-			line.write(buffer.array(), 0, buffer.position());
-		}
-		line.drain();
-		line.stop();
-		line.close();
-	}
-	
-	static void plotWavetableOscillator(String title, double frequency, int samples, ClassicSquare wavetable) {
-		double[] array = new double[samples];
-		double oscFreq = frequency / samplingRate;
-		double oscPhase = 0;
-		for (int i = 0; i < samples; i++) {
-			array[i] = wavetable.getSample(oscPhase, oscFreq);
-			oscPhase += oscFreq;
-			if (oscPhase >= 1) oscPhase -= 1;
-		}
-		PlotUtility demo = new PlotUtility(title, array);
-		demo.pack();
-		RefineryUtilities.centerFrameOnScreen(demo);
-		demo.setVisible(true);
-	}
-	
-	static void plotWavetable(String title, double[] wavetable) {
-		PlotUtility demo = new PlotUtility(title, wavetable);
-		demo.pack();
-		RefineryUtilities.centerFrameOnScreen(demo);
-		demo.setVisible(true);
-	}
-
+	*/
 }

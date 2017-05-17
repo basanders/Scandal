@@ -1,19 +1,19 @@
-package CIS6905;
+package CIS6905.waveforms;
 
-public class AliasedSquare extends AliasedWavetable {
-	
-	AliasedSquare() {
+public class AliasedTriangle extends AliasedWavetable {
+
+	public AliasedTriangle() {
 		super(4096);
 	}
 	
-	AliasedSquare(int tableSize) {
+	public AliasedTriangle(int tableSize) {
 		super(tableSize);
 	}
 
 	@Override
 	public void fillTable() {
 		for (int i = 0; i < tableSize; i++) {
-			wavetable[i] = i < tableSize / 2 ? 1 : -1;
+			wavetable[i] = 2 * Math.abs(1 - (double) i * 2 / tableSize) - 1;
 		}
 	}
 

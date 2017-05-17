@@ -1,5 +1,6 @@
-package CIS6905;
+package CIS6905.waveforms;
 import org.junit.Test;
+
 import static org.junit.Assert.*;
 
 public class WaveformTests {

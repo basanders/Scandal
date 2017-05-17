@@ -1,15 +1,15 @@
-package CIS6905;
+package CIS6905.waveforms;
 
 public class WavetableNoise extends Wavetable implements NoiseGenerator {
 	
 	int runningIndex = 0;
 
-	WavetableNoise() {
+	public WavetableNoise() {
 		super(88200);
 		fillTable();
 	}
 	
-	WavetableNoise(int size) {
+	public WavetableNoise(int size) {
 		super(size);
 		fillTable();
 	}
