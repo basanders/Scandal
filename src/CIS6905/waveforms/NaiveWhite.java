@@ -1,10 +1,10 @@
 package CIS6905.waveforms;
 
-public class NaiveSawtooth extends NaiveWaveform {
+public class NaiveWhite extends NaiveWaveform {
 
 	@Override
 	public double getSample(double phase, double frequency) {
-		return 2 * (1 - phase / twoPi) - 1;
+		return 2.0 * Math.random() - 1.0;
 	}
 
 }

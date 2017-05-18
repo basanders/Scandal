@@ -1,250 +1,38 @@
 package CIS6905;
 
-import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
-import java.nio.ByteBuffer;
-
-import javax.sound.sampled.AudioFileFormat;
-import javax.sound.sampled.AudioFormat;
-import javax.sound.sampled.AudioInputStream;
-import javax.sound.sampled.AudioSystem;
-import javax.sound.sampled.Clip;
-import javax.sound.sampled.Mixer;
-import javax.sound.sampled.SourceDataLine;
-import javax.sound.sampled.TargetDataLine;
-
-import CIS6905.waveforms.WavetableNoise;
+import static CIS6905.WavetableOscillator.Wave.*;
 
 public class Playground {
 
-	public static final int samplingRate = 44100;
-	public static final int bitDepth = 16;
-	static final int vectorSize = 512;
-	static final double twoPi = 2 * Math.PI;
-	static final double frequencyScale = twoPi / samplingRate;
-	static final double amplitudeScale = Short.MAX_VALUE;
-	static final AudioFormat mono = new AudioFormat(samplingRate, bitDepth, 1, true, true);
-	static final AudioFormat stereo = new AudioFormat(samplingRate, bitDepth, 2, true, true);
-
 	public static void main(String[] args) throws Exception {
-		//printDeviceList();
-		//playAudioFile("/lisa.wav");
-		//loopAudioFile("/lisa.wav", 1000, 6000, 16);
-		//recordAudioFile("src/test", 2000);
-		//playAudioFile("/test.wav");
-		//ByteArrayOutputStream buffer = recordBuffer(2000);
-		//playBuffer(buffer);
-		//noiseGenerator(1, 0.1);
-		//oscillator(2, 0.1, 440, new NaiveCosine());
-		//wavetableOscillator(2, 0.1, 1024, new ClassicSquare());
-		//new ClassicSquare().plot(2, 441);
-		//new AudioThread(oscillator(440, 2), mono).start();
-		//new AudioThread(sweep(0, 22050, 5), mono).start();
-		//new AudioThread(decayPulse(880, 5), mono).start();
-		//new AudioThread(stereoPanning(880, 2), stereo).start();
-		//new AudioThread(stereoPingPong(880, 5), stereo).start();
-	}
-
-	static void printActiveThreads() {
-		int running = 0;
-		for (Thread t : Thread.getAllStackTraces().keySet()) {
-			if (t.getState() == Thread.State.RUNNABLE) running++;
+		/*playAudioFile("/lisa.wav");
+		loopAudioFile("/lisa.wav", 1000, 6000, 16);
+		recordAudioFile("src/test", 2000);
+		playAudioFile("/test.wav");
+		ByteArrayOutputStream buffer = recordBuffer(2000);
+		playBuffer(buffer);
+		noiseGenerator(1, 0.1);
+		oscillator(2, 0.1, 440, new NaiveCosine());
+		wavetableOscillator(2, 0.1, 1024, new ClassicSquare());
+		new ClassicSquare().plot(2, 441);
+		new AudioThread(oscillator(440, 2), mono).start();
+		new AudioThread(sweep(0, 22050, 5), mono).start();
+		new AudioThread(decayPulse(880, 5), mono).start();
+		new AudioThread(stereoPanning(880, 2), stereo).start();
+		new AudioThread(stereoPingPong(880, 5), stereo).start();*/
+		
+		BreakpointFunction envelope = new BreakpointFunction(512, new double[]{220, 660, 440, 1100});
+		
+		WavetableOscillator sine = new WavetableOscillator(COSINE);
+		WavetableOscillator saw = new WavetableOscillator(SAWTOOTH);
+		WavetableOscillator square = new WavetableOscillator(SQUARE);
+		
+		for (int i = 0; i < 200; i++) {
+			sine.start((2 * i) * 60, 40, envelope.getArray(), Math.abs((i + 2) * 440 / 2 * Math.pow(-1, i)) % 2000);
+			saw.start((2 * i + 1) * 60, 30, envelope.getArray(), Math.abs((i + 1) * 440 / 3 * Math.pow(-1, i)) % 3000);
+			square.start((2 * i + 2) * 60, 20, envelope.getArray(), Math.abs(i * 440 / 4 * Math.pow(-1, i)) % 4000);
 		}
-		System.out.println("Active threads: " + running);
-	}
-
-	static void printDeviceList() {
-		int index = 0;
-		Mixer.Info[] mixers = AudioSystem.getMixerInfo();
-		for (Mixer.Info mixer : mixers) {
-			System.out.println(index++ + ": " + mixer.getName());
-		}
-	}
-
-	static void playAudioFile(String path) throws Exception {
-		InputStream file = Playground.class.getResourceAsStream(path);
-		AudioInputStream ais = AudioSystem.getAudioInputStream(file);
-		Clip clip = AudioSystem.getClip();
-		clip.open(ais);
-		clip.start();
-		Thread.sleep(clip.getFrameLength());
-		clip.stop();
-		clip.drain();
-		clip.close();
-	}
-
-	static void loopAudioFile(String path, double start, double end, double count) throws Exception {
-		InputStream file = Playground.class.getResourceAsStream(path);
-		AudioInputStream ais = AudioSystem.getAudioInputStream(file);
-		Clip clip = AudioSystem.getClip();
-		clip.open(ais);
-		clip.setLoopPoints((int) start, (int) end);
-		clip.loop((int) count);
-		Thread.sleep((int) ((end - start) * count * 1000 / samplingRate)); // samples to ms
-		clip.stop();
-		clip.drain();
-		clip.close();
-	}
-
-	static void recordAudioFile(String name, long duration) throws Exception {
-		File audioFile = new File(name + ".wav");
-		TargetDataLine targetDataLine = AudioSystem.getTargetDataLine(mono);
-		AudioInputStream ais = new AudioInputStream(targetDataLine);
-		targetDataLine.open();
-		targetDataLine.start();
-		// The recording task should be dispatched to a new thread while the main thread sleeps.
-		Thread dispatch = new Thread() {
-			@Override
-			public void run() {
-				try {
-					AudioSystem.write(ais, AudioFileFormat.Type.WAVE, audioFile);
-				} catch (IOException e) {
-					e.printStackTrace();
-				}
-			}
-		};
-		dispatch.start();
-		Thread.sleep(duration);
-		targetDataLine.stop();
-		targetDataLine.drain();
-		targetDataLine.close();
-	}
-
-	static ByteArrayOutputStream recordBuffer(long duration) throws Exception {
-		ByteArrayOutputStream buffer = new ByteArrayOutputStream();
-		TargetDataLine targetDataLine = AudioSystem.getTargetDataLine(mono);
-		targetDataLine.open();
-		targetDataLine.start();
-		Thread dispatch = new Thread() {
-			@Override
-			public void run() {
-				byte[] data = new byte[vectorSize];
-				int bytes = 1;
-				while (bytes != 0) {
-					bytes = targetDataLine.read(data, 0, data.length); // read from target
-					buffer.write(data, 0, bytes); // write to buffer
-				}
-			}
-		};
-		dispatch.start();
-		Thread.sleep(duration);
-		targetDataLine.stop();
-		targetDataLine.drain();
-		targetDataLine.close();
-		return buffer;
-	}
-
-	static void playBuffer(ByteArrayOutputStream buffer) throws Exception {
-		SourceDataLine sourceDataLine = AudioSystem.getSourceDataLine(mono);
-		sourceDataLine.open();
-		sourceDataLine.start();
-		Thread dispatch = new Thread() {
-			@Override
-			public void run() {
-				int bytes = 1;
-				while (bytes != 0) {
-					bytes = sourceDataLine.write(buffer.toByteArray(), 0, buffer.size());
-				}
-			}
-		};
-		dispatch.start();
-		// Divide by two because 16-bit audio takes two bytes per sample.
-		Thread.sleep(buffer.size() * 500 / samplingRate);
-		sourceDataLine.stop();
-		sourceDataLine.drain();
-		sourceDataLine.close();
-	}
-
-	static ByteBuffer decayPulse(double freq, int duration){
-		int samples = duration * samplingRate;
-		ByteBuffer byteBuffer = ByteBuffer.allocate(samples * bitDepth / 8); // mono
-		for (int i = 0; i < samples; i++) {
-			double scale = 2 * (double) i;
-			if (scale > samples) scale = samples;
-			double gain = amplitudeScale * (samples - scale) / samples;
-			double time = (double) i / samplingRate;
-			byteBuffer.putShort((short) (gain * Math.sin(twoPi * freq * time)));
-		}
-		return byteBuffer;
-	}
-
-	static ByteBuffer stereoPanning(double freq, int duration) {
-		int samples = duration * samplingRate;
-		ByteBuffer byteBuffer = ByteBuffer.allocate(samples * bitDepth / 4); // stereo
-		for (int i = 0; i < samples; i++) {
-			double rightGain = amplitudeScale * i / samples; // 0 -> 1
-			double leftGain = amplitudeScale - rightGain; // 1 -> 0
-			double time = (double) i / samplingRate;
-			byteBuffer.putShort((short) (leftGain * Math.sin(twoPi * freq * time)));
-			byteBuffer.putShort((short) (rightGain * Math.sin(twoPi * freq * time)));
-		}
-		return byteBuffer;
-	}
-
-	static ByteBuffer stereoPingPong(double freq, int duration) {
-		int samples = duration * samplingRate;
-		ByteBuffer byteBuffer = ByteBuffer.allocate(samples * bitDepth / 4); // stereo
-		double leftGain = 0;
-		double rightGain = amplitudeScale;
-		for (int i = 0; i < samples; i++) {
-			if (i % (samples / 8) == 0) {
-				double temp = leftGain;
-				leftGain = rightGain;
-				rightGain = temp;
-			}
-			double time = (double) i / samplingRate;
-			byteBuffer.putShort((short) (leftGain * Math.sin(twoPi * freq * time)));
-			byteBuffer.putShort((short) (rightGain * Math.sin(twoPi * freq * time)));
-		}
-		return byteBuffer;
+		
 	}
 	
-	static void noiseGenerator(int duration, double amplitude) throws Exception {
-		WavetableNoise waveform = new WavetableNoise();
-		int totalSamples = duration * samplingRate;
-		double oscAmp = amplitude * amplitudeScale;
-		ByteBuffer buffer = ByteBuffer.allocate(4096);
-		SourceDataLine line = AudioSystem.getSourceDataLine(mono);
-		line.open();
-		line.start();
-		while (totalSamples > 0) {
-			buffer.clear();
-			for (int i = 0; i < vectorSize; i++) {
-				buffer.putShort((short) (oscAmp * waveform.getSample()));
-			}
-			totalSamples -= vectorSize;
-			line.write(buffer.array(), 0, buffer.position());
-		}
-		line.drain();
-		line.stop();
-		line.close();
-	}
-	
-	/*
-	void naiveOscillator(int duration, int amplitude, int frequency, NaiveWaveform waveform) {
-		int totalSamples = duration * samplingRate;
-		double oscAmp = amplitude * amplitudeScale;
-		double oscFreq = frequency * frequencyScale;
-		double oscPhase = 0;
-		ByteBuffer buffer = ByteBuffer.allocate(4096);
-		SourceDataLine line = AudioSystem.getSourceDataLine(mono);
-		line.open();
-		line.start();
-		while (totalSamples > 0) {
-			buffer.clear();
-			for (int i = 0; i < vectorSize; i++) {
-				buffer.putShort((short) (oscAmp * waveform.getSample(oscPhase)));
-				oscPhase += oscFreq;
-				if (oscPhase >= twoPi) oscPhase -= twoPi;
-			}
-			totalSamples -= vectorSize;
-			line.write(buffer.array(), 0, buffer.position());
-		}
-		line.drain();
-		line.stop();
-		line.close();
-	}
-	*/
 }

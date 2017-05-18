@@ -26,7 +26,7 @@ public class AdditiveSawtooth extends AdditiveWavetable {
 	}
 
 	@Override
-	public double getSample(double phase) {
+	public double getSample(double phase, double frequency) {
 		return wavetable[(int) phase];
 	}
 

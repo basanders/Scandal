@@ -20,7 +20,7 @@ public class WavetableCosine extends Wavetable {
 	}
 
 	@Override
-	public double getSample(double phase) {
+	public double getSample(double phase, double frequency) {
 		return wavetable[(int) phase];
 	}
 	

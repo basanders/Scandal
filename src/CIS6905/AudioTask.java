@@ -18,9 +18,8 @@ public class AudioTask implements Runnable {
 
 	@Override
 	public void run() {
-		SourceDataLine sourceDataLine;
 		try {
-			sourceDataLine = AudioSystem.getSourceDataLine(format);
+			SourceDataLine sourceDataLine = AudioSystem.getSourceDataLine(format);
 			sourceDataLine.open();
 			sourceDataLine.start();
 			sourceDataLine.write(buffer.array(), 0, buffer.position());

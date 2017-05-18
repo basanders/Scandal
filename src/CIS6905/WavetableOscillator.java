@@ -35,79 +35,54 @@ public class WavetableOscillator {
 	}
 	
 	public void start(int delay, int duration, double amplitude, double frequency) {
-		switch (wave) {
-		case SAWTOOTH:
-		case SQUARE: {
-			scheduler.schedule(new AudioTask(getNormalized(duration, amplitude, frequency), Settings.mono), delay, MILLISECONDS);
-		} break;
-		default: {
-			scheduler.schedule(new AudioTask(get(duration, amplitude, frequency), Settings.mono), delay, MILLISECONDS);
-		} break;
-		}
-	}
-	
-	public void start(int duration, double amplitude, double initialFrequency, double finalFrequency) {
-		switch (wave) {
-		case SAWTOOTH:
-		case SQUARE: {
-			new AudioThread(getNormalized(duration, amplitude, initialFrequency), Settings.mono).start();
-		} break;
-		default: {
-			new AudioThread(get(duration, amplitude, initialFrequency, finalFrequency), Settings.mono).start();
-		} break;
-		}
-	}
-	
-	private ByteBuffer get(int duration, double amplitude, double frequency) {
 		int samples = duration * Settings.samplingRate / 1000;
 		double oscAmp = amplitude * Short.MAX_VALUE;
 		double oscFreq = frequency * wave.wavetable.tableSize / Settings.samplingRate;
 		double oscPhase = 0;
 		ByteBuffer buffer = ByteBuffer.allocate(samples * Settings.bitDepth / 8); // 16-bit mono
 		for (int i = 0; i < samples; i++) {
-			buffer.putShort((short) (oscAmp * wave.wavetable.getSample(oscPhase)));
+			buffer.putShort((short) (oscAmp * wave.wavetable.getSample(oscPhase, oscFreq)));
 			oscPhase += oscFreq;
 			if (oscPhase >= wave.wavetable.tableSize) oscPhase -= wave.wavetable.tableSize;
 		}
-		return buffer;
+		scheduler.schedule(new AudioTask(buffer, Settings.mono), delay, MILLISECONDS);
 	}
 	
-	private ByteBuffer get(int duration, double amplitude, double initialFrequency, double finalFrequency) {
+	public void start(int delay, int duration, double[] envelope, double frequency) {
 		int samples = duration * Settings.samplingRate / 1000;
-		double oscAmp = amplitude * Short.MAX_VALUE;
-		double frequencyScale = (double) wave.wavetable.tableSize / Settings.samplingRate;
+		double oscAmp = 0;
+		double oscFreq = frequency * wave.wavetable.tableSize / Settings.samplingRate;
 		double oscPhase = 0;
+		double envelopeIndex = 0;
+		double envelopeIncrement = (double) envelope.length / samples;
 		ByteBuffer buffer = ByteBuffer.allocate(samples * Settings.bitDepth / 8); // 16-bit mono
 		for (int i = 0; i < samples; i++) {
-			buffer.putShort((short) (oscAmp * wave.wavetable.getSample(oscPhase)));
-			double frequency = initialFrequency + (double) i * (finalFrequency - initialFrequency) / samples;
-			frequency *= frequencyScale;
-			oscPhase += frequency;
+			oscAmp = envelope[(int) envelopeIndex] * Short.MAX_VALUE; // TODO make this logarithmic
+			buffer.putShort((short) (oscAmp * wave.wavetable.getSample(oscPhase, oscFreq)));
+			envelopeIndex += envelopeIncrement;
+			oscPhase += oscFreq;
 			if (oscPhase >= wave.wavetable.tableSize) oscPhase -= wave.wavetable.tableSize;
 		}
-		return buffer;
+		scheduler.schedule(new AudioTask(buffer, Settings.mono), delay, MILLISECONDS);
 	}
 	
-	private ByteBuffer getNormalized(int duration, double amplitude, double frequency) {
+	public void start(int delay, int duration, double amplitude, double[] glide) {
 		int samples = duration * Settings.samplingRate / 1000;
 		double oscAmp = amplitude * Short.MAX_VALUE;
-		double oscFreq = frequency / Settings.samplingRate;
+		double oscFreq = 0;
 		double oscPhase = 0;
-		double sample = 0;
-		ByteBuffer buffer = ByteBuffer.allocate(samples * Settings.bitDepth / 8); // mono
+		double glideIndex = 0;
+		double glideIncrement = (double) glide.length / samples;
+		double frequencyScale = (double) wave.wavetable.tableSize / Settings.samplingRate;
+		ByteBuffer buffer = ByteBuffer.allocate(samples * Settings.bitDepth / 8); // 16-bit mono
 		for (int i = 0; i < samples; i++) {
-			if (wave == Wave.SAWTOOTH) sample = ((ClassicSawtooth) wave.wavetable).getSample(oscPhase, oscFreq);
-			if (wave == Wave.SQUARE) sample = ((ClassicSquare) wave.wavetable).getSample(oscPhase, oscFreq);
-			buffer.putShort((short) (oscAmp * sample));
+			oscFreq = glide[(int) glideIndex] * frequencyScale; // TODO make this logarithmic
+			buffer.putShort((short) (oscAmp * wave.wavetable.getSample(oscPhase, oscFreq)));
+			glideIndex += glideIncrement;
 			oscPhase += oscFreq;
-			if (oscPhase >= 1) oscPhase -= 1;
+			if (oscPhase >= wave.wavetable.tableSize) oscPhase -= wave.wavetable.tableSize;
 		}
-		return buffer;
-	}
-	
-	ByteBuffer getNormalized(int duration, double amplitude, double initialFrequency, double finalFrequency) {
-		// TODO
-		return null;
+		scheduler.schedule(new AudioTask(buffer, Settings.mono), delay, MILLISECONDS);
 	}
 
 }

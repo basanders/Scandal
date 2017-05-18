@@ -1,5 +1,7 @@
 package CIS6905.waveforms;
 
+import CIS6905.PlotUtility;
+
 public abstract class Wavetable extends Waveform {
 	
 	public final int tableSize;
@@ -19,7 +21,7 @@ public abstract class Wavetable extends Waveform {
 		double oscFreq = tableSize * frequency / samples;
 		double oscPhase = 0;
 		for (int i = 0; i < samples; i++) {
-			array[i] = getSample(oscPhase);
+			array[i] = getSample(oscPhase, oscFreq);
 			oscPhase += oscFreq;
 			if (oscPhase >= tableSize) oscPhase -= tableSize;
 		}

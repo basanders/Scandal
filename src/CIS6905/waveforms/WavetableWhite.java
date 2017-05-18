@@ -1,15 +1,15 @@
 package CIS6905.waveforms;
 
-public class WavetableNoise extends Wavetable implements NoiseGenerator {
+public class WavetableWhite extends Wavetable {
 	
 	int runningIndex = 0;
 
-	public WavetableNoise() {
+	public WavetableWhite() {
 		super(88200);
 		fillTable();
 	}
 	
-	public WavetableNoise(int size) {
+	public WavetableWhite(int size) {
 		super(size);
 		fillTable();
 	}
@@ -22,12 +22,10 @@ public class WavetableNoise extends Wavetable implements NoiseGenerator {
 	}
 
 	@Override
-	public double getSample(double phase) {
-		// You don't want this.
-		return wavetable[(int) phase];
+	public double getSample(double phase, double frequency) {
+		return wavetable[(int) phase]; // You don't want this.
 	}
 
-	@Override
 	public double getSample() {
 		if (runningIndex >= tableSize) runningIndex -= tableSize;
 		return wavetable[runningIndex++];

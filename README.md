@@ -1,13 +1,11 @@
 # Tasks
 
-- [ ] Remove modulo counters from classic waveforms;
+- Allow negative frequencies?
 - Test antialiased waveforms with a sweep;
 - Antialiased sawtooth unit test;
 - Antialiased triangle generator;
 - Antialiased triangle unit test;
 - Antialiased square unit test;
-- Naive oscillator class;
-- Wavetable oscillator class;
 - Audio buffer loop;
 - Audio file splice;
 - Audio buffer splice;
@@ -27,7 +25,8 @@
 - Frequency modulator;
 - Amplitude controls;
 - Reverb controls;
-- Filters
+- Filters;
+- Convert amplitudes to dB and frequencies to MIDI notes
 
 ## Plotting a waveform
 

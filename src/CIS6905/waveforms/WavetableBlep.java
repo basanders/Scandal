@@ -41,7 +41,7 @@ public class WavetableBlep extends Wavetable {
 	}
 
 	@Override
-	public double getSample(double index) {
+	public double getSample(double index, double frequency) {
 		return wavetable[(int) index];
 	}
 
