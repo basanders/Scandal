@@ -15,7 +15,7 @@ import CIS6905.waveforms.WavetableCosine;
 public class WavetableOscillator {
 
 	private final Wave wave;
-	private final ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(0);
+	private final ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(10);
 
 	public enum Wave {
 		COSINE(new WavetableCosine()),
@@ -34,6 +34,21 @@ public class WavetableOscillator {
 		this.wave = wave;
 	}
 	
+	private double runningPhase = 0;
+	
+	public ByteBuffer getVector(double amplitude, double frequency) {
+		int samples = Settings.vectorSize;
+		double oscAmp = amplitude * Short.MAX_VALUE;
+		double oscFreq = frequency * wave.wavetable.tableSize / Settings.samplingRate;
+		ByteBuffer buffer = ByteBuffer.allocate(samples * Settings.bitDepth / 8); // 16-bit mono
+		for (int i = 0; i < samples; i++) {
+			buffer.putShort((short) (oscAmp * wave.wavetable.getSample(runningPhase, oscFreq)));
+			runningPhase += oscFreq;
+			if (runningPhase >= wave.wavetable.tableSize) runningPhase -= wave.wavetable.tableSize;
+		}
+		return buffer;
+	}
+	
 	public void start(int delay, int duration, double amplitude, double frequency) {
 		int samples = duration * Settings.samplingRate / 1000;
 		double oscAmp = amplitude * Short.MAX_VALUE;
@@ -45,7 +60,8 @@ public class WavetableOscillator {
 			oscPhase += oscFreq;
 			if (oscPhase >= wave.wavetable.tableSize) oscPhase -= wave.wavetable.tableSize;
 		}
-		scheduler.schedule(new AudioTask(buffer, Settings.mono), delay, MILLISECONDS);
+		//scheduler.schedule(new AudioTask(buffer, Settings.mono), delay, MILLISECONDS);
+		scheduler.submit(new AudioTask(buffer, Settings.mono));
 	}
 	
 	public void start(int delay, int duration, double[] envelope, double frequency) {
@@ -63,7 +79,8 @@ public class WavetableOscillator {
 			oscPhase += oscFreq;
 			if (oscPhase >= wave.wavetable.tableSize) oscPhase -= wave.wavetable.tableSize;
 		}
-		scheduler.schedule(new AudioTask(buffer, Settings.mono), delay, MILLISECONDS);
+		//scheduler.schedule(new AudioTask(buffer, Settings.mono), delay, MILLISECONDS);
+		scheduler.submit(new AudioTask(buffer, Settings.mono));
 	}
 	
 	public void start(int delay, int duration, double amplitude, double[] glide) {
@@ -82,7 +99,8 @@ public class WavetableOscillator {
 			oscPhase += oscFreq;
 			if (oscPhase >= wave.wavetable.tableSize) oscPhase -= wave.wavetable.tableSize;
 		}
-		scheduler.schedule(new AudioTask(buffer, Settings.mono), delay, MILLISECONDS);
+		//scheduler.schedule(new AudioTask(buffer, Settings.mono), delay, MILLISECONDS);
+		scheduler.submit(new AudioTask(buffer, Settings.mono));
 	}
 	
 	public void start(int delay, int duration, double[] envelope, double[] glide) {
@@ -105,7 +123,8 @@ public class WavetableOscillator {
 			oscPhase += oscFreq;
 			if (oscPhase >= wave.wavetable.tableSize) oscPhase -= wave.wavetable.tableSize;
 		}
-		scheduler.schedule(new AudioTask(buffer, Settings.mono), delay, MILLISECONDS);
+		//scheduler.schedule(new AudioTask(buffer, Settings.mono), delay, MILLISECONDS);
+		scheduler.submit(new AudioTask(buffer, Settings.mono));
 	}
 
 }

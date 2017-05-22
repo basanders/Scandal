@@ -1,6 +1,6 @@
 package CIS6905.waveforms;
 
-public class WavetableBlep extends Wavetable {
+public final class WavetableBlep extends Wavetable {
 	
 	private static int ripples = 2;
 	private static WavetableBlep sharedInstance;

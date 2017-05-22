@@ -9,7 +9,7 @@ import org.jfree.data.xy.XYSeriesCollection;
 import org.jfree.ui.ApplicationFrame;
 import org.jfree.ui.RefineryUtilities;
 
-public class PlotUtility extends ApplicationFrame {
+public final class PlotUtility extends ApplicationFrame {
 
 	private static final long serialVersionUID = 1L;
 

@@ -1,0 +1,53 @@
+package CIS6905;
+
+import java.nio.ByteBuffer;
+
+import javax.sound.sampled.AudioFormat;
+import javax.sound.sampled.AudioSystem;
+import javax.sound.sampled.LineEvent;
+import javax.sound.sampled.LineListener;
+import javax.sound.sampled.SourceDataLine;
+
+public class AudioFlow implements Runnable, LineListener {
+	
+	public boolean running = true;
+	public double amplitude;
+	public double frequency;
+	private final AudioFormat format;
+	private final WavetableOscillator oscillator;
+	//private final ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(20);
+	
+	public AudioFlow(WavetableOscillator oscillator, AudioFormat format) {
+		this.oscillator = oscillator;
+		this.format = format;
+	}
+	
+	@Override
+	public void update(LineEvent event) {
+		//System.out.println(event.getType());
+	}
+
+	@Override
+	public void run() {
+		try {
+			SourceDataLine sourceDataLine = AudioSystem.getSourceDataLine(format);
+			//sourceDataLine.addLineListener(this);
+			sourceDataLine.open(format, Settings.vectorSize * 2); // 16-bit equals 2 bytes per sample
+			sourceDataLine.start();
+			//long startTime = 0;
+			while (running) {
+				ByteBuffer buffer = oscillator.getVector(amplitude, frequency);
+				//ByteBuffer buffer = scheduler.submit(() -> oscillator.getVector(amplitude, frequency)).get();
+				//startTime = System.nanoTime();
+				sourceDataLine.write(buffer.array(), 0, buffer.position());
+				//System.out.println((System.nanoTime() - startTime) / 1000000);
+			}
+			sourceDataLine.drain();
+			sourceDataLine.stop();
+			sourceDataLine.close();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}	
+
+}
