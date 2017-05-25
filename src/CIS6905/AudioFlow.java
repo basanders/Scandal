@@ -10,16 +10,28 @@ import javax.sound.sampled.SourceDataLine;
 
 public class AudioFlow implements Runnable, LineListener {
 	
-	public boolean running = true;
-	public double amplitude;
-	public double frequency;
-	private final AudioFormat format;
-	private final WavetableOscillator oscillator;
 	//private final ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(20);
+	private final RealTimePerformer performer;
+	private final AudioFormat format;
+	private boolean running = true;
+	private double amplitude;
+	private double frequency;
 	
-	public AudioFlow(WavetableOscillator oscillator, AudioFormat format) {
-		this.oscillator = oscillator;
+	public AudioFlow(RealTimePerformer performer, AudioFormat format) {
+		this.performer = performer;
 		this.format = format;
+	}
+	
+	public void setAmplitude(double amplitude) {
+		this.amplitude = amplitude;
+	}
+	
+	public void setFrequency(double frequency) {
+		this.frequency = frequency;
+	}
+	
+	public void quit() {
+		this.running = false;
 	}
 	
 	@Override
@@ -36,8 +48,8 @@ public class AudioFlow implements Runnable, LineListener {
 			sourceDataLine.start();
 			//long startTime = 0;
 			while (running) {
-				ByteBuffer buffer = oscillator.getVector(amplitude, frequency);
-				//ByteBuffer buffer = scheduler.submit(() -> oscillator.getVector(amplitude, frequency)).get();
+				ByteBuffer buffer = performer.getVector(amplitude, frequency);
+				//ByteBuffer buffer = scheduler.submit(() -> performer.getVector(amplitude, frequency)).get();
 				//startTime = System.nanoTime();
 				sourceDataLine.write(buffer.array(), 0, buffer.position());
 				//System.out.println((System.nanoTime() - startTime) / 1000000);

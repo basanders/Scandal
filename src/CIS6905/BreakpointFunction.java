@@ -23,7 +23,7 @@ public class BreakpointFunction {
 		this.weights = weights;
 	}
 	
-	public double[] getArray() {
+	public double[] get() {
 		double[] array = new double[length * (breakpoints.length - 1)];
 		int index = 0;
 		double value = breakpoints[0];
@@ -44,7 +44,7 @@ public class BreakpointFunction {
 	}
 	
 	public void plot() {
-		new PlotUtility(this.getClass().getSimpleName(), getArray());
+		new PlotUtility(this.getClass().getSimpleName(), get());
 	}
 
 }

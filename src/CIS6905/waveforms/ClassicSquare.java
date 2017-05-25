@@ -2,7 +2,7 @@ package CIS6905.waveforms;
 
 public class ClassicSquare extends AliasedSquare {
 	
-	static final double[] residuals = WavetableBlep.getSharedInstance().wavetable;
+	static final double[] residuals = WavetableResidual.getSharedInstance().wavetable;
 	static final int tableCenter = residuals.length / 2 - 1;
 
 	@Override
