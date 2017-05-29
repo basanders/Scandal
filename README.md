@@ -4,12 +4,13 @@
 new AdditiveSquare().plot(2, 512);
 WavetableResidual.getSharedInstance().plot(1, 500);
 new BreakpointFunction(512, new double[]{0, 0.5, 0, 1, 0, 1, 0, 0.5, 0}).plot();
+new BiquadCustom(new ComplexNumber(Math.sqrt(2), Math.sqrt(2))).plotMagnitudeResponse(2205);
 ```
 
 ## Using the WavetableOscillator class for real-time audio
 
 ```java
-AudioFlow saw = new WavetableOscillator(SAWTOOTH).start();
+AudioFlow saw = new WavetableOscillator(new ClassicSquare()).start();
 saw.setFrequency(440);
 saw.setAmplitude(0.5);
 for (int i = 0; i < 100; i++) {
@@ -35,7 +36,7 @@ BufferPlayer player = new BufferPlayer(0);
 player.playMono(0, saw.get(3000, longEnvelope.get(), glide.get()));
 ```
 
-## Using the Tremolo class
+## Using the RingModulator class
 
 ```java
 BreakpointFunction envelope = new BreakpointFunction(512, new double[]{0, 1, 0});
@@ -44,12 +45,23 @@ BreakpointFunction depthEnvelope = new BreakpointFunction(512, new double[]{1, 0
 BreakpointFunction glide = new BreakpointFunction(512, new double[]{880, 110, 2200, 2200});
 WavetableOscillator saw = new WavetableOscillator(new ClassicSawtooth());
 BufferPlayer player = new BufferPlayer(2);
-player.playMono(0, new Tremolo(new AdditiveSawtooth()).process(saw.get(6000, envelope.get(), glide.get()), 0.8, 10));
-player.playMono(0, new Tremolo(new WavetableCosine()).process(saw.get(6000, 0.8, 37), depthEnvelope.get(), speedEnvelope.get()));
+player.playMono(0, new RingModulator(new AdditiveSawtooth()).process(saw.get(6000, envelope.get(), glide.get()), 0.8, 10));
+player.playMono(0, new RingModulator(new WavetableCosine()).process(saw.get(6000, 0.8, 37), depthEnvelope.get(), speedEnvelope.get()));
 player.stop(); // necessary whenever BufferPlayer deals with more than "zero" threads
 ```
 
-## Using both real-time and non-real-time processes
+## Using the BiquadLowPass class
+
+```java
+double[] wave = new WavetableOscillator(new ClassicSawtooth()).get(4000, 0.5, 440);
+double[] cutoff = new BreakpointFunction(512, new double[]{40, 10000, 40, 40}).get();
+double[] resonance = new BreakpointFunction(512, new double[]{0, 6, 6, 0}).get();
+double[] filter = new BiquadLowPass().process(wave, cutoff, resonance);
+BufferPlayer player = new BufferPlayer(0);
+player.playMono(0, filter);
+```
+
+## Using both real-time *and* non-real-time processes
 
 ```java
 AudioFlow saws = new WavetableOscillator(new ClassicSawtooth()).start();
@@ -111,3 +123,4 @@ saws.quit();
 - Convert amplitudes to dB and frequencies to MIDI notes
 - Make envelopes and glides logarithmic
 - Allow negative frequencies?
+- Make filter plots logarithmic

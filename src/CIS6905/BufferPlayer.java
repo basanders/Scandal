@@ -12,7 +12,7 @@ public class BufferPlayer {
 	
 	public BufferPlayer(int voices) {
 		BufferPlayer.scheduler = Executors.newScheduledThreadPool(voices);
-		// dummy task to bypass lazy instantiation
+		// dummy task to force instantiation
 		scheduler.schedule(new AudioTask(ByteBuffer.allocate(0), Settings.mono), 0, MILLISECONDS);
 	}
 	
@@ -29,6 +29,7 @@ public class BufferPlayer {
 	}
 	
 	public void stop() {
+		// needs to be called if number of voices is greater than zero
 		scheduler.shutdown();
 	}
 

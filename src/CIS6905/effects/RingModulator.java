@@ -1,12 +1,13 @@
-package CIS6905;
+package CIS6905.effects;
 
+import CIS6905.Settings;
 import CIS6905.waveforms.Wavetable;
 
-public class Tremolo {
+public class RingModulator {
 	
 	private Wavetable table;
 	
-	public Tremolo(Wavetable table) {
+	public RingModulator(Wavetable table) {
 		this.table = table;
 	}
 
@@ -25,7 +26,6 @@ public class Tremolo {
 		return processedBuffer;
 	}
 	
-	// TODO test this
 	public double[] process(double[] buffer, double[] depths, double speed) {
 		int samples = buffer.length;
 		double freq = speed * table.tableSize / Settings.samplingRate;
@@ -46,7 +46,6 @@ public class Tremolo {
 		return processedBuffer;
 	}
 	
-	// TODO test this
 	public double[] process(double[] buffer, double depth, double[] speeds) {
 		int samples = buffer.length;
 		double[] processedBuffer = new double[buffer.length];
@@ -67,7 +66,6 @@ public class Tremolo {
 		return processedBuffer;
 	}
 	
-	// TODO test this
 	public double[] process(double[] buffer, double[] depths, double[] speeds) {
 		int samples = buffer.length;
 		double depth = 0;
