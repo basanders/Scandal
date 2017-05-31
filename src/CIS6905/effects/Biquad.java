@@ -1,10 +1,9 @@
 package CIS6905.effects;
 
-import CIS6905.ComplexNumber;
 import CIS6905.PlotUtility;
 import CIS6905.Settings;
 
-public abstract class Biquad {
+public abstract class Biquad extends EffectsProcessor {
 
 	private double b0;
 	private double b1;
@@ -31,6 +30,7 @@ public abstract class Biquad {
 		this.a2 = a2 * a0Inverse;
 	}
 
+	@Override
 	public double[] process(double[] buffer, double frequency, double gain) {
 		update(frequency, gain);
 		double[] processedBuffer = new double[buffer.length];
@@ -45,7 +45,7 @@ public abstract class Biquad {
 		}
 		return processedBuffer;
 	}
-	
+
 	public double[] process(double[] buffer, double[] frequencies, double gain) {
 		double frequencyIndex = 0;		
 		double frequencyIncrement = (double) frequencies.length / buffer.length;
@@ -63,7 +63,7 @@ public abstract class Biquad {
 		}
 		return processedBuffer;
 	}
-	
+
 	public double[] process(double[] buffer, double frequency, double[] gains) {
 		double gainIndex = 0;
 		double gainIncrement = (double) gains.length / buffer.length;
@@ -81,7 +81,7 @@ public abstract class Biquad {
 		}
 		return processedBuffer;
 	}
-	
+
 	public double[] process(double[] buffer, double[] frequencies, double[] gains) {
 		double frequencyIndex = 0;		
 		double frequencyIncrement = (double) frequencies.length / buffer.length;
@@ -109,62 +109,25 @@ public abstract class Biquad {
 	}
 
 	public static double normalizeAndClip(double value) {
-		value *= (double) 2 / Settings.samplingRate;
+		value *= (double) 2 / Settings.samplingRate; // normalize from 0 to 1 (Nyquist)
 		return Math.max(0.0, Math.min(value, 1.0));
 	}
 
-	/*
-	 * Frequencies are normalized from 0 to 1 (Nyquist). The filter equation is:
-	 * 
-	 * y[n] + m_a1 * y[n - 1] + m_a2 * y[n - 2] = m_b0 * x[n] + m_b1 * x[n - 1] + m_b2 * x[n - 2]
-	 * 
-	 * The z-transform is:
-	 * 
-	 * H(z) = (b0 + b1 * z^{-1} + b2 * z^{-2}) / (1 + a1 * z^{-1} + a2 * z^{-2})
-	 *      = (b0 + (b1 + b2 * z^{-1}) * z^{-1}) / (1 + (a1 + a2 * z^{-1}) * z^{-1}),
-	 * 
-	 * where z = e^{i * pi * frequency}
-	 */
-	private ComplexNumber[] getFrequencyResponse(int length, double frequency, double gain) {
-		update(frequency, gain);
-		ComplexNumber[] frequencyResponse = new ComplexNumber[length];
-		for (int i = 0; i < length; i++) {
-			double angle = -Math.PI * (double) i / length;
-			ComplexNumber z = new ComplexNumber(Math.cos(angle), Math.sin(angle));
-			ComplexNumber parenthesis = new ComplexNumber(b1, 0).add(new ComplexNumber(b2, 0).multiplyBy(z));
-			ComplexNumber numerator = new ComplexNumber(b0, 0).add(parenthesis.multiplyBy(z));
-			parenthesis = new ComplexNumber(a1, 0).add(new ComplexNumber(a2, 0).multiplyBy(z));
-			ComplexNumber denominator = new ComplexNumber(1, 0).add(parenthesis.multiplyBy(z));
-			frequencyResponse[i] = numerator.divideBy(denominator);
-		}
-		return frequencyResponse;
-	}
-
-	private double[] getMagnitudeResponse(int length, double frequency, double gain) {
-		ComplexNumber[] frequencyResponse = getFrequencyResponse(length, frequency, gain);
-		double[] magnitudeResponse = new double[frequencyResponse.length];
-		for (int i = 0; i < frequencyResponse.length; i++) {
-			magnitudeResponse[i] = frequencyResponse[i].getMagnitude();
-		}
-		return magnitudeResponse;
-	}
-
-	private double[] getPhaseResponse(int length, double frequency, double gain) {
-		ComplexNumber[] frequencyResponse = getFrequencyResponse(length, frequency, gain);
-		double[] phaseResponse = new double[frequencyResponse.length];
-		for (int i = 0; i < frequencyResponse.length; i++) {
-			phaseResponse[i] = Math.atan2(frequencyResponse[i].getImaginaryPart(), frequencyResponse[i].getRealPart());
-		}
-		return phaseResponse;
-	}
-
-	// TODO make this plot logarithmic
 	public void plotMagnitudeResponse(int length, double frequency, double gain) {
-		new PlotUtility(this.getClass().getSimpleName() + " magnitude response", getMagnitudeResponse(length, frequency, gain));
-	}
-
-	public void plotPhaseResponse(int length, double frequency, double gain) {
-		new PlotUtility(this.getClass().getSimpleName() + " phase response", getPhaseResponse(length, frequency, gain));
+		update(frequency, gain);
+		double[] data = new double[length];
+		double w;
+		double numerator;
+		double denominator;
+		double magnitude;
+		for (int i = 0; i < length; i++) {
+			w = 2 * Math.PI * (double) i / Settings.samplingRate;  
+			numerator = b0 * b0 + b1 * b1 + b2 * b2 + 2 * (b0 * b1 + b1 * b2) * Math.cos(w) + 2 * b0 * b2 * Math.cos(2 * w);
+			denominator = 1 + a1 * a1 + a2 * a2 + 2 * (a1 + a1 * a2) * Math.cos(w) + 2 * a2 * Math.cos(2 * w);
+			magnitude = Math.sqrt(numerator / denominator);
+			data[i] = magnitude;   
+		}
+		new PlotUtility(this.getClass().getSimpleName() + " magnitude response", data);
 	}
 
 }

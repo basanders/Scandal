@@ -43,8 +43,4 @@ public class BiquadCustom extends Biquad {
 		plotMagnitudeResponse(length, Double.NaN, Double.NaN);
 	}
 
-	public void plotPhaseResponse(int length) {
-		plotPhaseResponse(length, Double.NaN, Double.NaN);
-	}
-
 }

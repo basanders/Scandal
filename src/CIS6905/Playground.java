@@ -1,8 +1,5 @@
 package CIS6905;
 
-import CIS6905.effects.*;
-import CIS6905.waveforms.*;
-
 public class Playground {
 
 	public static void main(String[] args) throws Exception {
@@ -31,10 +28,8 @@ public class Playground {
 		/*MidiDevice.Info[] infos = MidiSystem.getMidiDeviceInfo();
 		MidiDevice device = MidiSystem.getMidiDevice(infos[1]);
 		device.open();
-		Receiver receiver = new Playground().new MidiReceiver();		
+		Receiver receiver = new Playground().new MidiReceiver();
 		device.getTransmitter().setReceiver(receiver);*/
-		
-		
 	}
 
 }

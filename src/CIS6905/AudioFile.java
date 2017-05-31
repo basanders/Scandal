@@ -14,7 +14,7 @@ public class AudioFile {
 	
 	static void playAudioFile(String path) throws Exception {
 		InputStream file = Playground.class.getResourceAsStream(path);
-		AudioInputStream ais = AudioSystem.getAudioInputStream(file);
+		AudioInputStream ais = AudioSystem.getAudioInputStream(file);		
 		Clip clip = AudioSystem.getClip();
 		clip.open(ais);
 		clip.start();

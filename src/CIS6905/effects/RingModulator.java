@@ -3,7 +3,7 @@ package CIS6905.effects;
 import CIS6905.Settings;
 import CIS6905.waveforms.Wavetable;
 
-public class RingModulator {
+public class RingModulator extends EffectsProcessor {
 	
 	private Wavetable table;
 	
@@ -11,6 +11,7 @@ public class RingModulator {
 		this.table = table;
 	}
 
+	@Override
 	public double[] process(double[] buffer, double depth, double speed) {
 		int samples = buffer.length;
 		double freq = speed * table.tableSize / Settings.samplingRate;

@@ -4,8 +4,15 @@
 new AdditiveSquare().plot(2, 512);
 WavetableResidual.getSharedInstance().plot(1, 500);
 new BreakpointFunction(512, new double[]{0, 0.5, 0, 1, 0, 1, 0, 0.5, 0}).plot();
-new BiquadCustom(new ComplexNumber(Math.sqrt(2), Math.sqrt(2))).plotMagnitudeResponse(2205);
+new BiquadPeak().plotMagnitudeResponse(1000, 100, 3);
 ```
+
+## Using the WaveFile class
+
+```java
+WaveFile lisa = new WaveFile("stereoLisa.wav");
+lisa.printInfo();
+``` 
 
 ## Using the WavetableOscillator class for real-time audio
 
@@ -23,30 +30,36 @@ saw.quit();
 ## Using the WavetableOscillator class for non-real-time audio
 
 ```java
-BufferPlayer player = new BufferPlayer(0);
-player.playMono(0, saw.get(2000, 0.5, 440));
+new BufferPlayer(0).playMono(0, new WavetableOscillator(new ClassicSawtooth()).get(2000, 0.5, 440));
 ```
 ## Using the BreakpointFunction class
 
 ```java
-BreakpointFunction longEnvelope = new BreakpointFunction(512, new double[]{0, 0.5, 0, 1, 0, 1, 0, 0.5, 0});
-BreakpointFunction glide = new BreakpointFunction(512, new double[]{880, 110, 2200, 2200});
-WavetableOscillator saw = new WavetableOscillator(new ClassicSawtooth());
-BufferPlayer player = new BufferPlayer(0);
-player.playMono(0, saw.get(3000, longEnvelope.get(), glide.get()));
+double[] longEnvelope = new BreakpointFunction(512, new double[]{0, 0.5, 0, 1, 0, 1, 0, 0.5, 0}).get();
+double[] glide = new BreakpointFunction(512, new double[]{880, 110, 2200, 2200}).get();
+new BufferPlayer(0).playMono(0, new WavetableOscillator(new ClassicSawtooth()).get(3000, longEnvelope, glide));
+```
+
+## Using the Delay class
+
+```java
+double[] lisa = new WaveFile("stereoLisa.wav").getMonoSum();
+double[] feedback = new BreakpointFunction(512, new double[]{0.5, 0, 0.5, 0}).get();
+double[] mix = new BreakpointFunction(512, new double[]{0.7, 0, 0.5, 0, 0.5, 0, 0.7}).get();
+new BufferPlayer(0).playMono(0, new Delay().process(lisa, 500, feedback, mix));
 ```
 
 ## Using the RingModulator class
 
 ```java
-BreakpointFunction envelope = new BreakpointFunction(512, new double[]{0, 1, 0});
-BreakpointFunction speedEnvelope = new BreakpointFunction(512, new double[]{0, 12, 0});
-BreakpointFunction depthEnvelope = new BreakpointFunction(512, new double[]{1, 0.2, 1});
-BreakpointFunction glide = new BreakpointFunction(512, new double[]{880, 110, 2200, 2200});
+double[] envelope = new BreakpointFunction(512, new double[]{0, 1, 0}).get();
+double[] speedEnvelope = new BreakpointFunction(512, new double[]{0, 12, 0}).get();
+double[] depthEnvelope = new BreakpointFunction(512, new double[]{1, 0.2, 1}).get();
+double[] glide = new BreakpointFunction(512, new double[]{880, 110, 2200, 2200}).get;
 WavetableOscillator saw = new WavetableOscillator(new ClassicSawtooth());
 BufferPlayer player = new BufferPlayer(2);
-player.playMono(0, new RingModulator(new AdditiveSawtooth()).process(saw.get(6000, envelope.get(), glide.get()), 0.8, 10));
-player.playMono(0, new RingModulator(new WavetableCosine()).process(saw.get(6000, 0.8, 37), depthEnvelope.get(), speedEnvelope.get()));
+player.playMono(0, new RingModulator(new AdditiveSawtooth()).process(saw.get(6000, envelope, glide), 0.8, 10));
+player.playMono(0, new RingModulator(new WavetableCosine()).process(saw.get(6000, 0.8, 37), depthEnvelope, speedEnvelope));
 player.stop(); // necessary whenever BufferPlayer deals with more than "zero" threads
 ```
 
@@ -67,23 +80,23 @@ player.playMono(0, filter);
 AudioFlow saws = new WavetableOscillator(new ClassicSawtooth()).start();
 saws.setFrequency(37);
 saws.setAmplitude(0.1);
-BreakpointFunction envelope = new BreakpointFunction(512, new double[]{0, 1, 0});
-BreakpointFunction longEnvelope = new BreakpointFunction(512, new double[]{0, 0.5, 0, 1, 0, 1, 0, 0.5, 0});
-BreakpointFunction glide = new BreakpointFunction(512, new double[]{880, 55, 2200, 1100, 4400});
+double[] envelope = new BreakpointFunction(512, new double[]{0, 1, 0}).get();
+double[] longEnvelope = new BreakpointFunction(512, new double[]{0, 0.5, 0, 1, 0, 1, 0, 0.5, 0}).get();
+double[] glide = new BreakpointFunction(512, new double[]{880, 55, 2200, 1100, 4400}).get();
 WavetableOscillator saw = new WavetableOscillator(new ClassicSawtooth());
 WavetableOscillator square = new WavetableOscillator(new ClassicSquare());
 WavetableOscillator sine = new WavetableOscillator(new WavetableCosine());
 BufferPlayer player = new BufferPlayer(10);
 double[] buffer;
 for (int i = 0; i < 200; i++) {
-	buffer = sine.get(30, envelope.get(), Math.abs((i + 2) * 440 / 2 * Math.pow(-1, i)) % 2000);
+	buffer = sine.get(30, envelope, Math.abs((i + 2) * 440 / 2 * Math.pow(-1, i)) % 2000);
 	player.playMono((2 * i) * 90, buffer);
-	buffer = saw.get(30, envelope.get(), Math.abs((i + 1) * 440 / 3 * Math.pow(-1, i)) % 3000);
+	buffer = saw.get(30, envelope, Math.abs((i + 1) * 440 / 3 * Math.pow(-1, i)) % 3000);
 	player.playMono((2 * i + 1) * 90, buffer);
-	buffer = square.get(30, envelope.get(), Math.abs(i * 440 / 4 * Math.pow(-1, i)) % 4000);
+	buffer = square.get(30, envelope, Math.abs(i * 440 / 4 * Math.pow(-1, i)) % 4000);
 	player.playMono((2 * i + 2) * 90, buffer);
 	if (i == 150) {
-		buffer = new WavetableOscillator(new ClassicSquare()).get(10000, longEnvelope.get(), glide.get());
+		buffer = new WavetableOscillator(new ClassicSquare()).get(10000, longEnvelope, glide);
 		player.playMono(2 * i * 90, buffer);
 	}
 }
@@ -123,4 +136,3 @@ saws.quit();
 - Convert amplitudes to dB and frequencies to MIDI notes
 - Make envelopes and glides logarithmic
 - Allow negative frequencies?
-- Make filter plots logarithmic

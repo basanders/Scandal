@@ -12,17 +12,13 @@ public final class PlotUtility extends JFrame {
 
 	private static final long serialVersionUID = 1L;
 
-	public PlotUtility(final String title, double[] array) {
-		super("");
+	public PlotUtility(String title, double[] array) {
 		final XYSeries series = new XYSeries(title);
 		for (int i = 0; i < array.length; i++) {
 			series.add(i, array[i]);
 		}
-		final XYSeriesCollection data = new XYSeriesCollection(series);
-		final JFreeChart chart = ChartFactory.createXYLineChart("", "", "", data);
-		final ChartPanel chartPanel = new ChartPanel(chart);
-		chartPanel.setPreferredSize(new java.awt.Dimension(720, 480));
-		setContentPane(chartPanel);
+		final JFreeChart chart = ChartFactory.createXYLineChart("", "", "", new XYSeriesCollection(series));
+		setContentPane(new ChartPanel(chart));
 		pack();
 		setDefaultCloseOperation(3); // exit on close
 		setLocationRelativeTo(null); // center on screen
