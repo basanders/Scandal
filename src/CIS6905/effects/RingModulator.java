@@ -1,6 +1,6 @@
 package CIS6905.effects;
 
-import CIS6905.Settings;
+import CIS6905.utilities.Settings;
 import CIS6905.waveforms.Wavetable;
 
 public class RingModulator extends EffectsProcessor {

@@ -5,6 +5,7 @@ import java.nio.ByteBuffer;
 import javax.sound.sampled.AudioSystem;
 import javax.sound.sampled.SourceDataLine;
 
+import CIS6905.utilities.Settings;
 import CIS6905.waveforms.NaiveWaveform;
 
 public class ControlOscillator {

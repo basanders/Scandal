@@ -1,4 +1,6 @@
-package CIS6905;
+package CIS6905.functions;
+
+import CIS6905.utilities.PlotUtility;
 
 public class BreakpointFunction {
 	

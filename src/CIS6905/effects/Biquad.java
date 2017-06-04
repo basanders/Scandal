@@ -1,7 +1,7 @@
 package CIS6905.effects;
 
-import CIS6905.PlotUtility;
-import CIS6905.Settings;
+import CIS6905.utilities.PlotUtility;
+import CIS6905.utilities.Settings;
 
 public abstract class Biquad extends EffectsProcessor {
 

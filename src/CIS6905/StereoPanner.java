@@ -2,6 +2,8 @@ package CIS6905;
 
 import java.nio.ByteBuffer;
 
+import CIS6905.utilities.Settings;
+
 public class StereoPanner {
 	
 	static ByteBuffer stereoPanning(double freq, int duration) {

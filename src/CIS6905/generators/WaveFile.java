@@ -1,8 +1,10 @@
-package CIS6905;
+package CIS6905.generators;
 
 import java.nio.file.FileSystems;
 import java.nio.file.Files;
 import java.nio.file.Path;
+
+import CIS6905.utilities.PlotUtility;
 
 public class WaveFile {
 	
@@ -22,26 +24,27 @@ public class WaveFile {
 				(byteArray[16] & 0xff) |
 				(byteArray[17] & 0xff) << 8 |
 				(byteArray[18] & 0xff) << 16 |
-				(byteArray[19]) << 24;
-		this.numberOfChannels = (byteArray[22] & 0xff) | (byteArray[23]) << 8;
+				byteArray[19] << 24;
+		this.numberOfChannels = (byteArray[22] & 0xff) | byteArray[23] << 8;
 		if (numberOfChannels > 2) throw new Exception("Only stereo and mono files are supported.");
 		this.samplingRate =
 				(byteArray[24] & 0xff) |
 				(byteArray[25] & 0xff) << 8 |
 				(byteArray[26] & 0xff) << 16 |
-				(byteArray[27]) << 24;
-		this.bitDepth = (byteArray[34] & 0xff) | (byteArray[35]) << 8;
+				byteArray[27] << 24;
+		this.bitDepth = (byteArray[34] & 0xff) | byteArray[35] << 8;
 		if (bitDepth != 16) throw new Exception("Only 16-bit files are supported.");
 		this.dataStartIndex = 28 + formatChunkSize;
 		this.dataLength =
 				(byteArray[dataStartIndex - 4] & 0xff) |
 				(byteArray[dataStartIndex - 3] & 0xff) << 8 |
 				(byteArray[dataStartIndex - 2] & 0xff) << 16 |
-				(byteArray[dataStartIndex - 1]) << 24;
+				byteArray[dataStartIndex - 1] << 24;
 		// fill interleaved buffer
 		interleavedBuffer = new double[dataLength / 2];
-		for (int i = 0, j = dataStartIndex; j < dataLength; i++, j += 2) {
-			interleavedBuffer[i] = (byteArray[j] & 0xff) | (byteArray[j + 1] << 8);
+		for (int i = 0, j = dataStartIndex; j < dataStartIndex + dataLength; i++, j += 2) {
+			// This is little endian.
+			interleavedBuffer[i] = (byteArray[j] & 0xff) | byteArray[j + 1] << 8;
 			interleavedBuffer[i] /= Short.MAX_VALUE;
 		}
 	}
@@ -71,6 +74,14 @@ public class WaveFile {
 			sum[j] = (interleavedBuffer[i] + interleavedBuffer[i - 1]) * 0.5;
 		}
 		return sum;
+	}
+	
+	public void plot(int size) {
+		double[] data = new double[size];
+		double[] sum = getMonoSum();
+		float increment = (float) sum.length / size;
+		for (int i = 0; i < size; i++) data[i] = sum[(int) (i * increment)];
+		new PlotUtility(path.getFileName().toString(), data);
 	}
 	
 	public void printInfo() {

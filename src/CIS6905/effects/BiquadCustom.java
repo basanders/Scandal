@@ -1,30 +1,30 @@
 package CIS6905.effects;
 
-import CIS6905.ComplexNumber;
+import CIS6905.utilities.Complex;
 
 public class BiquadCustom extends Biquad {
 
-	private ComplexNumber pole;
-	private ComplexNumber zero;
+	private Complex pole;
+	private Complex zero;
 
-	public BiquadCustom(ComplexNumber pole) {
+	public BiquadCustom(Complex pole) {
 		this.pole = pole;
-		this.zero = new ComplexNumber(1, 0).divideBy(pole);
+		this.zero = new Complex(1, 0).divideBy(pole);
 		update(Double.NaN, Double.NaN);
 	}
 
-	public BiquadCustom(ComplexNumber pole, ComplexNumber zero) {
+	public BiquadCustom(Complex pole, Complex zero) {
 		this.pole = pole;
 		this.zero = zero;
 		update(Double.NaN, Double.NaN);
 	}
 	
-	public void setPole(ComplexNumber pole) {
+	public void setPole(Complex pole) {
 		this.pole = pole;
 		update(Double.NaN, Double.NaN);
 	}
 	
-	public void setZero(ComplexNumber zero) {
+	public void setZero(Complex zero) {
 		this.zero = zero;
 		update(Double.NaN, Double.NaN);
 	}

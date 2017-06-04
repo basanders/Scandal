@@ -1,6 +1,6 @@
 package CIS6905.waveforms;
 
-import CIS6905.PlotUtility;
+import CIS6905.utilities.PlotUtility;
 
 public abstract class Wavetable extends Waveform {
 	

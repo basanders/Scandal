@@ -1,25 +1,35 @@
-package CIS6905;
+package CIS6905.generators;
 
 import java.nio.ByteBuffer;
 
+import CIS6905.utilities.Settings;
 import CIS6905.waveforms.Wavetable;
 
 public class WavetableOscillator extends RealTimePerformer {
 
 	private final Wavetable wavetable;
+	private double amplitude;
+	private double frequency;
 	
 	public WavetableOscillator(Wavetable wavetable) {
 		this.wavetable = wavetable;
 	}
 	
+	public void setAmplitude(double amplitude) {
+		this.amplitude = amplitude;
+	}
+
+	public void setFrequency(double frequency) {
+		this.frequency = frequency;
+	}
+	
 	public AudioFlow start() {
 		AudioFlow flow = new AudioFlow(this, Settings.mono);
-		Thread thread = new Thread(flow);
-		thread.start();
+		new Thread(flow).start();
 		return flow;
 	}
 	
-	public ByteBuffer getVector(double amplitude, double frequency) {
+	public ByteBuffer getVector() {
 		int samples = Settings.vectorSize;
 		double oscAmp = amplitude * Short.MAX_VALUE;
 		double oscFreq = frequency * wavetable.tableSize / Settings.samplingRate;

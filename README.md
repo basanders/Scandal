@@ -5,39 +5,55 @@ new AdditiveSquare().plot(2, 512);
 WavetableResidual.getSharedInstance().plot(1, 500);
 new BreakpointFunction(512, new double[]{0, 0.5, 0, 1, 0, 1, 0, 0.5, 0}).plot();
 new BiquadPeak().plotMagnitudeResponse(1000, 100, 3);
+new WaveFile("monoLisa.wav").plot(1000);
 ```
 
 ## Using the WaveFile class
 
 ```java
-WaveFile lisa = new WaveFile("stereoLisa.wav");
-lisa.printInfo();
+new WaveFile("monoLisa.wav").printInfo();
 ``` 
 
 ## Using the WavetableOscillator class for real-time audio
 
 ```java
-AudioFlow saw = new WavetableOscillator(new ClassicSquare()).start();
+WavetableOscillator saw = new WavetableOscillator(new ClassicSquare());
+AudioFlow flow = saw.start();
 saw.setFrequency(440);
 saw.setAmplitude(0.5);
 for (int i = 0; i < 100; i++) {
 	Thread.sleep((i * 100) % 500);
 	saw.setFrequency((440 * i) % 2000);
 }
-saw.quit();
+flow.quit();
+```
+
+## Using the AudioTask class for timed real-time recording
+
+```java
+double[] buffer = new AudioTask(0).record(2000);
+new AudioTask(0).playMono(0, buffer);
+```
+
+## Using the AudioFlow class for continuous real-time recording
+
+```java
+AudioFlow flow = new AudioFlow("test", Settings.mono);
+Thread.sleep(2000);
+flow.quit();
 ```
 
 ## Using the WavetableOscillator class for non-real-time audio
 
 ```java
-new BufferPlayer(0).playMono(0, new WavetableOscillator(new ClassicSawtooth()).get(2000, 0.5, 440));
+new AudioTask(0).playMono(0, new WavetableOscillator(new ClassicSawtooth()).get(2000, 0.5, 440));
 ```
 ## Using the BreakpointFunction class
 
 ```java
 double[] longEnvelope = new BreakpointFunction(512, new double[]{0, 0.5, 0, 1, 0, 1, 0, 0.5, 0}).get();
 double[] glide = new BreakpointFunction(512, new double[]{880, 110, 2200, 2200}).get();
-new BufferPlayer(0).playMono(0, new WavetableOscillator(new ClassicSawtooth()).get(3000, longEnvelope, glide));
+new AudioTask(0).playMono(0, new WavetableOscillator(new ClassicSawtooth()).get(3000, longEnvelope, glide));
 ```
 
 ## Using the Delay class
@@ -46,7 +62,7 @@ new BufferPlayer(0).playMono(0, new WavetableOscillator(new ClassicSawtooth()).g
 double[] lisa = new WaveFile("stereoLisa.wav").getMonoSum();
 double[] feedback = new BreakpointFunction(512, new double[]{0.5, 0, 0.5, 0}).get();
 double[] mix = new BreakpointFunction(512, new double[]{0.7, 0, 0.5, 0, 0.5, 0, 0.7}).get();
-new BufferPlayer(0).playMono(0, new Delay().process(lisa, 500, feedback, mix));
+new AudioTask(0).playMono(0, new Delay().process(lisa, 500, feedback, mix));
 ```
 
 ## Using the RingModulator class
@@ -57,7 +73,7 @@ double[] speedEnvelope = new BreakpointFunction(512, new double[]{0, 12, 0}).get
 double[] depthEnvelope = new BreakpointFunction(512, new double[]{1, 0.2, 1}).get();
 double[] glide = new BreakpointFunction(512, new double[]{880, 110, 2200, 2200}).get;
 WavetableOscillator saw = new WavetableOscillator(new ClassicSawtooth());
-BufferPlayer player = new BufferPlayer(2);
+AudioTask player = new AudioTask(2);
 player.playMono(0, new RingModulator(new AdditiveSawtooth()).process(saw.get(6000, envelope, glide), 0.8, 10));
 player.playMono(0, new RingModulator(new WavetableCosine()).process(saw.get(6000, 0.8, 37), depthEnvelope, speedEnvelope));
 player.stop(); // necessary whenever BufferPlayer deals with more than "zero" threads
@@ -70,14 +86,14 @@ double[] wave = new WavetableOscillator(new ClassicSawtooth()).get(4000, 0.5, 44
 double[] cutoff = new BreakpointFunction(512, new double[]{40, 10000, 40, 40}).get();
 double[] resonance = new BreakpointFunction(512, new double[]{0, 6, 6, 0}).get();
 double[] filter = new BiquadLowPass().process(wave, cutoff, resonance);
-BufferPlayer player = new BufferPlayer(0);
-player.playMono(0, filter);
+new AudioTask(0).playMono(0, filter);
 ```
 
 ## Using both real-time *and* non-real-time processes
 
 ```java
-AudioFlow saws = new WavetableOscillator(new ClassicSawtooth()).start();
+WavetableOscillator saws = new WavetableOscillator(new ClassicSawtooth());
+AudioFlow flow = saws.start();
 saws.setFrequency(37);
 saws.setAmplitude(0.1);
 double[] envelope = new BreakpointFunction(512, new double[]{0, 1, 0}).get();
@@ -86,7 +102,7 @@ double[] glide = new BreakpointFunction(512, new double[]{880, 55, 2200, 1100, 4
 WavetableOscillator saw = new WavetableOscillator(new ClassicSawtooth());
 WavetableOscillator square = new WavetableOscillator(new ClassicSquare());
 WavetableOscillator sine = new WavetableOscillator(new WavetableCosine());
-BufferPlayer player = new BufferPlayer(10);
+AudioTask player = new AudioTask(10);
 double[] buffer;
 for (int i = 0; i < 200; i++) {
 	buffer = sine.get(30, envelope, Math.abs((i + 2) * 440 / 2 * Math.pow(-1, i)) % 2000);
@@ -107,32 +123,24 @@ Thread.sleep(6000);
 saws.setAmplitude(0.4);
 saws.setFrequency(18);
 Thread.sleep(12000);
-saws.quit();
+flow.quit();
 ```
 
 ### Tasks
 
-- Test antialiased waveforms with a sweep;
 - Antialiased sawtooth unit test;
 - Antialiased triangle generator;
 - Antialiased triangle unit test;
 - Antialiased square unit test;
+- Test antialiased waveforms with a sweep;
 - Audio buffer loop;
-- Audio file splice;
 - Audio buffer splice;
-- Audio file reverse;
 - Audio buffer reverse;
-- Audio file delay;
-- Audio buffer delay;
-- Audio file speed change;
 - Audio buffer speed change;
 - Audio buffer recording to file;
 - Audio buffer recording to buffer;
-- Amplitude modulator;
 - Frequency modulator;
 - Amplitude controls;
 - Reverb controls;
-- Filters;
 - Convert amplitudes to dB and frequencies to MIDI notes
 - Make envelopes and glides logarithmic
-- Allow negative frequencies?

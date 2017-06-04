@@ -1,5 +1,7 @@
-package CIS6905;
+package CIS6905.utilities;
 
+import javax.sound.midi.MidiDevice;
+import javax.sound.midi.MidiSystem;
 import javax.sound.sampled.AudioFormat;
 import javax.sound.sampled.AudioSystem;
 import javax.sound.sampled.Mixer;
@@ -25,6 +27,14 @@ public final class Settings {
 		Mixer.Info[] mixers = AudioSystem.getMixerInfo();
 		for (Mixer.Info mixer : mixers) {
 			System.out.println(index++ + ": " + mixer.getName());
+		}
+	}
+	
+	public static void printMidiDeviceList() {
+		int index = 0;
+		MidiDevice.Info[] infos = MidiSystem.getMidiDeviceInfo();
+		for (MidiDevice.Info info : infos) {
+			System.out.println(index++ + ": " + info.getName());
 		}
 	}
 

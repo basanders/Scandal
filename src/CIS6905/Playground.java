@@ -3,10 +3,8 @@ package CIS6905;
 public class Playground {
 
 	public static void main(String[] args) throws Exception {
-		/*playAudioFile("/lisa.wav");
-		loopAudioFile("/lisa.wav", 1000, 6000, 16);
+		/*
 		recordAudioFile("src/test", 2000);
-		playAudioFile("/test.wav");
 		ByteArrayOutputStream buffer = recordBuffer(2000);
 		playBuffer(buffer);
 		noiseGenerator(1, 0.1);
@@ -25,11 +23,8 @@ public class Playground {
 			}
 		}*/		
 
-		/*MidiDevice.Info[] infos = MidiSystem.getMidiDeviceInfo();
-		MidiDevice device = MidiSystem.getMidiDevice(infos[1]);
-		device.open();
-		Receiver receiver = new Playground().new MidiReceiver();
-		device.getTransmitter().setReceiver(receiver);*/
+		//Settings.printMidiDeviceList();
+		
 	}
 
 }

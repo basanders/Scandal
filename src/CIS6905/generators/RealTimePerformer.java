@@ -1,4 +1,4 @@
-package CIS6905;
+package CIS6905.generators;
 
 import java.nio.ByteBuffer;
 
@@ -6,6 +6,6 @@ public abstract class RealTimePerformer {
 	
 	double runningPhase = 0;
 	
-	public abstract ByteBuffer getVector(double amplitude, double frequency);
+	public abstract ByteBuffer getVector();
 
 }
