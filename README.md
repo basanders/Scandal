@@ -1,3 +1,5 @@
+[![Build Status](https://travis-ci.org/lufevida/Scandal.svg?branch=master)](https://travis-ci.org/lufevida/Scandal)
+
 ## Plotting waveforms and functions
 
 ```java
