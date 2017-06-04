@@ -10,24 +10,12 @@ new BiquadPeak().plotMagnitudeResponse(1000, 100, 3);
 new WaveFile("monoLisa.wav").plot(1000);
 ```
 
-## Using the WaveFile class
+## Printing device, settings and file information
 
 ```java
+Settings.printDeviceList();
+Settings.printMidiDeviceList();
 new WaveFile("monoLisa.wav").printInfo();
-``` 
-
-## Using the WavetableOscillator class for real-time audio
-
-```java
-WavetableOscillator saw = new WavetableOscillator(new ClassicSquare());
-AudioFlow flow = saw.start();
-saw.setFrequency(440);
-saw.setAmplitude(0.5);
-for (int i = 0; i < 100; i++) {
-	Thread.sleep((i * 100) % 500);
-	saw.setFrequency((440 * i) % 2000);
-}
-flow.quit();
 ```
 
 ## Using the AudioTask class for timed real-time recording
@@ -45,11 +33,38 @@ Thread.sleep(2000);
 flow.quit();
 ```
 
+## Using the NaiveOscillator class for non-real-time audio
+
+```java
+new AudioTask(0).playMono(0, new NaiveOscillator(new NaiveSawtooth()).get(2000, 0.5, 440));
+```
+
+## Using the NoiseGenerator class for non-real-time audio
+
+```java
+new AudioTask(0).playMono(0, new NoiseGenerator(new WavetableWhite()).get(2000, 0.5));
+```
+
 ## Using the WavetableOscillator class for non-real-time audio
 
 ```java
 new AudioTask(0).playMono(0, new WavetableOscillator(new ClassicSawtooth()).get(2000, 0.5, 440));
 ```
+
+## Using the WavetableOscillator class for real-time audio
+
+```java
+WavetableOscillator saw = new WavetableOscillator(new ClassicSquare());
+AudioFlow flow = saw.start();
+saw.setFrequency(440);
+saw.setAmplitude(0.5);
+for (int i = 0; i < 100; i++) {
+	Thread.sleep((i * 100) % 500);
+	saw.setFrequency((440 * i) % 2000);
+}
+flow.quit();
+```
+
 ## Using the BreakpointFunction class
 
 ```java
@@ -144,5 +159,10 @@ flow.quit();
 - Frequency modulator;
 - Amplitude controls;
 - Reverb controls;
-- Convert amplitudes to dB and frequencies to MIDI notes
-- Make envelopes and glides logarithmic
+- Panorama controls;
+- ASCII controls;
+- Exponential functions;
+- Windowing functions;
+- ADSR class;
+- Convert amplitudes to dB and frequencies to MIDI notes;
+- Make envelopes and glides logarithmic;
