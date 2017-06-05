@@ -24,13 +24,21 @@ public class AudioTask {
 	}
 
 	public void playMono(int delay, double[] doubles) {
+		playInterleaved(delay, doubles, Settings.mono);
+	}
+
+	public void playStereo(int delay, double[] doubles) {
+		playInterleaved(delay, doubles, Settings.stereo);
+	}
+
+	private void playInterleaved(int delay, double[] doubles, AudioFormat format) {
 		ByteBuffer buffer = ByteBuffer.allocate(doubles.length * Settings.bitDepth / 8);
 		for (int i = 0; i < doubles.length; i++) {
 			buffer.putShort((short) (doubles[i] * Short.MAX_VALUE));
 		}
 		scheduler.schedule(() -> {
 			try {
-				this.playTask(buffer, Settings.mono);
+				this.playTask(buffer, format);
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
@@ -54,12 +62,6 @@ public class AudioTask {
 
 	public double[] record(int duration) throws Exception {
 		return scheduler.submit(() -> this.recordTask(duration)).get();
-	}
-	
-	public AudioFlow record(String name) {
-		AudioFlow flow = new AudioFlow(name, Settings.mono);
-		new Thread(flow).start();
-		return flow;
 	}
 
 	private double[] recordTask(int duration) throws Exception {

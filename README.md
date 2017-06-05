@@ -68,9 +68,45 @@ flow.quit();
 ## Using the BreakpointFunction class
 
 ```java
-double[] longEnvelope = new BreakpointFunction(512, new double[]{0, 0.5, 0, 1, 0, 1, 0, 0.5, 0}).get();
+double[] longEnvelope = new BreakpointFunction(512, new double[]{0, 0.5, 0, 1, 0, 0.5, 0}).get();
 double[] glide = new BreakpointFunction(512, new double[]{880, 110, 2200, 2200}).get();
-new AudioTask(0).playMono(0, new WavetableOscillator(new ClassicSawtooth()).get(3000, longEnvelope, glide));
+double[] saw = new WavetableOscillator(new ClassicSawtooth()).get(3000, longEnvelope, glide);
+new AudioTask(0).playMono(0, saw);
+```
+
+## Using the Reverse class
+
+```java
+double[] lisa = new WaveFile("monoLisa.wav").getMonoSum();
+double[] reverse = new Reverse().process(lisa);
+new AudioTask(0).playMono(0, reverse);
+```
+
+## Using the Speed class
+
+```java
+double[] lisa = new WaveFile("monoLisa.wav").getMonoSum();
+double[] speed = new Speed().process(lisa, 1.2);
+new AudioTask(0).playMono(0, speed);
+```
+
+## Using the Loop class
+
+```java
+double[] lisa = new WaveFile("monoLisa.wav").getMonoSum();
+double[] loop = new Loop().process(lisa, 0, 10000, 8);
+new AudioTask(0).playMono(0, loop);
+```
+
+## Using the Splice class
+
+```java
+double[] lisa = new WaveFile("monoLisa.wav").getMonoSum();
+double[] loop1 = new Loop().process(lisa, 0, 12000, 8);
+double[] loop2 = new Loop().process(lisa, 0, 6000, 16);
+double[] loop3 = new Loop().process(lisa, 0, 3000, 32);
+double[] splice = new Splice().process(loop1, loop2, loop3);
+new AudioTask(0).playMono(0, splice);
 ```
 
 ## Using the Delay class
@@ -90,9 +126,11 @@ double[] speedEnvelope = new BreakpointFunction(512, new double[]{0, 12, 0}).get
 double[] depthEnvelope = new BreakpointFunction(512, new double[]{1, 0.2, 1}).get();
 double[] glide = new BreakpointFunction(512, new double[]{880, 110, 2200, 2200}).get;
 WavetableOscillator saw = new WavetableOscillator(new ClassicSawtooth());
+RingModulator sawRing = new RingModulator(new AdditiveSawtooth());
+RingModulator cosineRing = new RingModulator(new WavetableCosine());
 AudioTask player = new AudioTask(2);
-player.playMono(0, new RingModulator(new AdditiveSawtooth()).process(saw.get(6000, envelope, glide), 0.8, 10));
-player.playMono(0, new RingModulator(new WavetableCosine()).process(saw.get(6000, 0.8, 37), depthEnvelope, speedEnvelope));
+player.playMono(0, sawRing.process(saw.get(6000, envelope, glide), 0.8, 10));
+player.playMono(0, cosineRing.process(saw.get(6000, 0.8, 37), depthEnvelope, speedEnvelope));
 player.stop(); // necessary whenever BufferPlayer deals with more than "zero" threads
 ```
 
@@ -114,7 +152,7 @@ AudioFlow flow = saws.start();
 saws.setFrequency(37);
 saws.setAmplitude(0.1);
 double[] envelope = new BreakpointFunction(512, new double[]{0, 1, 0}).get();
-double[] longEnvelope = new BreakpointFunction(512, new double[]{0, 0.5, 0, 1, 0, 1, 0, 0.5, 0}).get();
+double[] longEnvelope = new BreakpointFunction(512, new double[]{0, 0.5, 0, 1, 0, 0.5, 0}).get();
 double[] glide = new BreakpointFunction(512, new double[]{880, 55, 2200, 1100, 4400}).get();
 WavetableOscillator saw = new WavetableOscillator(new ClassicSawtooth());
 WavetableOscillator square = new WavetableOscillator(new ClassicSquare());
@@ -143,6 +181,14 @@ Thread.sleep(12000);
 flow.quit();
 ```
 
+## Using the StereoPanner class
+
+```java
+double[] lisa = new WaveFile("monoLisa.wav").getMonoSum();
+double[] stereo = new StereoPanner().process(lisa, 0.2, 0.8);
+new AudioTask(0).playStereo(0, stereo);
+```
+
 ### Tasks
 
 - Antialiased sawtooth unit test;
@@ -150,16 +196,11 @@ flow.quit();
 - Antialiased triangle unit test;
 - Antialiased square unit test;
 - Test antialiased waveforms with a sweep;
-- Audio buffer loop;
-- Audio buffer splice;
-- Audio buffer reverse;
 - Audio buffer speed change;
 - Audio buffer recording to file;
 - Audio buffer recording to buffer;
 - Frequency modulator;
-- Amplitude controls;
-- Reverb controls;
-- Panorama controls;
+- Panorama effects;
 - ASCII controls;
 - Exponential functions;
 - Windowing functions;

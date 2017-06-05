@@ -4,7 +4,6 @@ import utilities.Settings;
 
 public class Delay implements EffectsProcessor {
 
-	@Override
 	public double[] process(double[] buffer, double time, double feedback) {
 		return process(buffer, time, 0.5);
 	}

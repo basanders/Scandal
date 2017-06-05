@@ -12,6 +12,7 @@ import javax.sound.midi.Track;
 
 public abstract class MidiKeyboardController implements Receiver {
 
+	// TODO add ASCII keyboard support
 	private final MidiDevice device;
 
 	public MidiKeyboardController(int number) throws Exception {
@@ -38,7 +39,20 @@ public abstract class MidiKeyboardController implements Receiver {
 			handleAftertouch(firstByte, secondByte, channelByte);
 		} break;
 		case 0xB0: {
-			handleControlChange(firstByte, secondByte, channelByte);
+			switch (firstByte) {
+			case 1: {
+				handleModulationWheelChange(secondByte, channelByte);
+			} break;
+			case 7: {
+				handleVolumeChange(secondByte, channelByte);
+			} break;
+			case 10: {
+				handlePanoramaChange(secondByte, channelByte);
+			} break;
+			default: {
+				handleControlChange(firstByte, secondByte, channelByte);
+			} break;
+			}
 		} break;
 		case 0xC0: {
 			handleProgramChange(firstByte, channelByte);
@@ -59,6 +73,12 @@ public abstract class MidiKeyboardController implements Receiver {
 
 	public abstract void handleAftertouch(int note, int pressure, int channel);
 
+	public abstract void handleModulationWheelChange(int value, int channel);
+
+	public abstract void handleVolumeChange(int value, int channel);
+
+	public abstract void handlePanoramaChange(int value, int channel);
+
 	public abstract void handleControlChange(int controller, int value, int channel);
 
 	public abstract void handleProgramChange(int program, int channel);
@@ -78,6 +98,7 @@ public abstract class MidiKeyboardController implements Receiver {
 				MidiEvent event = track.get(i);
 				long timeStamp = event.getTick();
 				MidiMessage message = event.getMessage();
+				// TODO schedule this
 				send(message, timeStamp);
 			}
 		}

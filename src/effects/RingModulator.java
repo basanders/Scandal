@@ -11,7 +11,6 @@ public class RingModulator implements EffectsProcessor {
 		this.table = table;
 	}
 
-	@Override
 	public double[] process(double[] buffer, double depth, double speed) {
 		int samples = buffer.length;
 		double freq = speed * table.tableSize / Settings.samplingRate;

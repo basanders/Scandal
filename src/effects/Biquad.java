@@ -30,7 +30,6 @@ public abstract class Biquad implements EffectsProcessor {
 		this.a2 = a2 * a0Inverse;
 	}
 
-	@Override
 	public double[] process(double[] buffer, double frequency, double gain) {
 		update(frequency, gain);
 		double[] processedBuffer = new double[buffer.length];
