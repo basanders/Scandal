@@ -21,6 +21,13 @@ public final class Settings {
 		if (sharedInstance == null) sharedInstance = new Settings();
 		return sharedInstance;
 	}
+	
+	public static void printInfo() {
+		System.out.println(
+				"Sampling rate: " + samplingRate + "\n" +
+				"Bit depth: " + bitDepth + "\n" +
+				"Vector size: " + vectorSize);
+	}
 
 	public static void printDeviceList() {
 		int index = 0;

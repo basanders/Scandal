@@ -89,7 +89,8 @@ public class AudioFlow implements Runnable, LineListener {
 		targetDataLine.open();
 		targetDataLine.start();
 		while (targetDataLine.isOpen()) {
-			System.out.println(AudioSystem.write(ais, AudioFileFormat.Type.WAVE, file) + " bytes written");
+			int result = AudioSystem.write(ais, AudioFileFormat.Type.WAVE, file);
+			System.out.println(result + " bytes written to " + file.getName());
 		}
 	}
 

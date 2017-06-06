@@ -2,11 +2,16 @@ package generators;
 
 import static java.util.concurrent.TimeUnit.MILLISECONDS;
 
+import java.io.ByteArrayInputStream;
+import java.io.File;
+import java.io.InputStream;
 import java.nio.ByteBuffer;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 
+import javax.sound.sampled.AudioFileFormat;
 import javax.sound.sampled.AudioFormat;
+import javax.sound.sampled.AudioInputStream;
 import javax.sound.sampled.AudioSystem;
 import javax.sound.sampled.SourceDataLine;
 import javax.sound.sampled.TargetDataLine;
@@ -17,6 +22,10 @@ public class AudioTask {
 
 	private static ScheduledExecutorService scheduler;
 
+	public AudioTask() {
+		new AudioTask(0);
+	}
+	
 	public AudioTask(int voices) {
 		AudioTask.scheduler = Executors.newScheduledThreadPool(voices);
 		// dummy task to force instantiation
@@ -86,6 +95,18 @@ public class AudioTask {
 		targetDataLine.stop();
 		targetDataLine.close();
 		return buffer;
+	}
+	
+	public void exportStereo(String name, double[] doubles) throws Exception {
+		File file = new File("wav", name + ".wav");
+		ByteBuffer buffer = ByteBuffer.allocate(doubles.length * Settings.bitDepth / 8);
+		for (int i = 0; i < doubles.length; i++) {
+			buffer.putShort((short) (doubles[i] * Short.MAX_VALUE));
+		}
+		InputStream is = new ByteArrayInputStream(buffer.array());
+		AudioInputStream ais = new AudioInputStream(is, Settings.stereo, doubles.length / 2);
+		int result = AudioSystem.write(ais, AudioFileFormat.Type.WAVE, file);
+		System.out.println(result + " bytes written to " + file.getName());
 	}
 
 }

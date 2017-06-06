@@ -13,7 +13,7 @@ public abstract class Waveform {
 	
 	public abstract double getSample(double phase, double frequency);
 	
-	public void plot(double frequency, int samples) {
+	public double[] getTable(double frequency, int samples) {
 		double[] array = new double[samples];
 		double oscFreq = twoPi * frequency / samples;
 		double oscPhase = 0;
@@ -22,7 +22,11 @@ public abstract class Waveform {
 			oscPhase += oscFreq;
 			if (oscPhase >= twoPi) oscPhase -= twoPi;
 		}
-		new PlotUtility(this.getClass().getSimpleName(), array);
+		return array;
+	}
+	
+	public void plot(double frequency, int samples) {
+		new PlotUtility(this.getClass().getSimpleName(), getTable(frequency, samples));
 	}
 
 }

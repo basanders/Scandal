@@ -1,4 +1,6 @@
-package utilities;
+package generators;
+
+import utilities.PlotUtility;
 
 public class BreakpointFunction {
 	

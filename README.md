@@ -1,3 +1,5 @@
+# Scandal
+
 [![Build Status](https://travis-ci.org/lufevida/Scandal.svg?branch=master)](https://travis-ci.org/lufevida/Scandal)
 
 ## Plotting waveforms and functions
@@ -13,6 +15,7 @@ new WaveFile("monoLisa.wav").plot(1000);
 ## Printing device, settings and file information
 
 ```java
+Settings.printInfo();
 Settings.printDeviceList();
 Settings.printMidiDeviceList();
 new WaveFile("monoLisa.wav").printInfo();
@@ -167,7 +170,7 @@ for (int i = 0; i < 200; i++) {
 	buffer = square.get(30, envelope, Math.abs(i * 440 / 4 * Math.pow(-1, i)) % 4000);
 	player.playMono((2 * i + 2) * 90, buffer);
 	if (i == 150) {
-		buffer = new WavetableOscillator(new ClassicSquare()).get(10000, longEnvelope, glide);
+		buffer = new WavetableOscillator(new ClassicSquare()).get(9999, longEnvelope, glide);
 		player.playMono(2 * i * 90, buffer);
 	}
 }
@@ -185,25 +188,39 @@ flow.quit();
 
 ```java
 double[] lisa = new WaveFile("monoLisa.wav").getMonoSum();
-double[] stereo = new StereoPanner().process(lisa, 0.2, 0.8);
+double[] pan = new BreakpointFunction(512, new double[]{-1, 1}).get();
+double[] stereo = new StereoPanner().process(lisa, pan);
 new AudioTask(0).playStereo(0, stereo);
+```
+
+## Creating a stereo ping-pong effect
+
+```java
+double[] lisa = new WaveFile("monoLisa.wav").getMonoSum();
+double[] pingPong = new NaiveSquare().getTable(4, 512);
+double[] stereo = new StereoPanner().process(lisa, pingPong);
+new AudioTask(0).playStereo(0, stereo);
+```
+
+## Using the AudioTrack and StereoMixer classes
+
+```java
+double[] saw = new WavetableOscillator(new ClassicSawtooth()).get(4000, 0.7, 880);
+double[] lisa = new WaveFile("monoLisa.wav").getMonoSum();
+AudioTrack sawTrack = new AudioTrack(saw, 3000, 0.2, -0.8);
+AudioTrack lisaTrack = new AudioTrack(lisa, 0, 1, 0.8);
+double[] mixdown = new StereoMixer().render(sawTrack, lisaTrack);
+new AudioTask().playStereo(0, mixdown);
+new AudioTask().exportStereo("mix", mixdown);
 ```
 
 ### Tasks
 
-- Antialiased sawtooth unit test;
-- Antialiased triangle generator;
-- Antialiased triangle unit test;
-- Antialiased square unit test;
-- Test antialiased waveforms with a sweep;
-- Audio buffer speed change;
-- Audio buffer recording to file;
-- Audio buffer recording to buffer;
-- Frequency modulator;
-- Panorama effects;
-- ASCII controls;
 - Exponential functions;
 - Windowing functions;
+- ASCII controls;
 - ADSR class;
 - Convert amplitudes to dB and frequencies to MIDI notes;
-- Make envelopes and glides logarithmic;
+- Frequency modulator;
+- Antialiased triangle generator;
+- Test antialiased waveforms with a sweep;

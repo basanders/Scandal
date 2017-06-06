@@ -16,7 +16,7 @@ public abstract class Wavetable extends Waveform {
 	public abstract void fillTable();
 	
 	@Override
-	public void plot(double frequency, int samples) {
+	public double[] getTable(double frequency, int samples) {
 		double[] array = new double[samples];
 		double oscFreq = tableSize * frequency / samples;
 		double oscPhase = 0;
@@ -25,7 +25,12 @@ public abstract class Wavetable extends Waveform {
 			oscPhase += oscFreq;
 			if (oscPhase >= tableSize) oscPhase -= tableSize;
 		}
-		new PlotUtility(this.getClass().getSimpleName(), array);
+		return array;
+	}
+	
+	@Override
+	public void plot(double frequency, int samples) {
+		new PlotUtility(this.getClass().getSimpleName(), getTable(frequency, samples));
 	}
 	
 }
