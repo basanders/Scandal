@@ -26,6 +26,7 @@ public class WavetableOscillator implements RealTimePerformer {
 		this.frequency = frequency;
 	}
 	
+	@Override
 	public AudioFlow start() {
 		AudioFlow flow = new AudioFlow(this, Settings.mono);
 		new Thread(flow).start();
