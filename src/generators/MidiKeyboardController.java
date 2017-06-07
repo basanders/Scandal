@@ -1,4 +1,4 @@
-package utilities;
+package generators;
 
 import java.io.File;
 
@@ -12,11 +12,10 @@ import javax.sound.midi.Track;
 
 public abstract class MidiKeyboardController implements Receiver {
 
-	// TODO add ASCII keyboard support
-	private final MidiDevice device;
+	public final MidiDevice device;
 
-	public MidiKeyboardController(int number) throws Exception {
-		device = MidiSystem.getMidiDevice(MidiSystem.getMidiDeviceInfo()[number]);
+	public MidiKeyboardController(int controller) throws Exception {
+		device = MidiSystem.getMidiDevice(MidiSystem.getMidiDeviceInfo()[controller]);
 		device.open();
 		device.getTransmitter().setReceiver(this);
 	}
@@ -91,7 +90,7 @@ public abstract class MidiKeyboardController implements Receiver {
 		return 440 * Math.pow(2, ((double) note - 69) / 12);
 	}
 
-	public void playSequence(File file) throws Exception {
+	void playSequence(File file) throws Exception {
 		Sequence sequence = MidiSystem.getSequence(file);
 		for (Track track : sequence.getTracks()) {
 			for (int i = 0; i < track.size(); i++) {

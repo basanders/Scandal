@@ -214,13 +214,17 @@ new AudioTask().playStereo(0, mixdown);
 new AudioTask().exportStereo("mix", mixdown);
 ```
 
+## Using the PolyphonicSynthesizer class
+
+```java
+PolyphonicSynthesizer synth = new PolyphonicSynthesizer(1);
+Thread.sleep(10000);
+synth.close();
+System.exit(0);
+```
+
 ### Tasks
 
 - Exponential functions;
-- Windowing functions;
-- ASCII controls;
-- ADSR class;
-- Convert amplitudes to dB and frequencies to MIDI notes;
-- Frequency modulator;
 - Antialiased triangle generator;
 - Test antialiased waveforms with a sweep;

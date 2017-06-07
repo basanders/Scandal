@@ -7,13 +7,15 @@ import waveforms.Wavetable;
 
 public class WavetableOscillator implements RealTimePerformer {
 
-	private final Wavetable wavetable;
 	private double amplitude;
 	private double frequency;
 	private double runningPhase = 0;
+	public final double frequencyScale;
+	public final Wavetable wavetable;
 	
 	public WavetableOscillator(Wavetable wavetable) {
 		this.wavetable = wavetable;
+		frequencyScale = (double) wavetable.tableSize / Settings.samplingRate;
 	}
 	
 	public void setAmplitude(double amplitude) {
@@ -30,10 +32,11 @@ public class WavetableOscillator implements RealTimePerformer {
 		return flow;
 	}
 	
+	@Override
 	public ByteBuffer getVector() {
 		int samples = Settings.vectorSize;
 		double oscAmp = amplitude * Short.MAX_VALUE;
-		double oscFreq = frequency * wavetable.tableSize / Settings.samplingRate;
+		double oscFreq = frequency * frequencyScale;
 		ByteBuffer buffer = ByteBuffer.allocate(samples * Settings.bitDepth / 8); // 16-bit mono
 		for (int i = 0; i < samples; i++) {
 			buffer.putShort((short) (oscAmp * wavetable.getSample(runningPhase, oscFreq)));
@@ -45,7 +48,7 @@ public class WavetableOscillator implements RealTimePerformer {
 	
 	public double[] get(int duration, double amplitude, double frequency) {
 		int samples = duration * Settings.samplingRate / 1000;
-		double oscFreq = frequency * wavetable.tableSize / Settings.samplingRate;
+		double oscFreq = frequency * frequencyScale;
 		double oscPhase = 0;
 		double[] buffer = new double[samples];
 		for (int i = 0; i < samples; i++) {
@@ -59,7 +62,7 @@ public class WavetableOscillator implements RealTimePerformer {
 	public double[] get(int duration, double[] envelope, double frequency) {
 		int samples = duration * Settings.samplingRate / 1000;
 		double oscAmp = 0;
-		double oscFreq = frequency * wavetable.tableSize / Settings.samplingRate;
+		double oscFreq = frequency * frequencyScale;
 		double oscPhase = 0;
 		double envelopeIndex = 0;
 		double envelopeIncrement = (double) envelope.length / samples;
@@ -80,7 +83,6 @@ public class WavetableOscillator implements RealTimePerformer {
 		double oscPhase = 0;
 		double glideIndex = 0;
 		double glideIncrement = (double) glide.length / samples;
-		double frequencyScale = (double) wavetable.tableSize / Settings.samplingRate;
 		double[] buffer = new double[samples];
 		for (int i = 0; i < samples; i++) {
 			oscFreq = glide[(int) glideIndex] * frequencyScale;
@@ -101,7 +103,6 @@ public class WavetableOscillator implements RealTimePerformer {
 		double envelopeIncrement = (double) envelope.length / samples;
 		double glideIndex = 0;
 		double glideIncrement = (double) glide.length / samples;
-		double frequencyScale = (double) wavetable.tableSize / Settings.samplingRate;
 		double[] buffer = new double[samples];
 		for (int i = 0; i < samples; i++) {
 			oscAmp = envelope[(int) envelopeIndex];
