@@ -214,10 +214,10 @@ new AudioTask().playStereo(0, mixdown);
 new AudioTask().exportStereo("mix", mixdown);
 ```
 
-## Using the PolyphonicSynthesizer class
+## Using the KarplusStrong class
 
 ```java
-PolyphonicSynthesizer synth = new PolyphonicSynthesizer(1);
+KarplusStrong synth = new KarplusStrong();
 AudioFlow flow = synth.start();
 Thread.sleep(10000);
 flow.quit();

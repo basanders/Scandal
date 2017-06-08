@@ -5,9 +5,9 @@ import utilities.Settings;
 public class Delay implements EffectsProcessor {
 
 	public double[] process(double[] buffer, double time, double feedback) {
-		return process(buffer, time, 0.5);
+		return process(buffer, time, feedback, 0.5);
 	}
-	
+
 	public double[] process(double[] buffer, double time, double feedback, double mix) {
 		double samples = time * (double) Settings.samplingRate / 1000; // ms to samples
 		if (samples <= 0 || samples >= buffer.length) return buffer; // sanity check
@@ -25,7 +25,7 @@ public class Delay implements EffectsProcessor {
 		}
 		return processedBuffer;
 	}
-	
+
 	public double[] process(double[] buffer, double time, double[] feedbacks, double mix) {
 		double samples = time * (double) Settings.samplingRate / 1000;
 		if (samples <= 0 || samples >= buffer.length) return buffer;
@@ -46,7 +46,7 @@ public class Delay implements EffectsProcessor {
 		}
 		return processedBuffer;
 	}
-	
+
 	public double[] process(double[] buffer, double time, double feedback, double[] mixes) {
 		double samples = time * (double) Settings.samplingRate / 1000; // ms to samples
 		if (samples <= 0 || samples >= buffer.length) return buffer; // sanity check
@@ -67,7 +67,7 @@ public class Delay implements EffectsProcessor {
 		}
 		return processedBuffer;
 	}
-	
+
 	public double[] process(double[] buffer, double time, double[] feedbacks, double[] mixes) {
 		double samples = time * (double) Settings.samplingRate / 1000; // ms to samples
 		if (samples <= 0 || samples >= buffer.length) return buffer; // sanity check

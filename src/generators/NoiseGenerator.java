@@ -2,10 +2,15 @@ package generators;
 
 import utilities.Settings;
 import waveforms.WavetableNoise;
+import waveforms.WavetableWhite;
 
 public class NoiseGenerator {
 
 	private final WavetableNoise wavetable;
+
+	public NoiseGenerator() {
+		this.wavetable = new WavetableWhite();
+	}
 
 	public NoiseGenerator(WavetableNoise wavetable) {
 		this.wavetable = wavetable;

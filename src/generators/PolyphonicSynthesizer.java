@@ -5,43 +5,48 @@ import java.util.ArrayList;
 import java.util.Arrays;
 
 import utilities.Settings;
-import waveforms.ClassicSawtooth;
+import waveforms.Wavetable;
 
-public class PolyphonicSynthesizer extends MidiKeyboardController implements RealTimePerformer {
+public abstract class PolyphonicSynthesizer extends MidiKeyboardController implements RealTimePerformer {
 
-	private final WavetableOscillator oscillator = new WavetableOscillator(new ClassicSawtooth());
-	private final ArrayList<MidiNote> midiNotes = new ArrayList<MidiNote>();
-	private double masterVolume = 0.5;
-	private double leftLevel = Math.sqrt(2) / 2;
-	private double rightLevel = Math.sqrt(2) / 2;
-	private int attackSamples = 441; // 10 ms
-	private int decaySamples = 2205;
-	private double sustainLevel = 0.5;
-	private int releaseSamples = 22050;
-	private double[] doubles = new double[2 * Settings.vectorSize];
+	public final Wavetable baseWavetable;
+	public final ArrayList<MidiNote> midiNotes = new ArrayList<MidiNote>();
+	public double masterVolume = 0.5;
+	public double masterLeft = Math.sqrt(2) / 2;
+	public double masterRight = Math.sqrt(2) / 2;
+	public int attackSamples = 44;
+	public int decaySamples = 2205;
+	public double sustainLevel = 0.5;
+	public int releaseSamples = 22050;
 	private double[] noteVector;
-	private ByteBuffer buffer = ByteBuffer.allocate(2 * Settings.vectorSize * Settings.bitDepth / 8);
+	private final double[] mixVector = new double[2 * Settings.vectorSize];
+	private final ByteBuffer buffer = ByteBuffer.allocate(2 * Settings.vectorSize * Settings.bitDepth / 8);
 
-	private static enum ADSR { ATTACK, DECAY, SUSTAIN, RELEASE, OFF }
+	public static enum ADSR { ATTACK, DECAY, SUSTAIN, RELEASE, OFF }
 
-	private class MidiNote {
+	public PolyphonicSynthesizer(int controller, Wavetable baseWavetable) throws Exception {
+		super(controller);
+		this.baseWavetable = baseWavetable;
+	}
 
-		final double frequency;
+	public class MidiNote {
+
 		double amplitude;
-		double frequencyIncrement;
+		final double frequency;
 		double phase = 0;
-		double[] buffer = new double[Settings.vectorSize];
+		double phaseIncrement;
 		ADSR envelopeStage = ADSR.OFF;
 		int envelopeSamples;
 		double envelopeSlope;
 		double envelopeLevel;
+		final double[] vector = new double[Settings.vectorSize];
 
 		MidiNote(int midiNoteNumber) {
-			this.frequency = midiToFrequency(midiNoteNumber);
-			this.frequencyIncrement = this.frequency * oscillator.frequencyScale;
+			frequency = midiToFrequency(midiNoteNumber);
+			phaseIncrement = frequency * (double) baseWavetable.tableSize / Settings.samplingRate;
 		}
 
-		void updateAmplitude(int velocity) {
+		void updateVelocity(int velocity) {
 			if (velocity != 0) {
 				amplitude = (double) velocity / 127;
 				envelopeStage = ADSR.ATTACK;
@@ -54,45 +59,45 @@ public class PolyphonicSynthesizer extends MidiKeyboardController implements Rea
 			}
 		}
 
-		double[] get() {
-			for (int i = 0; i < buffer.length; i++) {
-				buffer[i] = envelopeLevel * amplitude * oscillator.wavetable.getSample(phase, frequencyIncrement);
-				phase += frequencyIncrement;
-				if (phase >= oscillator.wavetable.tableSize) phase -= oscillator.wavetable.tableSize;
-				switch (envelopeStage) {
-				case ATTACK: {
-					envelopeLevel += envelopeSlope;
-					envelopeSamples -= 1;
-					if (envelopeSamples == 0) {
-						envelopeStage = ADSR.DECAY;
-						envelopeSamples = decaySamples;
-						envelopeSlope = (envelopeLevel - sustainLevel) / decaySamples;
-					}
-				} break;
-				case DECAY: {
-					envelopeLevel -= envelopeSlope;
-					envelopeSamples -= 1;
-					if (envelopeSamples == 0) envelopeStage = ADSR.SUSTAIN;
-				} break;
-				case RELEASE: {
-					envelopeLevel -= envelopeSlope;
-					envelopeSamples -= 1;
-					if (envelopeSamples == 0) {
-						envelopeStage = ADSR.OFF;
-						phase = 0;
-					}
-				} break;
-				default: break;
+		void updateEnvelope() {
+			switch (envelopeStage) {
+			case ATTACK: {
+				envelopeLevel += envelopeSlope;
+				envelopeSamples -= 1;
+				if (envelopeSamples == 0) {
+					envelopeStage = ADSR.DECAY;
+					envelopeSamples = decaySamples;
+					envelopeSlope = (envelopeLevel - sustainLevel) / decaySamples;
 				}
+			} break;
+			case DECAY: {
+				envelopeLevel -= envelopeSlope;
+				envelopeSamples -= 1;
+				if (envelopeSamples == 0) envelopeStage = ADSR.SUSTAIN;
+			} break;
+			case RELEASE: {
+				envelopeLevel -= envelopeSlope;
+				envelopeSamples -= 1;
+				if (envelopeSamples == 0) {
+					envelopeStage = ADSR.OFF;
+					phase = 0;
+				}
+			} break;
+			default: break;
 			}
-			return buffer;
 		}
 
-	}
+		double[] get() {
+			for (int i = 0; i < vector.length; i++) {
+				vector[i] = baseWavetable.getSample(phase, phaseIncrement);
+				vector[i] *= envelopeLevel * amplitude;
+				phase += phaseIncrement;
+				if (phase >= baseWavetable.tableSize) phase -= baseWavetable.tableSize;
+				updateEnvelope();
+			}
+			return vector;
+		}
 
-	public PolyphonicSynthesizer(int controller) throws Exception {
-		super(controller);
-		for (int i = 0; i < 128; i++) midiNotes.add(new MidiNote(i));
 	}
 
 	@Override
@@ -104,31 +109,31 @@ public class PolyphonicSynthesizer extends MidiKeyboardController implements Rea
 
 	@Override
 	public ByteBuffer getVector() {
-		Arrays.fill(doubles, 0);
+		Arrays.fill(mixVector, 0);
 		buffer.clear();
 		for (MidiNote note : midiNotes) {
 			if (note.envelopeStage != ADSR.OFF) {
 				noteVector = note.get();
-				for (int i = 0, j = 0; i < doubles.length; i += 2, j++) {
-					doubles[i] += leftLevel * noteVector[j];
-					doubles[i + 1] += rightLevel * noteVector[j];
+				for (int i = 0, j = 0; i < mixVector.length; i += 2, j++) {
+					mixVector[i] += masterLeft * noteVector[j];
+					mixVector[i + 1] += masterRight * noteVector[j];
 				}
 			}
 		}
-		for (int i = 0; i < doubles.length; i++) {
-			buffer.putShort((short) (masterVolume * doubles[i] * Short.MAX_VALUE));
+		for (int i = 0; i < mixVector.length; i++) {
+			buffer.putShort((short) (masterVolume * mixVector[i] * Short.MAX_VALUE));
 		}
 		return buffer;
 	}
 
 	@Override
 	public void handleNoteOn(int note, int velocity, int channel) {
-		midiNotes.get(note).updateAmplitude(velocity);
+		midiNotes.get(note).updateVelocity(velocity);
 	}
 
 	@Override
 	public void handleNoteOff(int note, int velocity, int channel) {
-		midiNotes.get(note).updateAmplitude(0);
+		midiNotes.get(note).updateVelocity(0);
 	}
 
 	@Override
@@ -139,8 +144,8 @@ public class PolyphonicSynthesizer extends MidiKeyboardController implements Rea
 	@Override
 	public void handlePanoramaChange(int value, int channel) {
 		double scaledValue = (2.0 * value / 127) - 1;
-		leftLevel = Math.cos(Math.PI * (scaledValue + 1) / 4);
-		rightLevel = Math.sin(Math.PI * (scaledValue + 1) / 4);
+		masterLeft = Math.cos(Math.PI * (scaledValue + 1) / 4);
+		masterRight = Math.sin(Math.PI * (scaledValue + 1) / 4);
 	}
 
 	@Override

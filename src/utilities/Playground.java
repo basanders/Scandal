@@ -1,12 +1,12 @@
 package utilities;
 
 import generators.AudioFlow;
-import generators.PolyphonicSynthesizer;
+import generators.KarplusStrong;
 
 public class Playground {
 
 	public static void main(String[] args) throws Exception {
-		PolyphonicSynthesizer synth = new PolyphonicSynthesizer(1);
+		KarplusStrong synth = new KarplusStrong();
 		AudioFlow flow = synth.start();
 		Thread.sleep(10000);
 		flow.quit();

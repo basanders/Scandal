@@ -12,12 +12,12 @@ public class WavetableOscillator implements RealTimePerformer {
 	private double runningPhase = 0;
 	public final double frequencyScale;
 	public final Wavetable wavetable;
-	
+
 	public WavetableOscillator(Wavetable wavetable) {
 		this.wavetable = wavetable;
 		frequencyScale = (double) wavetable.tableSize / Settings.samplingRate;
 	}
-	
+
 	public void setAmplitude(double amplitude) {
 		this.amplitude = amplitude;
 	}
@@ -25,14 +25,14 @@ public class WavetableOscillator implements RealTimePerformer {
 	public void setFrequency(double frequency) {
 		this.frequency = frequency;
 	}
-	
+
 	@Override
 	public AudioFlow start() {
 		AudioFlow flow = new AudioFlow(this, Settings.mono);
 		new Thread(flow).start();
 		return flow;
 	}
-	
+
 	@Override
 	public ByteBuffer getVector() {
 		int samples = Settings.vectorSize;
@@ -46,7 +46,7 @@ public class WavetableOscillator implements RealTimePerformer {
 		}
 		return buffer;
 	}
-	
+
 	public double[] get(int duration, double amplitude, double frequency) {
 		int samples = duration * Settings.samplingRate / 1000;
 		double oscFreq = frequency * frequencyScale;
@@ -59,7 +59,7 @@ public class WavetableOscillator implements RealTimePerformer {
 		}
 		return buffer;
 	}
-	
+
 	public double[] get(int duration, double[] envelope, double frequency) {
 		int samples = duration * Settings.samplingRate / 1000;
 		double oscAmp = 0;
@@ -77,7 +77,7 @@ public class WavetableOscillator implements RealTimePerformer {
 		}
 		return buffer;
 	}
-	
+
 	public double[] get(int duration, double amplitude, double[] glide) {
 		int samples = duration * Settings.samplingRate / 1000;
 		double oscFreq = 0;
@@ -94,7 +94,7 @@ public class WavetableOscillator implements RealTimePerformer {
 		}
 		return buffer;
 	}
-	
+
 	public double[] get(int duration, double[] envelope, double[] glide) {
 		int samples = duration * Settings.samplingRate / 1000;
 		double oscAmp = 0;
