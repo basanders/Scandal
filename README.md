@@ -5,8 +5,8 @@
 ## Plotting waveforms and functions
 
 ```java
-new AdditiveSquare().plot(2, 512);
-WavetableResidual.getSharedInstance().plot(1, 500);
+new AdditiveSquare().plot(512, 2);
+WavetableResidual.getSharedInstance().plot(500, 1);
 new BreakpointFunction(512, new double[]{0, 0.5, 0, 1, 0, 1, 0, 0.5, 0}).plot();
 new BiquadPeak().plotMagnitudeResponse(1000, 100, 3);
 new WaveFile("monoLisa.wav").plot(1000);
@@ -197,7 +197,7 @@ new AudioTask().playStereo(stereo);
 
 ```java
 double[] lisa = new WaveFile("monoLisa.wav").getMonoSum();
-double[] pingPong = new NaiveSquare().getTable(4, 512);
+double[] pingPong = new NaiveSquare().getTable(512, 4);
 double[] stereo = new StereoPanner().process(lisa, pingPong);
 new AudioTask().playStereo(stereo);
 ```

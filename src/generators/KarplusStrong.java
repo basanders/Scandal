@@ -1,9 +1,14 @@
 package generators;
 
+import effects.RingModulator;
 import utilities.Settings;
+import waveforms.WavetableCosine;
 import waveforms.WavetableWhite;
 
 public class KarplusStrong extends PolyphonicSynthesizer {
+
+	private final RingModulator tremolo = new RingModulator(new WavetableCosine());
+	public double tremoloSpeed;
 
 	public KarplusStrong(int controller) throws Exception {
 		super(controller, new WavetableWhite());
@@ -21,7 +26,7 @@ public class KarplusStrong extends PolyphonicSynthesizer {
 		int index = 0;
 		int newIndex;
 		final double delaySamples = (double) Settings.samplingRate / frequency;
-		double[] circularBuffer = new double[(int) delaySamples];
+		final double[] circularBuffer = new double[(int) delaySamples];
 		double feedback = 0.99;
 
 		KarplusStrongNote(int midiNoteNumber) {
@@ -49,6 +54,16 @@ public class KarplusStrong extends PolyphonicSynthesizer {
 			return vector;
 		}
 
+	}
+
+	@Override
+	public void processMasterEffects() {
+		mixVector = tremolo.processVector(mixVector, 0.99, tremoloSpeed);
+	}
+
+	@Override
+	public void handleModulationWheelChange(int value, int channel) {
+		tremoloSpeed = 0.05 * value;
 	}
 
 }

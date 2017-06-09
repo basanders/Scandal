@@ -6,9 +6,24 @@ import waveforms.Wavetable;
 public class RingModulator implements EffectsProcessor {
 	
 	private Wavetable table;
+	public double runningPhase = 0;
 	
 	public RingModulator(Wavetable table) {
 		this.table = table;
+	}
+	
+	public double[] processVector(double[] buffer, double depth, double speed) {
+		int samples = buffer.length;
+		double freq = speed * table.tableSize / Settings.samplingRate;
+		double[] processedBuffer = new double[buffer.length];
+		double tableSample = 0;
+		for (int i = 0; i < samples; i++) {
+			tableSample = (table.getSample(runningPhase, freq) + 1) * 0.5;
+			processedBuffer[i] = buffer[i] * (tableSample * depth - depth + 1); 
+			runningPhase += freq;
+			if (runningPhase >= table.tableSize) runningPhase -= table.tableSize;
+		}
+		return processedBuffer;
 	}
 
 	public double[] process(double[] buffer, double depth, double speed) {

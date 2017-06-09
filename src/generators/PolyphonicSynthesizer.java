@@ -19,7 +19,7 @@ public class PolyphonicSynthesizer extends MidiKeyboardController implements Rea
 	public double sustainLevel = 0.5;
 	public int releaseSamples = 22050;
 	private double[] noteVector;
-	private final double[] mixVector = new double[2 * Settings.vectorSize];
+	public double[] mixVector = new double[2 * Settings.vectorSize];
 	private final ByteBuffer buffer = ByteBuffer.allocate(2 * Settings.vectorSize * Settings.bitDepth / 8);
 
 	public static enum ADSR { ATTACK, DECAY, SUSTAIN, RELEASE, OFF }
@@ -125,11 +125,14 @@ public class PolyphonicSynthesizer extends MidiKeyboardController implements Rea
 				}
 			}
 		}
+		processMasterEffects();
 		for (int i = 0; i < mixVector.length; i++) {
 			buffer.putShort((short) (masterVolume * mixVector[i] * Short.MAX_VALUE));
 		}
 		return buffer;
 	}
+
+	public void processMasterEffects() {}
 
 	@Override
 	public void handleNoteOn(int note, int velocity, int channel) {
