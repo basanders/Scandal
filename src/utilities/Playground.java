@@ -6,7 +6,7 @@ import generators.KarplusStrong;
 public class Playground {
 
 	public static void main(String[] args) throws Exception {
-		KarplusStrong synth = new KarplusStrong();
+		KarplusStrong synth = new KarplusStrong(1);
 		AudioFlow flow = synth.start();
 		Thread.sleep(10000);
 		flow.quit();

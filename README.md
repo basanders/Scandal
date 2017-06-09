@@ -24,14 +24,14 @@ new WaveFile("monoLisa.wav").printInfo();
 ## Using the AudioTask class for timed real-time recording
 
 ```java
-double[] buffer = new AudioTask(0).record(2000);
-new AudioTask(0).playMono(0, buffer);
+double[] buffer = new AudioTask().record(2000);
+new AudioTask().playMono(buffer);
 ```
 
 ## Using the AudioFlow class for continuous real-time recording
 
 ```java
-AudioFlow flow = new AudioFlow("test", Settings.mono);
+AudioFlow flow = new AudioFlow("test.wav", Settings.mono);
 Thread.sleep(2000);
 flow.quit();
 ```
@@ -39,19 +39,19 @@ flow.quit();
 ## Using the NaiveOscillator class for non-real-time audio
 
 ```java
-new AudioTask(0).playMono(0, new NaiveOscillator(new NaiveSawtooth()).get(2000, 0.5, 440));
+new AudioTask().playMono(new NaiveOscillator(new NaiveSawtooth()).get(2000, 0.5, 440));
 ```
 
 ## Using the NoiseGenerator class for non-real-time audio
 
 ```java
-new AudioTask(0).playMono(0, new NoiseGenerator(new WavetableWhite()).get(2000, 0.5));
+new AudioTask().playMono(new NoiseGenerator(new WavetableWhite()).get(2000, 0.5));
 ```
 
 ## Using the WavetableOscillator class for non-real-time audio
 
 ```java
-new AudioTask(0).playMono(0, new WavetableOscillator(new ClassicSawtooth()).get(2000, 0.5, 440));
+new AudioTask().playMono(new WavetableOscillator(new ClassicSawtooth()).get(2000, 0.5, 440));
 ```
 
 ## Using the WavetableOscillator class for real-time audio
@@ -74,7 +74,7 @@ flow.quit();
 double[] longEnvelope = new BreakpointFunction(512, new double[]{0, 0.5, 0, 1, 0, 0.5, 0}).get();
 double[] glide = new BreakpointFunction(512, new double[]{880, 110, 2200, 2200}).get();
 double[] saw = new WavetableOscillator(new ClassicSawtooth()).get(3000, longEnvelope, glide);
-new AudioTask(0).playMono(0, saw);
+new AudioTask().playMono(saw);
 ```
 
 ## Using the Reverse class
@@ -82,7 +82,7 @@ new AudioTask(0).playMono(0, saw);
 ```java
 double[] lisa = new WaveFile("monoLisa.wav").getMonoSum();
 double[] reverse = new Reverse().process(lisa);
-new AudioTask(0).playMono(0, reverse);
+new AudioTask().playMono(reverse);
 ```
 
 ## Using the Speed class
@@ -90,7 +90,7 @@ new AudioTask(0).playMono(0, reverse);
 ```java
 double[] lisa = new WaveFile("monoLisa.wav").getMonoSum();
 double[] speed = new Speed().process(lisa, 1.2);
-new AudioTask(0).playMono(0, speed);
+new AudioTask().playMono(speed);
 ```
 
 ## Using the Loop class
@@ -98,7 +98,7 @@ new AudioTask(0).playMono(0, speed);
 ```java
 double[] lisa = new WaveFile("monoLisa.wav").getMonoSum();
 double[] loop = new Loop().process(lisa, 0, 10000, 8);
-new AudioTask(0).playMono(0, loop);
+new AudioTask().playMono(loop);
 ```
 
 ## Using the Splice class
@@ -109,7 +109,7 @@ double[] loop1 = new Loop().process(lisa, 0, 12000, 8);
 double[] loop2 = new Loop().process(lisa, 0, 6000, 16);
 double[] loop3 = new Loop().process(lisa, 0, 3000, 32);
 double[] splice = new Splice().process(loop1, loop2, loop3);
-new AudioTask(0).playMono(0, splice);
+new AudioTask().playMono(splice);
 ```
 
 ## Using the Delay class
@@ -118,7 +118,7 @@ new AudioTask(0).playMono(0, splice);
 double[] lisa = new WaveFile("stereoLisa.wav").getMonoSum();
 double[] feedback = new BreakpointFunction(512, new double[]{0.5, 0, 0.5, 0}).get();
 double[] mix = new BreakpointFunction(512, new double[]{0.7, 0, 0.5, 0, 0.5, 0, 0.7}).get();
-new AudioTask(0).playMono(0, new Delay().process(lisa, 500, feedback, mix));
+new AudioTask().playMono(new Delay().process(lisa, 500, feedback, mix));
 ```
 
 ## Using the RingModulator class
@@ -131,10 +131,10 @@ double[] glide = new BreakpointFunction(512, new double[]{880, 110, 2200, 2200})
 WavetableOscillator saw = new WavetableOscillator(new ClassicSawtooth());
 RingModulator sawRing = new RingModulator(new AdditiveSawtooth());
 RingModulator cosineRing = new RingModulator(new WavetableCosine());
-AudioTask player = new AudioTask(2);
-player.playMono(0, sawRing.process(saw.get(6000, envelope, glide), 0.8, 10));
-player.playMono(0, cosineRing.process(saw.get(6000, 0.8, 37), depthEnvelope, speedEnvelope));
-player.stop(); // necessary whenever BufferPlayer deals with more than "zero" threads
+AudioTask task = new AudioTask(2);
+task.playMono(sawRing.process(saw.get(6000, envelope, glide), 0.8, 10));
+task.playMono(cosineRing.process(saw.get(6000, 0.8, 37), depthEnvelope, speedEnvelope));
+task.stop(); // necessary whenever AudioTask deals with more than "zero" threads
 ```
 
 ## Using the BiquadLowPass class
@@ -144,7 +144,7 @@ double[] wave = new WavetableOscillator(new ClassicSawtooth()).get(4000, 0.5, 44
 double[] cutoff = new BreakpointFunction(512, new double[]{40, 10000, 40, 40}).get();
 double[] resonance = new BreakpointFunction(512, new double[]{0, 6, 6, 0}).get();
 double[] filter = new BiquadLowPass().process(wave, cutoff, resonance);
-new AudioTask(0).playMono(0, filter);
+new AudioTask().playMono(filter);
 ```
 
 ## Using both real-time *and* non-real-time processes
@@ -160,21 +160,21 @@ double[] glide = new BreakpointFunction(512, new double[]{880, 55, 2200, 1100, 4
 WavetableOscillator saw = new WavetableOscillator(new ClassicSawtooth());
 WavetableOscillator square = new WavetableOscillator(new ClassicSquare());
 WavetableOscillator sine = new WavetableOscillator(new WavetableCosine());
-AudioTask player = new AudioTask(10);
+AudioTask task = new AudioTask(10);
 double[] buffer;
 for (int i = 0; i < 200; i++) {
 	buffer = sine.get(30, envelope, Math.abs((i + 2) * 440 / 2 * Math.pow(-1, i)) % 2000);
-	player.playMono((2 * i) * 90, buffer);
+	task.playMono((2 * i) * 90, buffer);
 	buffer = saw.get(30, envelope, Math.abs((i + 1) * 440 / 3 * Math.pow(-1, i)) % 3000);
-	player.playMono((2 * i + 1) * 90, buffer);
+	task.playMono((2 * i + 1) * 90, buffer);
 	buffer = square.get(30, envelope, Math.abs(i * 440 / 4 * Math.pow(-1, i)) % 4000);
-	player.playMono((2 * i + 2) * 90, buffer);
+	task.playMono((2 * i + 2) * 90, buffer);
 	if (i == 150) {
 		buffer = new WavetableOscillator(new ClassicSquare()).get(9999, longEnvelope, glide);
-		player.playMono(2 * i * 90, buffer);
+		task.playMono(2 * i * 90, buffer);
 	}
 }
-player.stop();
+task.stop();
 Thread.sleep(12000);
 saws.setAmplitude(0);
 Thread.sleep(6000);
@@ -190,7 +190,7 @@ flow.quit();
 double[] lisa = new WaveFile("monoLisa.wav").getMonoSum();
 double[] pan = new BreakpointFunction(512, new double[]{-1, 1}).get();
 double[] stereo = new StereoPanner().process(lisa, pan);
-new AudioTask(0).playStereo(0, stereo);
+new AudioTask().playStereo(stereo);
 ```
 
 ## Creating a stereo ping-pong effect
@@ -199,7 +199,7 @@ new AudioTask(0).playStereo(0, stereo);
 double[] lisa = new WaveFile("monoLisa.wav").getMonoSum();
 double[] pingPong = new NaiveSquare().getTable(4, 512);
 double[] stereo = new StereoPanner().process(lisa, pingPong);
-new AudioTask(0).playStereo(0, stereo);
+new AudioTask().playStereo(stereo);
 ```
 
 ## Using the AudioTrack and StereoMixer classes
@@ -210,14 +210,25 @@ double[] lisa = new WaveFile("monoLisa.wav").getMonoSum();
 AudioTrack sawTrack = new AudioTrack(saw, 3000, 0.2, -0.8);
 AudioTrack lisaTrack = new AudioTrack(lisa, 0, 1, 0.8);
 double[] mixdown = new StereoMixer().render(sawTrack, lisaTrack);
-new AudioTask().playStereo(0, mixdown);
-new AudioTask().exportStereo("mix", mixdown);
+new AudioTask().playStereo(mixdown);
+new AudioTask().exportStereo("mix.wav", mixdown);
+```
+
+## Using the PolyphonicSynthesizer class
+
+```java
+PolyphonicSynthesizer synth = new PolyphonicSynthesizer(1, new ClassicSawtooth());
+AudioFlow flow = synth.start();
+Thread.sleep(10000);
+flow.quit();
+synth.close();
+System.exit(0);
 ```
 
 ## Using the KarplusStrong class
 
 ```java
-KarplusStrong synth = new KarplusStrong();
+KarplusStrong synth = new KarplusStrong(1);
 AudioFlow flow = synth.start();
 Thread.sleep(10000);
 flow.quit();

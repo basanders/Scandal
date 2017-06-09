@@ -5,11 +5,15 @@ import waveforms.WavetableWhite;
 
 public class KarplusStrong extends PolyphonicSynthesizer {
 
-	public KarplusStrong() throws Exception {
-		super(1, new WavetableWhite());
+	public KarplusStrong(int controller) throws Exception {
+		super(controller, new WavetableWhite());
+		attackSamples = decaySamples = releaseSamples = 44;
+		sustainLevel = 1.0;
+	}
+
+	@Override
+	public void fillMidiNotesArray() {
 		for (int i = 0; i < 128; i++) midiNotes.add(new KarplusStrongNote(i));
-		attackSamples = decaySamples = 44;
-		releaseSamples = 441;
 	}
 
 	class KarplusStrongNote extends PolyphonicSynthesizer.MidiNote {

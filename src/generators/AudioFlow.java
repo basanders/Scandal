@@ -82,7 +82,7 @@ public class AudioFlow implements Runnable, LineListener {
 	}
 
 	private void record(String name) throws Exception {
-		File file = new File("wav", name + ".wav");
+		File file = new File("wav", name);
 		targetDataLine = AudioSystem.getTargetDataLine(Settings.mono);
 		targetDataLine.addLineListener(this);
 		AudioInputStream ais = new AudioInputStream(targetDataLine);

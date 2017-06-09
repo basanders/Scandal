@@ -23,17 +23,26 @@ public class AudioTask {
 	private static ScheduledExecutorService scheduler;
 
 	public AudioTask() {
-		new AudioTask(0);
-	}
-	
-	public AudioTask(int voices) {
-		AudioTask.scheduler = Executors.newScheduledThreadPool(voices);
+		AudioTask.scheduler = Executors.newScheduledThreadPool(0);
 		// dummy task to force instantiation
 		scheduler.schedule(() -> null, 0, MILLISECONDS);
 	}
 
+	public AudioTask(int voices) {
+		AudioTask.scheduler = Executors.newScheduledThreadPool(voices);
+		scheduler.schedule(() -> null, 0, MILLISECONDS);
+	}
+
+	public void playMono(double[] doubles) {
+		playInterleaved(0, doubles, Settings.mono);
+	}
+
 	public void playMono(int delay, double[] doubles) {
 		playInterleaved(delay, doubles, Settings.mono);
+	}
+
+	public void playStereo(double[] doubles) {
+		playInterleaved(0, doubles, Settings.stereo);
 	}
 
 	public void playStereo(int delay, double[] doubles) {
@@ -96,9 +105,9 @@ public class AudioTask {
 		targetDataLine.close();
 		return buffer;
 	}
-	
+
 	public void exportStereo(String name, double[] doubles) throws Exception {
-		File file = new File("wav", name + ".wav");
+		File file = new File("wav", name);
 		ByteBuffer buffer = ByteBuffer.allocate(doubles.length * Settings.bitDepth / 8);
 		for (int i = 0; i < doubles.length; i++) {
 			buffer.putShort((short) (doubles[i] * Short.MAX_VALUE));

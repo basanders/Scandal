@@ -7,7 +7,7 @@ import java.util.Arrays;
 import utilities.Settings;
 import waveforms.Wavetable;
 
-public abstract class PolyphonicSynthesizer extends MidiKeyboardController implements RealTimePerformer {
+public class PolyphonicSynthesizer extends MidiKeyboardController implements RealTimePerformer {
 
 	public final Wavetable baseWavetable;
 	public final ArrayList<MidiNote> midiNotes = new ArrayList<MidiNote>();
@@ -27,6 +27,11 @@ public abstract class PolyphonicSynthesizer extends MidiKeyboardController imple
 	public PolyphonicSynthesizer(int controller, Wavetable baseWavetable) throws Exception {
 		super(controller);
 		this.baseWavetable = baseWavetable;
+		fillMidiNotesArray();
+	}
+
+	public void fillMidiNotesArray() {
+		for (int i = 0; i < 128; i++) midiNotes.add(new MidiNote(i));
 	}
 
 	public class MidiNote {
