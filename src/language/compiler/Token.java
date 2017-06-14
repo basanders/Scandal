@@ -1,4 +1,4 @@
-package language.scanner;
+package language.compiler;
 
 public class Token {
 
@@ -47,9 +47,19 @@ public class Token {
 			this.text = text;
 		}
 	}
-
-	Token(Kind kind, int position, int length, int lineNumber, int lineNumberPosition) {
+	
+	public Token(Kind kind, int position, int length, int lineNumber, int lineNumberPosition) {
 		this.kind = kind;
+		this.text = kind.text;
+		this.position = position;
+		this.length = length;
+		this.lineNumber = lineNumber;
+		this.lineNumberPosition = lineNumberPosition;
+	}
+
+	public Token(Kind kind, String text, int position, int length, int lineNumber, int lineNumberPosition) {
+		this.kind = kind;
+		this.text = text;
 		this.position = position;
 		this.length = length;
 		this.lineNumber = lineNumber;
@@ -57,23 +67,15 @@ public class Token {
 	}
 
 	public final Kind kind;
+	public final String text;
 	public final int position; // position in input array
 	public final int length;
 	public final int lineNumber;
 	public final int lineNumberPosition;
-	public String substring;
-
-	public String getText() {
-		if (this.kind == Kind.IDENT || this.kind == Kind.INT_LIT || this.kind == Kind.FLOAT_LIT) {
-			return this.substring;
-		} else {
-			return this.kind.text;
-		}
-	}
 
 	public int getIntValue() throws NumberFormatException {
 		try {
-			return Integer.parseInt(substring);
+			return Integer.parseInt(text);
 		} catch (NumberFormatException exception) {
 			throw new NumberFormatException("The token does not contain an integer.");
 		}
@@ -81,7 +83,7 @@ public class Token {
 
 	public float getFloatValue() throws NumberFormatException {
 		try {
-			return Float.parseFloat(substring);
+			return Float.parseFloat(text);
 		} catch (NumberFormatException exception) {
 			throw new NumberFormatException("The token does not contain a float.");
 		}

@@ -2,6 +2,42 @@
 
 [![Build Status](https://travis-ci.org/lufevida/Scandal.svg?branch=master)](https://travis-ci.org/lufevida/Scandal)
 
+## Concrete syntax
+
+program := ( declaration | statement )*
+block := LBRACE ( declaration | statement )* RBRACE
+type := KW\_INT | KW\_FLOAT | KW\_BOOL
+declaration := type IDENT
+assignmentDeclaration := type IDENT ASSIGN expression
+statement := assignmentStatement | ifStatement | whileStatement
+assignmentStatement := IDENT ASSIGN expression
+ifStatement := KW\_IF LPAREN expression RPAREN block
+whileStatement := KW\_WHILE LPAREN expression RPAREN block
+expression := term ( termOperator term )*
+term := summand ( summandOperator summand )*
+summand := factor ( factorOperator factor )*
+operator := termOperator | summandOperator | factorOperator
+termOperator := LT | LE | GT | GE | EQUAL | NOTEQUAL
+summandOperator := PLUS | MINUS | OR
+factorOperator := TIMES | DIV | MOD | AND
+
+## Abstract syntax
+
+Program := ArrayList<Dec> ArrayList<Statement>
+Block := ArrayList<Dec> ArrayList<Statement>
+Type := type
+Declaration := Type IDENT
+AssignmentDeclaration := Type IDENT Expression
+Statement := AssignmentStatement | IfStatement | WhileStatement
+AssignmentStatement := IDENT Expression
+IfStatement := Expression Block
+WhileStatement := Expression Block
+Expression := IdentExpression | IntLitExpression | BoolLitExpression | BinaryExpression
+IdentExpression := IDENT
+IntLitExpression := INT\_LIT
+BoolLitExpression := BOOL\_LIT
+BinaryExpression := Expression operator Expression
+
 ## Plotting waveforms and functions
 
 ```java
