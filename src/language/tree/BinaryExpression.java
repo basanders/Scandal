@@ -15,4 +15,9 @@ public class BinaryExpression extends Expression {
 		this.e1 = e1;
 	}
 
+	@Override
+	public Object visit(NodeVisitor visitor, Object argument) throws Exception {
+		return visitor.visitBinaryExpression(this, argument);
+	}
+
 }

@@ -2,7 +2,7 @@ package language.tree;
 
 import language.compiler.Token;
 
-public class Declaration extends Node {
+public abstract class Declaration extends Node {
 	
 	public final Token identToken;
 	

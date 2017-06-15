@@ -15,4 +15,9 @@ public class Program extends Node {
 		this.statements = statements;
 	}
 
+	@Override
+	public Object visit(NodeVisitor visitor, Object argument) throws Exception {
+		return visitor.visitProgram(this, argument);
+	}
+
 }

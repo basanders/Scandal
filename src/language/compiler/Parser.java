@@ -34,12 +34,6 @@ public class Parser {
 	}
 
 	public Program parse() throws Exception {
-		Program program = program();
-		matchEOF();
-		return program;
-	}
-
-	public Program program() throws Exception {
 		Token firstToken = token;
 		ArrayList<Declaration> declarations = new ArrayList<>();
 		ArrayList<Statement> statements = new ArrayList<>();
@@ -56,6 +50,7 @@ public class Parser {
 				}
 			}
 		}
+		matchEOF();
 		return new Program(firstToken, declarations, statements);
 	}
 
@@ -64,13 +59,7 @@ public class Parser {
 		ArrayList<Declaration> declarations = new ArrayList<>();
 		ArrayList<Statement> statements = new ArrayList<>();
 		match(LBRACE);
-		boolean noError = true;
-		while (noError) {
-			if (token.kind == RBRACE) {
-				noError = false;
-				consume();
-				break;
-			}
+		while (token.kind != RBRACE) {
 			try {
 				Declaration declaration = declaration();
 				declarations.add(declaration);
@@ -79,11 +68,11 @@ public class Parser {
 					Statement statement = statement();
 					statements.add(statement);
 				} catch (Exception statementException) {
-					noError = false;
 					throw new Exception("Illegal block: " + token.lineNumberPosition);
 				}
 			}
 		}
+		match(RBRACE);
 		return new Block(firstToken, declarations, statements);
 	}
 
@@ -98,7 +87,7 @@ public class Parser {
 				Expression expression = expression();
 				return new AssignmentDeclaration(firstToken, identToken, expression);
 			} else {
-				return new Declaration(firstToken, identToken);
+				return new UnassignedDeclaration(firstToken, identToken);
 			}
 		} else {
 			throw new Exception("Illegal declaration: " + token.lineNumberPosition);

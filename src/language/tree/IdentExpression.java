@@ -8,4 +8,9 @@ public class IdentExpression extends Expression {
 		super(firstToken);
 	}
 
+	@Override
+	public Object visit(NodeVisitor visitor, Object argument) throws Exception {
+		return visitor.visitIdentExpression(this, argument);
+	}
+
 }

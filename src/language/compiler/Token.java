@@ -2,6 +2,13 @@ package language.compiler;
 
 public class Token {
 
+	public final Kind kind;
+	public final String text;
+	public final int position; // position in input array
+	public final int length;
+	public final int lineNumber;
+	public final int lineNumberPosition;
+
 	public static enum Kind {
 		EOF("eof"),
 		IDENT(""),
@@ -47,7 +54,7 @@ public class Token {
 			this.text = text;
 		}
 	}
-	
+
 	public Token(Kind kind, int position, int length, int lineNumber, int lineNumberPosition) {
 		this.kind = kind;
 		this.text = kind.text;
@@ -65,13 +72,6 @@ public class Token {
 		this.lineNumber = lineNumber;
 		this.lineNumberPosition = lineNumberPosition;
 	}
-
-	public final Kind kind;
-	public final String text;
-	public final int position; // position in input array
-	public final int length;
-	public final int lineNumber;
-	public final int lineNumberPosition;
 
 	public int getIntValue() throws NumberFormatException {
 		try {
