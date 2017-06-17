@@ -9,7 +9,6 @@ public class AssignmentDeclaration extends Declaration {
 	public AssignmentDeclaration(Token firstToken, Token identToken, Expression expression) {
 		super(firstToken, identToken);
 		this.expression = expression;
-		this.type = super.getType(firstToken);
 	}
 
 	@Override

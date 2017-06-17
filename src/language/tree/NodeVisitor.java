@@ -6,9 +6,9 @@ public interface NodeVisitor {
 
 	Object visitBlock(Block block, Object argument) throws Exception;
 
-	Object visitUnassignedDeclaration(UnassignedDeclaration declaration, Object argument) throws Exception;
+	Object visitUnassignedDeclaration(UnassignedDeclaration dec, Object arg) throws Exception;
 
-	Object visitAssignmentDeclaration(AssignmentDeclaration declaration, Object argument) throws Exception;
+	Object visitAssignmentDeclaration(AssignmentDeclaration dec, Object arg) throws Exception;
 
 	Object visitAssignmentStatement(AssignmentStatement assignStatement, Object argument) throws Exception;
 

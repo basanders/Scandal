@@ -8,6 +8,7 @@ import static org.junit.Assert.assertEquals;
 import org.junit.Test;
 
 import language.tree.Expression;
+import language.tree.Program;
 
 public class TypeCheckerTests {
 	
@@ -69,6 +70,40 @@ public class TypeCheckerTests {
 		TypeChecker checker = new TypeChecker();
 		expression.visit(checker, null);
 		assertEquals(BOOL, expression.type);
+	}
+	
+	@Test
+	public void testAssignmentDeclaration() throws Exception {
+		String input = "int three = 3 float pi pi = 3.14 float sum sum = three + 3.14";
+		Scanner scanner = new Scanner(input);
+		scanner.scan();
+		Parser parser = new Parser(scanner);
+		Program program = parser.parse();
+		TypeChecker checker = new TypeChecker();
+		program.visit(checker, null);
+	}
+	
+	@Test
+	public void testIfStatement() throws Exception {
+		String input = "int three = 3 float pi = 3.14 float sum if (three < pi) { sum = three + 3.14 }";
+		Scanner scanner = new Scanner(input);
+		scanner.scan();
+		Parser parser = new Parser(scanner);
+		Program program = parser.parse();
+		TypeChecker checker = new TypeChecker();
+		program.visit(checker, null);
+	}
+	
+	@Test
+	public void testProgram() throws Exception {
+		String input = "int p = 15 int q = 2 bool test = true bool result "
+				+ "while (q < p) { if (p % q == 0) { test = false q = p - 1 } q = q + 1 } result = test";
+		Scanner scanner = new Scanner(input);
+		scanner.scan();
+		Parser parser = new Parser(scanner);
+		Program program = parser.parse();
+		TypeChecker checker = new TypeChecker();
+		program.visit(checker, null);
 	}
 
 }

@@ -6,7 +6,6 @@ public class UnassignedDeclaration extends Declaration {
 
 	public UnassignedDeclaration(Token firstToken, Token identToken) {
 		super(firstToken, identToken);
-		this.type = super.getType(firstToken);
 	}
 
 	@Override

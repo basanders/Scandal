@@ -3,6 +3,8 @@ package language.tree;
 import language.compiler.Token;
 
 public class IdentExpression extends Expression {
+	
+	public Declaration declaration;
 
 	public IdentExpression(Token firstToken) {
 		super(firstToken);

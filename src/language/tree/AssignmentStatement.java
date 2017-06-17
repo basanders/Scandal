@@ -3,6 +3,8 @@ package language.tree;
 import language.compiler.Token;
 
 public class AssignmentStatement extends Statement {
+	
+	public Declaration declaration;
 
 	public AssignmentStatement(Token identToken, Expression expression) {
 		super(identToken, expression);

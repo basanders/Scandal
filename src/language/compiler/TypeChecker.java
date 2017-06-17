@@ -68,21 +68,19 @@ public class TypeChecker implements NodeVisitor {
 
 	@Override
 	public Object visitAssignmentStatement(AssignmentStatement assignmentStatement, Object arg) throws Exception {
-		Declaration testResult = symtab.lookup(assignmentStatement.firstToken.text);
-		if (testResult == null) throw new Exception("Variable must have been declared in some enclosing scope");
-		assignmentStatement.type = testResult.type;
+		Declaration declaration = symtab.lookup(assignmentStatement.firstToken.text);
+		if (declaration == null) throw new Exception("Variable must have been declared in some enclosing scope");
+		assignmentStatement.declaration = declaration;
 		Type expressionType = (Type) assignmentStatement.expression.visit(this, null);
-		if (expressionType != assignmentStatement.type) throw new Exception("Type mismatch");
-		return assignmentStatement.type;
+		if (expressionType != declaration.type) throw new Exception("Type mismatch");
+		return assignmentStatement.declaration.type;
 	}
 
 	@Override
 	public Object visitIfStatement(IfStatement ifStatement, Object arg) throws Exception {
 		Expression expression = ifStatement.expression;
 		expression.visit(this, null);
-		if (expression.type != BOOL) {
-			throw new Exception("Invalid IfStatement");
-		}
+		if (expression.type != BOOL) throw new Exception("Invalid IfStatement");
 		ifStatement.block.visit(this, null);
 		return null;
 	}
@@ -91,9 +89,7 @@ public class TypeChecker implements NodeVisitor {
 	public Object visitWhileStatement(WhileStatement whileStatement, Object arg) throws Exception {
 		Expression expression = whileStatement.expression;
 		expression.visit(this, null);
-		if (expression.type != BOOL) {
-			throw new Exception("Invalid WhileStatement");
-		}
+		if (expression.type != BOOL) throw new Exception("Invalid WhileStatement");
 		whileStatement.block.visit(this, null);
 		return null;
 	}
@@ -103,8 +99,8 @@ public class TypeChecker implements NodeVisitor {
 		Token ident = identExpression.firstToken;
 		Declaration declaration = symtab.lookup(ident.text);
 		if (declaration == null) throw new Exception("Variable must have been declared in some enclosing scope");
-		identExpression.type = declaration.type;
-		return identExpression.type;
+		identExpression.declaration = declaration;
+		return identExpression.type = identExpression.declaration.type;
 	}
 
 	@Override
@@ -128,15 +124,14 @@ public class TypeChecker implements NodeVisitor {
 		Expression e1 = binaryExpression.e1;
 		Token op = binaryExpression.operator;
 		e0.visit(this, null);
-		e1.visit(this, null);
-		if (e0.type == INT && e1.type == INT) {
+		e1.visit(this, null);		
+		if (e0.type == FLOAT && e1.type == FLOAT) {
 			switch(op.kind) {
-			case MOD:
 			case PLUS:
 			case MINUS:
 			case TIMES:
 			case DIV: {
-				binaryExpression.type = INT;
+				binaryExpression.type = FLOAT;
 				break;
 			}
 			default: break;
@@ -151,16 +146,6 @@ public class TypeChecker implements NodeVisitor {
 				binaryExpression.type = FLOAT;
 				break;
 			}
-			case LT:
-			case LE:
-			case GT:
-			case GE:
-			case AND:
-			case OR:
-			case EQUAL:
-			case NOTEQUAL: {
-				binaryExpression.type = BOOL;
-			} break;
 			default: break;
 			}
 		}
@@ -173,32 +158,23 @@ public class TypeChecker implements NodeVisitor {
 				binaryExpression.type = FLOAT;
 				break;
 			}
-			case LT:
-			case LE:
-			case GT:
-			case GE:
-			case AND:
-			case OR:
-			case EQUAL:
-			case NOTEQUAL: {
-				binaryExpression.type = BOOL;
-			} break;
 			default: break;
 			}
 		}
-		if (e0.type == FLOAT && e1.type == FLOAT) {
+		if (e0.type == INT && e1.type == INT) {
 			switch(op.kind) {
+			case MOD:
 			case PLUS:
 			case MINUS:
 			case TIMES:
 			case DIV: {
-				binaryExpression.type = FLOAT;
+				binaryExpression.type = INT;
 				break;
 			}
 			default: break;
 			}
 		}
-		if (e0.type == e1.type) {
+		if (e0.type == e1.type || e0.type != BOOL && e1.type != BOOL) {
 			switch(op.kind) {
 			case LT:
 			case LE:

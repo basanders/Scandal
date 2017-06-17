@@ -13,10 +13,10 @@ public abstract class Node {
 		this.firstToken = firstToken;
 	}
 	
-	public static Type getType(Token token) {
-		switch (token.kind) {
-		case INT_LIT: return Type.INT;
-		case FLOAT_LIT: return Type.FLOAT;
+	public Type getType() {
+		switch (firstToken.kind) {
+		case KW_INT: return Type.INT;
+		case KW_FLOAT: return Type.FLOAT;
 		case KW_BOOL: return Type.BOOL;
 		default: return null;
 		}

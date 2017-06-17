@@ -92,5 +92,7 @@ public class ParserTests {
 		scanner.scan();
 		new Parser(scanner).parse();
 	}
+	
+	
 
 }
