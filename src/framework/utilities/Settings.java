@@ -8,6 +8,7 @@ import javax.sound.sampled.Mixer;
 
 public final class Settings {
 
+	public static final int midiController = 1;
 	public static final int samplingRate = 44100;
 	public static final int bitDepth = 16;
 	public static final int vectorSize = 1024;

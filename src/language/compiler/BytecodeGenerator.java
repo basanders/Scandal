@@ -29,22 +29,16 @@ public class BytecodeGenerator implements NodeVisitor, Opcodes {
 
 	private int slotCount = 1;
 	
-	public String getJvmType(Token token) {
-		switch (token.kind) {
-		case KW_INT: return "I";
-		case KW_FLOAT: return "F";
-		case KW_BOOL: return "Z";
-		default: return null;
+	private void printTopOfStack(MethodVisitor mv, Expression expr) throws Exception {
+		String jvmType = "";
+		switch (expr.type) {
+		case INT: jvmType = "I"; break;
+		case FLOAT: jvmType = "F"; break;
+		case BOOL: jvmType = "Z"; break;
 		}
-	}
-	
-	public String getJvmType(Type type) {
-		switch (type) {
-		case INT: return "I";
-		case FLOAT: return "F";
-		case BOOL: return "Z";
-		default: return null;
-		}
+		mv.visitFieldInsn(GETSTATIC, "java/lang/System", "out", "Ljava/io/PrintStream;");
+		expr.visit(this, mv);
+		mv.visitMethodInsn(INVOKEVIRTUAL, "java/io/PrintStream", "println", "(" + jvmType + ")V", false);
 	}
 
 	@Override
@@ -104,21 +98,7 @@ public class BytecodeGenerator implements NodeVisitor, Opcodes {
 		mv.visitLabel(runStart);
 		ArrayList<Declaration> declarations = program.declarations;
 		ArrayList<Statement> statements = program.statements;		
-		for (Declaration declaration : declarations) {
-			String ident = declaration.firstToken.text;
-			String type = getJvmType(declaration.firstToken);
-			mv.visitLocalVariable(ident, type, null, runStart, runEnd, slotCount);
-			declaration.slotNumber = slotCount;
-			slotCount++;
-			if (declaration instanceof AssignmentDeclaration) {
-				Expression expr = ((AssignmentDeclaration) declaration).expression;
-				mv.visitFieldInsn(GETSTATIC, "java/lang/System", "out", "Ljava/io/PrintStream;");
-				expr.visit(this, mv);
-				mv.visitMethodInsn(INVOKEVIRTUAL, "java/io/PrintStream", "println", "(" + getJvmType(expr.type) + ")V", false);
-				expr.visit(this, mv);
-				mv.visitVarInsn(ISTORE, declaration.slotNumber);
-			}
-		}
+		for (Declaration declaration : declarations) declaration.visit(this, new Object[]{mv, runStart, runEnd});
 		for (Statement statement : statements) statement.visit(this, mv);
 		mv.visitInsn(RETURN);
 		mv.visitLabel(runEnd);
@@ -136,32 +116,39 @@ public class BytecodeGenerator implements NodeVisitor, Opcodes {
 		Label blockEnd = new Label();
 		mv.visitLabel(blockStart);
 		mv.visitLabel(blockEnd);
-		for (Declaration declaration : declarations) {
-			String ident = declaration.firstToken.text;
-			String type = getJvmType(declaration.firstToken);
-			mv.visitLocalVariable(ident, type, null, blockStart, blockEnd, slotCount);
-			declaration.slotNumber = slotCount;
-			slotCount++;
-			if (declaration instanceof AssignmentDeclaration) {
-				Expression expr = ((AssignmentDeclaration) declaration).expression;
-				mv.visitFieldInsn(GETSTATIC, "java/lang/System", "out", "Ljava/io/PrintStream;");
-				expr.visit(this, mv);
-				mv.visitMethodInsn(INVOKEVIRTUAL, "java/io/PrintStream", "println", "(" + getJvmType(expr.type) + ")V", false);
-				expr.visit(this, mv);
-				mv.visitVarInsn(ISTORE, declaration.slotNumber);
-			}
-		}
+		for (Declaration declaration : declarations) declaration.visit(this, new Object[]{mv, blockStart, blockEnd});
 		for (Statement statement : statements) statement.visit(this, arg);
 		return null;
 	}
 
 	@Override
 	public Object visitUnassignedDeclaration(UnassignedDeclaration declaration, Object arg) throws Exception {
+		Object[] args = (Object[]) arg;
+		MethodVisitor mv = (MethodVisitor) args[0];
+		Label start = (Label) args[1];
+		Label end = (Label) args[2];
+		String ident = declaration.firstToken.text;
+		String type = declaration.jvmType;
+		mv.visitLocalVariable(ident, type, null, start, end, slotCount);
+		declaration.slotNumber = slotCount++;
 		return null;
 	}
 
 	@Override
 	public Object visitAssignmentDeclaration(AssignmentDeclaration declaration, Object arg) throws Exception {
+		Object[] args = (Object[]) arg;
+		MethodVisitor mv = (MethodVisitor) args[0];
+		Label start = (Label) args[1];
+		Label end = (Label) args[2];
+		String ident = declaration.firstToken.text;
+		String type = declaration.jvmType;
+		mv.visitLocalVariable(ident, type, null, start, end, slotCount);
+		declaration.slotNumber = slotCount++;
+		Expression expr = ((AssignmentDeclaration) declaration).expression;
+		printTopOfStack(mv, expr);
+		expr.visit(this, mv);
+		if (expr.type == Type.FLOAT) mv.visitVarInsn(FSTORE, declaration.slotNumber);
+		else mv.visitVarInsn(ISTORE, declaration.slotNumber);
 		return null;
 	}
 
@@ -169,11 +156,10 @@ public class BytecodeGenerator implements NodeVisitor, Opcodes {
 	public Object visitAssignmentStatement(AssignmentStatement assignmentStatement, Object arg) throws Exception {
 		MethodVisitor mv = (MethodVisitor) arg;
 		Expression expr = assignmentStatement.expression;
-		mv.visitFieldInsn(GETSTATIC, "java/lang/System", "out", "Ljava/io/PrintStream;");
+		printTopOfStack(mv, expr);
 		expr.visit(this, mv);
-		mv.visitMethodInsn(INVOKEVIRTUAL, "java/io/PrintStream", "println", "(" + getJvmType(expr.type) + ")V", false);
-		expr.visit(this, mv);
-		mv.visitVarInsn(ISTORE, assignmentStatement.declaration.slotNumber);
+		if (expr.type == Type.FLOAT) mv.visitVarInsn(FSTORE, assignmentStatement.declaration.slotNumber);
+		else mv.visitVarInsn(ISTORE, assignmentStatement.declaration.slotNumber);
 		return null;
 	}
 
@@ -207,7 +193,8 @@ public class BytecodeGenerator implements NodeVisitor, Opcodes {
 	@Override
 	public Object visitIdentExpression(IdentExpression identExpression, Object arg) throws Exception {
 		MethodVisitor mv = (MethodVisitor) arg;
-		mv.visitVarInsn(ILOAD, identExpression.declaration.slotNumber);
+		if (identExpression.type == Type.FLOAT) mv.visitVarInsn(FLOAD, identExpression.declaration.slotNumber);
+		else mv.visitVarInsn(ILOAD, identExpression.declaration.slotNumber);
 		return null;
 	}
 
@@ -243,19 +230,24 @@ public class BytecodeGenerator implements NodeVisitor, Opcodes {
 		binaryExpression.e1.visit(this, mv);
 		switch (binaryExpression.operator.kind) {
 		case MOD: {
-			mv.visitInsn(IREM);
+			if (binaryExpression.type == Type.FLOAT) mv.visitInsn(FREM);
+			else mv.visitInsn(IREM);
 		} break;
 		case PLUS: {
-			mv.visitInsn(IADD);
+			if (binaryExpression.type == Type.FLOAT) mv.visitInsn(FADD);
+			else mv.visitInsn(IADD);
 		} break;
 		case MINUS: {
-			mv.visitInsn(ISUB);
+			if (binaryExpression.type == Type.FLOAT) mv.visitInsn(FSUB);
+			else mv.visitInsn(ISUB);
 		} break;
 		case TIMES: {
-			mv.visitInsn(IMUL);
+			if (binaryExpression.type == Type.FLOAT) mv.visitInsn(FMUL);
+			else mv.visitInsn(IMUL);
 		} break;
 		case DIV: {
-			mv.visitInsn(IDIV);
+			if (binaryExpression.type == Type.FLOAT) mv.visitInsn(FDIV);
+			else mv.visitInsn(IDIV);
 		} break;
 		case AND: {
 			mv.visitInsn(IAND);

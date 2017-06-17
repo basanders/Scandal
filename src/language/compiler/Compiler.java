@@ -6,6 +6,9 @@ import java.io.PrintStream;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.lang.reflect.Constructor;
+import java.nio.file.FileSystems;
+import java.nio.file.Files;
+import java.nio.file.Path;
 
 import org.objectweb.asm.ClassReader;
 import org.objectweb.asm.util.TraceClassVisitor;
@@ -24,22 +27,21 @@ public class Compiler {
 		}
 	}
 
-	public Runnable getInstance(String name, byte[] bytecode, Object args) throws Exception {
-		DynamicClassLoader loader = new DynamicClassLoader(Thread.currentThread().getContextClassLoader());
-		Class<?> testClass = loader.define(name, bytecode);
-		Constructor<?> constructor = testClass.getConstructor(args.getClass());
-		return (Runnable) constructor.newInstance(args);
-	}
-
-	public void compileAndRun(String name, String code, String[] args) throws Exception {
+	public byte[] compile(String fileName, Object args) throws Exception {
+		Path path = FileSystems.getDefault().getPath("src/language/examples", fileName);
+		String code = new String(Files.readAllBytes(path));
+		int extension = path.getFileName().toString().lastIndexOf('.');
+		String className = path.getFileName().toString().substring(0, extension);
 		Scanner scanner = new Scanner(code);
 		scanner.scan();
 		Program program = new Parser(scanner).parse();
-		program.visit(new TypeChecker(), name);
-		byte[] bytecode = (byte[]) program.visit(new BytecodeGenerator(), name);
-		print(bytecode);
-		Runnable instance = getInstance(name, bytecode, args);
-		instance.run();
+		program.visit(new TypeChecker(), null);
+		byte[] bytecode = (byte[]) program.visit(new BytecodeGenerator(), className);
+		DynamicClassLoader loader = new DynamicClassLoader(Thread.currentThread().getContextClassLoader());
+		Class<?> testClass = loader.define(className, bytecode);
+		Constructor<?> constructor = testClass.getConstructor(args.getClass());
+		((Runnable) constructor.newInstance(args)).run();
+		return bytecode;
 	}
 
 	public String decompile(byte[] bytecode) {

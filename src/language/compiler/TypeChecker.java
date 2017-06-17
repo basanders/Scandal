@@ -4,8 +4,6 @@ import static language.tree.Node.Type.BOOL;
 import static language.tree.Node.Type.FLOAT;
 import static language.tree.Node.Type.INT;
 
-import java.util.ArrayList;
-
 import language.tree.AssignmentDeclaration;
 import language.tree.AssignmentStatement;
 import language.tree.BinaryExpression;
@@ -30,20 +28,16 @@ public class TypeChecker implements NodeVisitor {
 
 	@Override
 	public Object visitProgram(Program program, Object arg) throws Exception {
-		ArrayList<Declaration> declarations = program.declarations;
-		ArrayList<Statement> statements = program.statements;
-		for (Declaration declaration : declarations) declaration.visit(this, null);
-		for (Statement statement : statements) statement.visit(this, null);
+		for (Declaration declaration : program.declarations) declaration.visit(this, null);
+		for (Statement statement : program.statements) statement.visit(this, null);
 		return null;
 	}
 
 	@Override
 	public Object visitBlock(Block block, Object arg) throws Exception {
-		ArrayList<Declaration> declarations = block.declarations;
-		ArrayList<Statement> statements = block.statements;
 		symtab.enterScope();
-		for (Declaration declaration : declarations) declaration.visit(this, null);
-		for (Statement statement : statements) statement.visit(this, null);
+		for (Declaration declaration : block.declarations) declaration.visit(this, null);
+		for (Statement statement : block.statements) statement.visit(this, null);
 		symtab.leaveScope();
 		return null;
 	}
@@ -53,7 +47,7 @@ public class TypeChecker implements NodeVisitor {
 		Declaration testResult = symtab.topOfStackLookup(declaration.identToken.text);
 		if (testResult != null) throw new Exception("Illegal redeclaration");
 		symtab.insert(declaration.identToken.text, declaration);
-		return declaration.type;
+		return null;
 	}
 
 	@Override
@@ -63,7 +57,7 @@ public class TypeChecker implements NodeVisitor {
 		Type expressionType = (Type) declaration.expression.visit(this, null);
 		if (expressionType != declaration.type) throw new Exception("Type mismatch");
 		symtab.insert(declaration.identToken.text, declaration);
-		return declaration.type;
+		return null;
 	}
 
 	@Override
@@ -73,7 +67,7 @@ public class TypeChecker implements NodeVisitor {
 		assignmentStatement.declaration = declaration;
 		Type expressionType = (Type) assignmentStatement.expression.visit(this, null);
 		if (expressionType != declaration.type) throw new Exception("Type mismatch");
-		return assignmentStatement.declaration.type;
+		return null;
 	}
 
 	@Override
@@ -100,7 +94,7 @@ public class TypeChecker implements NodeVisitor {
 		Declaration declaration = symtab.lookup(ident.text);
 		if (declaration == null) throw new Exception("Variable must have been declared in some enclosing scope");
 		identExpression.declaration = declaration;
-		return identExpression.type = identExpression.declaration.type;
+		return identExpression.type = declaration.type;
 	}
 
 	@Override
@@ -125,69 +119,40 @@ public class TypeChecker implements NodeVisitor {
 		Token op = binaryExpression.operator;
 		e0.visit(this, null);
 		e1.visit(this, null);		
-		if (e0.type == FLOAT && e1.type == FLOAT) {
-			switch(op.kind) {
-			case PLUS:
-			case MINUS:
-			case TIMES:
-			case DIV: {
-				binaryExpression.type = FLOAT;
-				break;
-			}
-			default: break;
-			}
-		}
-		if (e0.type == INT && e1.type == FLOAT) {
-			switch(op.kind) {
-			case PLUS:
-			case MINUS:
-			case TIMES:
-			case DIV: {
-				binaryExpression.type = FLOAT;
-				break;
-			}
-			default: break;
-			}
-		}
-		if (e0.type == FLOAT && e1.type == INT) {
-			switch(op.kind) {
-			case PLUS:
-			case MINUS:
-			case TIMES:
-			case DIV: {
-				binaryExpression.type = FLOAT;
-				break;
-			}
-			default: break;
-			}
-		}
-		if (e0.type == INT && e1.type == INT) {
+		if (e0.type != BOOL && e1.type != BOOL) {
 			switch(op.kind) {
 			case MOD:
 			case PLUS:
 			case MINUS:
 			case TIMES:
 			case DIV: {
-				binaryExpression.type = INT;
+				if (e0.type == INT && e1.type == INT) binaryExpression.type = INT;
+				else binaryExpression.type = FLOAT;
 				break;
 			}
 			default: break;
 			}
 		}
-		if (e0.type == e1.type || e0.type != BOOL && e1.type != BOOL) {
+		if (e0.type != FLOAT && e1.type != FLOAT) {
 			switch(op.kind) {
-			case LT:
-			case LE:
-			case GT:
-			case GE:
 			case AND:
-			case OR:
-			case EQUAL:
-			case NOTEQUAL: {
+			case OR: {
 				binaryExpression.type = BOOL;
 			} break;
 			default: break;
 			}
+		}
+		//if (e0.type == e1.type || e0.type != BOOL && e1.type != BOOL) {}
+		switch(op.kind) {
+		case LT:
+		case LE:
+		case GT:
+		case GE:
+		case EQUAL:
+		case NOTEQUAL: {
+			binaryExpression.type = BOOL;
+		} break;
+		default: break;
 		}
 		if (binaryExpression.type == null) {
 			throw new Exception("Invalid BinaryExpression");
