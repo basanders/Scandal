@@ -17,6 +17,7 @@ import language.tree.IfStatement;
 import language.tree.IntLitExpression;
 import language.tree.Node.Type;
 import language.tree.NodeVisitor;
+import language.tree.PrintStatement;
 import language.tree.Program;
 import language.tree.Statement;
 import language.tree.UnassignedDeclaration;
@@ -85,6 +86,12 @@ public class TypeChecker implements NodeVisitor {
 		expression.visit(this, null);
 		if (expression.type != BOOL) throw new Exception("Invalid WhileStatement");
 		whileStatement.block.visit(this, null);
+		return null;
+	}
+	
+	@Override
+	public Object visitPrintStatement(PrintStatement printStatement, Object argument) throws Exception {
+		printStatement.expression.visit(this, null);
 		return null;
 	}
 

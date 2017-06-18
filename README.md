@@ -1,6 +1,8 @@
 # Scandal
 
 [![Build Status](https://travis-ci.org/lufevida/Scandal.svg?branch=master)](https://travis-ci.org/lufevida/Scandal)
+
+![Screenshot](https://raw.githubusercontent.com/lufevida/Scandal/master/doc/sublime.png)
 	
 ## Framework
 
@@ -11,7 +13,7 @@ new AdditiveSquare().plot(512, 2);
 WavetableResidual.getSharedInstance().plot(500, 1);
 new BreakpointFunction(512, new double[]{0, 0.5, 0, 1, 0, 1, 0, 0.5, 0}).plot();
 new BiquadPeak().plotMagnitudeResponse(1000, 100, 3);
-new WaveFile("monoLisa.wav").plot(1000);
+new WaveFile("wav/monoLisa.wav").plot(1000);
 ```
 
 ### Printing device, settings and file information
@@ -20,7 +22,7 @@ new WaveFile("monoLisa.wav").plot(1000);
 Settings.printInfo();
 Settings.printDeviceList();
 Settings.printMidiDeviceList();
-new WaveFile("monoLisa.wav").printInfo();
+new WaveFile("wav/monoLisa.wav").printInfo();
 ```
 
 ### Using the AudioTask class for timed real-time recording
@@ -33,7 +35,7 @@ new AudioTask().playMono(buffer);
 ### Using the AudioFlow class for continuous real-time recording
 
 ```java
-AudioFlow flow = new AudioFlow("test.wav", Settings.mono);
+AudioFlow flow = new AudioFlow("wav/test.wav", Settings.mono);
 Thread.sleep(2000);
 flow.quit();
 ```
@@ -82,7 +84,7 @@ new AudioTask().playMono(saw);
 ### Using the Reverse class
 
 ```java
-double[] lisa = new WaveFile("monoLisa.wav").getMonoSum();
+double[] lisa = new WaveFile("wav/monoLisa.wav").getMonoSum();
 double[] reverse = new Reverse().process(lisa);
 new AudioTask().playMono(reverse);
 ```
@@ -90,7 +92,7 @@ new AudioTask().playMono(reverse);
 ### Using the Speed class
 
 ```java
-double[] lisa = new WaveFile("monoLisa.wav").getMonoSum();
+double[] lisa = new WaveFile("wav/monoLisa.wav").getMonoSum();
 double[] speed = new Speed().process(lisa, 1.2);
 new AudioTask().playMono(speed);
 ```
@@ -98,7 +100,7 @@ new AudioTask().playMono(speed);
 ### Using the Loop class
 
 ```java
-double[] lisa = new WaveFile("monoLisa.wav").getMonoSum();
+double[] lisa = new WaveFile("wav/monoLisa.wav").getMonoSum();
 double[] loop = new Loop().process(lisa, 0, 10000, 8);
 new AudioTask().playMono(loop);
 ```
@@ -106,7 +108,7 @@ new AudioTask().playMono(loop);
 ### Using the Splice class
 
 ```java
-double[] lisa = new WaveFile("monoLisa.wav").getMonoSum();
+double[] lisa = new WaveFile("wav/monoLisa.wav").getMonoSum();
 double[] loop1 = new Loop().process(lisa, 0, 12000, 8);
 double[] loop2 = new Loop().process(lisa, 0, 6000, 16);
 double[] loop3 = new Loop().process(lisa, 0, 3000, 32);
@@ -117,7 +119,7 @@ new AudioTask().playMono(splice);
 ### Using the Delay class
 
 ```java
-double[] lisa = new WaveFile("stereoLisa.wav").getMonoSum();
+double[] lisa = new WaveFile("wav/stereoLisa.wav").getMonoSum();
 double[] feedback = new BreakpointFunction(512, new double[]{0.5, 0, 0.5, 0}).get();
 double[] mix = new BreakpointFunction(512, new double[]{0.7, 0, 0.5, 0, 0.5, 0, 0.7}).get();
 new AudioTask().playMono(new Delay().process(lisa, 500, feedback, mix));
@@ -189,7 +191,7 @@ flow.quit();
 ### Using the StereoPanner class
 
 ```java
-double[] lisa = new WaveFile("monoLisa.wav").getMonoSum();
+double[] lisa = new WaveFile("wav/monoLisa.wav").getMonoSum();
 double[] pan = new BreakpointFunction(512, new double[]{-1, 1}).get();
 double[] stereo = new StereoPanner().process(lisa, pan);
 new AudioTask().playStereo(stereo);
@@ -198,7 +200,7 @@ new AudioTask().playStereo(stereo);
 ### Creating a stereo ping-pong effect
 
 ```java
-double[] lisa = new WaveFile("monoLisa.wav").getMonoSum();
+double[] lisa = new WaveFile("wav/monoLisa.wav").getMonoSum();
 double[] pingPong = new NaiveSquare().getTable(512, 4);
 double[] stereo = new StereoPanner().process(lisa, pingPong);
 new AudioTask().playStereo(stereo);
@@ -208,7 +210,7 @@ new AudioTask().playStereo(stereo);
 
 ```java
 double[] saw = new WavetableOscillator(new ClassicSawtooth()).get(4000, 0.7, 880);
-double[] lisa = new WaveFile("monoLisa.wav").getMonoSum();
+double[] lisa = new WaveFile("wav/monoLisa.wav").getMonoSum();
 AudioTrack sawTrack = new AudioTrack(saw, 3000, 0.2, -0.8);
 AudioTrack lisaTrack = new AudioTrack(lisa, 0, 1, 0.8);
 double[] mixdown = new StereoMixer().render(sawTrack, lisaTrack);
@@ -219,7 +221,8 @@ new AudioTask().exportStereo("mix.wav", mixdown);
 ### Using the PolyphonicSynthesizer class
 
 ```java
-PolyphonicSynthesizer synth = new PolyphonicSynthesizer(Settings.midiController, new ClassicSawtooth());
+int keyboard = Settings.midiController;
+PolyphonicSynthesizer synth = new PolyphonicSynthesizer(keyboard, new ClassicSawtooth());
 AudioFlow flow = synth.start();
 Thread.sleep(10000);
 flow.quit();
@@ -240,6 +243,15 @@ System.exit(0);
 
 ## Language
 
+### Using the Compiler class
+
+```java
+Compiler compiler = new Compiler();
+byte[] bytecode = compiler.compile("doc/NaivePrimeFinder.scandal", args);
+compiler.print(bytecode);
+compiler.save("bin/NaivePrimeFinder.class", bytecode);
+```
+
 ### Concrete syntax
 
 - program := ( declaration | statement )*
@@ -251,6 +263,7 @@ System.exit(0);
 - assignmentStatement := IDENT ASSIGN expression
 - ifStatement := KW\_IF LPAREN expression RPAREN block
 - whileStatement := KW\_WHILE LPAREN expression RPAREN block
+- printStatement := KW\_PRINT LPAREN expression RPAREN
 - expression := term ( termOperator term )*
 - term := summand ( summandOperator summand )*
 - summand := factor ( factorOperator factor )*
@@ -266,10 +279,11 @@ System.exit(0);
 - Declaration := UnassignedDeclaration | AssignmentDeclaration
 - UnassignedDeclaration := Type IDENT
 - AssignmentDeclaration := Type IDENT Expression
-- Statement := AssignmentStatement | IfStatement | WhileStatement
+- Statement := AssignmentStatement | IfStatement | WhileStatement | PrintStatement
 - AssignmentStatement := IDENT Expression
 - IfStatement := Expression Block
 - WhileStatement := Expression Block
+- PrintStatement := Expression Block
 - Expression := IdentExpression | IntLitExpression | FloatLitExpression | BoolLitExpression | BinaryExpression
 - IdentExpression := IDENT
 - IntLitExpression := INT\_LIT
@@ -306,17 +320,10 @@ System.exit(0);
 	+ INT (summandOperator | factorOperator) INT ==> INT
 	+ Type termOperator Type ==> BOOL
 
-### Using the Compiler class
-
-```java
-Compiler compiler = new Compiler();
-byte[] bytecode = compiler.compile("NaivePrimeFinder.scandal", args);
-compiler.print(bytecode);
-```
-
 #### Tasks
 
 - Unary expression class (MINUS and NOT)
-- Exponential functions;
-- Antialiased triangle generator;
-- Test antialiased waveforms with a sweep;
+- String, array and buffer types
+- Exponential functions
+- Antialiased triangle generator
+- Test antialiased waveforms with a sweep

@@ -18,7 +18,7 @@ public class WaveFile {
 	private final double[] interleavedBuffer;
 	
 	public WaveFile(String name) throws Exception {
-		this.path = FileSystems.getDefault().getPath("wav", name);
+		this.path = FileSystems.getDefault().getPath(name);
 		byte[] byteArray = Files.readAllBytes(path);
 		this.formatChunkSize =
 				(byteArray[16] & 0xff) |

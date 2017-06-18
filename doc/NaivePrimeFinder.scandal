@@ -1,15 +1,13 @@
-
 /* Naive Prime Finder */
 
-bool test = true
-bool result
-int p = 111
+bool result = true
+int p = 571
 int q = 2
 while (q < p) {
 	if (p % q == 0) {
-		test = false
+		result = false
 		q = p - 1
 	}
 	q = q + 1
 }
-result = test
+print(result)

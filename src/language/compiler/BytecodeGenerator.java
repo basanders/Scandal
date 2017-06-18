@@ -20,6 +20,7 @@ import language.tree.IfStatement;
 import language.tree.IntLitExpression;
 import language.tree.Node.Type;
 import language.tree.NodeVisitor;
+import language.tree.PrintStatement;
 import language.tree.Program;
 import language.tree.Statement;
 import language.tree.UnassignedDeclaration;
@@ -28,18 +29,6 @@ import language.tree.WhileStatement;
 public class BytecodeGenerator implements NodeVisitor, Opcodes {
 
 	private int slotCount = 1;
-	
-	private void printTopOfStack(MethodVisitor mv, Expression expr) throws Exception {
-		String jvmType = "";
-		switch (expr.type) {
-		case INT: jvmType = "I"; break;
-		case FLOAT: jvmType = "F"; break;
-		case BOOL: jvmType = "Z"; break;
-		}
-		mv.visitFieldInsn(GETSTATIC, "java/lang/System", "out", "Ljava/io/PrintStream;");
-		expr.visit(this, mv);
-		mv.visitMethodInsn(INVOKEVIRTUAL, "java/io/PrintStream", "println", "(" + jvmType + ")V", false);
-	}
 
 	@Override
 	public Object visitProgram(Program program, Object arg) throws Exception {
@@ -145,7 +134,6 @@ public class BytecodeGenerator implements NodeVisitor, Opcodes {
 		mv.visitLocalVariable(ident, type, null, start, end, slotCount);
 		declaration.slotNumber = slotCount++;
 		Expression expr = ((AssignmentDeclaration) declaration).expression;
-		printTopOfStack(mv, expr);
 		expr.visit(this, mv);
 		if (expr.type == Type.FLOAT) mv.visitVarInsn(FSTORE, declaration.slotNumber);
 		else mv.visitVarInsn(ISTORE, declaration.slotNumber);
@@ -156,7 +144,6 @@ public class BytecodeGenerator implements NodeVisitor, Opcodes {
 	public Object visitAssignmentStatement(AssignmentStatement assignmentStatement, Object arg) throws Exception {
 		MethodVisitor mv = (MethodVisitor) arg;
 		Expression expr = assignmentStatement.expression;
-		printTopOfStack(mv, expr);
 		expr.visit(this, mv);
 		if (expr.type == Type.FLOAT) mv.visitVarInsn(FSTORE, assignmentStatement.declaration.slotNumber);
 		else mv.visitVarInsn(ISTORE, assignmentStatement.declaration.slotNumber);
@@ -187,6 +174,16 @@ public class BytecodeGenerator implements NodeVisitor, Opcodes {
 		whileStatement.block.visit(this, mv);
 		mv.visitJumpInsn(GOTO, l1);
 		mv.visitLabel(l2);
+		return null;
+	}
+	
+	@Override
+	public Object visitPrintStatement(PrintStatement printStatement, Object arg) throws Exception {
+		String type = printStatement.expression.getJvmType();
+		MethodVisitor mv = (MethodVisitor) arg;
+		mv.visitFieldInsn(GETSTATIC, "java/lang/System", "out", "Ljava/io/PrintStream;");
+		printStatement.expression.visit(this, mv);
+		mv.visitMethodInsn(INVOKEVIRTUAL, "java/io/PrintStream", "println", "(" + type + ")V", false);
 		return null;
 	}
 

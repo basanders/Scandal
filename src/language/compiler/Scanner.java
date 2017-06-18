@@ -46,6 +46,9 @@ public class Scanner {
 		case "while": {
 			token = new Token(Kind.KW_WHILE, startPos, endPos, lineNum, lineNumPos);
 		} break;
+		case "print": {
+			token = new Token(Kind.KW_PRINT, startPos, endPos, lineNum, lineNumPos);
+		} break;
 		default: {
 			token = new Token(Kind.IDENT, substring, startPos, endPos, lineNum, lineNumPos);
 		} break;

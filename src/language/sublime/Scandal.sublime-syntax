@@ -1,0 +1,74 @@
+%YAML 1.2
+---
+name: Scandal
+file_extensions: [scandal]
+scope: source.scandal
+
+contexts:
+  main:
+
+    - match: \b(if|while)\b
+      scope: keyword.control.scandal
+
+    - match: \b\s*(\-|\+|\*|\/|\%)\s*\b
+      scope: keyword.operator.arithmetic.scandal
+
+    - match: \b\s*(=|->)\s*\b
+      scope: keyword.operator.assignment.scandal
+
+    - match: \b\s*(==|!=|<|>|<=|>=)\s*\b
+      scope: keyword.operator.comparison.scandal
+
+    - match: \b\s*(!|\&|\|)\s*\b
+      scope: keyword.operator.logical.scandal
+
+    - match: \b(?:[0-9]+\.?[0-9]*)\b
+      scope: constant.numeric.integer.decimal.scandal
+
+    - match: \b[0-9]+\.?[0-9]*(?:(e|E)(\+|-)?[0-9]+)?\b
+      scope: constant.numeric.float.decimal.scandal
+
+    - match: \b(true|false)\b
+      scope: constant.language.scandal
+
+    - match: \b(int|float|bool)
+      scope: storage.type.scandal
+
+    - match: \b(print)\b
+      scope: support.function.scandal
+
+    - match: '"'
+      scope: punctuation.definition.string.begin.scandal
+      push:
+        - meta_scope: string.quoted.double.scandal
+        - match: \\.
+          scope: constant.character.escape.scandal
+        - match: '"'
+          scope: punctuation.definition.string.end.scandal
+          pop: true
+
+    - match: \(
+      scope: punctuation.section.parens.begin.scandal
+      push:
+        - match: \)
+          scope: punctuation.section.parens.end.scandal
+          pop: true
+        - match: '\b[a-zA-Z._][a-zA-Z0-9._]*\b'
+          scope: variable.parameter.scandal
+        - include: main
+
+    - match: \{
+      scope: punctuation.section.braces.begin.scandal
+      push:
+        - match: \}
+          scope: punctuation.section.braces.end.scandal
+          pop: true
+        - include: main
+
+    - match: /\*
+      scope: punctuation.definition.comment.begin.scandal
+      push:
+        - meta_scope: comment.block.scandal
+        - match: \*/
+          scope: punctuation.definition.comment.end.scandal
+          pop: true

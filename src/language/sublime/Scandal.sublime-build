@@ -1,0 +1,5 @@
+{
+	"shell_cmd": "java -jar \"$packages/Scandal/Scandal.jar\" \"$file\"",
+	"file_regex": "^(...*?):([0-9]*):?([0-9]*)",
+	"selector": "source.scandal"
+}

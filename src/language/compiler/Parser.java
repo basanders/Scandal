@@ -106,6 +106,9 @@ public class Parser {
 		case KW_WHILE: {
 			statement = whileStatement();
 		} break;
+		case KW_PRINT: {
+			statement = printStatement();
+		} break;
 		default: throw new Exception("Illegal statement: " + token.lineNumberPosition);
 		}
 		return statement;
@@ -137,6 +140,15 @@ public class Parser {
 		match(RPAREN);
 		Block block = block();
 		return new WhileStatement(firstToken, expression, block);
+	}
+	
+	public PrintStatement printStatement() throws Exception {
+		Token firstToken = token;
+		match(KW_PRINT);
+		match(LPAREN);
+		Expression expression = expression();
+		match(RPAREN);
+		return new PrintStatement(firstToken, expression);
 	}
 
 	public Expression expression() throws Exception {

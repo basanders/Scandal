@@ -15,6 +15,8 @@ public interface NodeVisitor {
 	Object visitIfStatement(IfStatement ifStatement, Object argument) throws Exception;
 
 	Object visitWhileStatement(WhileStatement whileStatement, Object argument) throws Exception;
+	
+	Object visitPrintStatement(PrintStatement printStatement, Object argument) throws Exception;
 
 	Object visitIdentExpression(IdentExpression identExpression, Object argument) throws Exception;
 

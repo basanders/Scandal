@@ -28,7 +28,7 @@ public class Compiler {
 	}
 
 	public byte[] compile(String fileName, Object args) throws Exception {
-		Path path = FileSystems.getDefault().getPath("src/language/examples", fileName);
+		Path path = FileSystems.getDefault().getPath(fileName);
 		String code = new String(Files.readAllBytes(path));
 		int extension = path.getFileName().toString().lastIndexOf('.');
 		String className = path.getFileName().toString().substring(0, extension);
@@ -58,7 +58,7 @@ public class Compiler {
 	}
 
 	public void save(String name, byte[] bytecode) throws Exception {
-		String classFileName = "bin/" + name + ".class";
+		String classFileName = name;
 		OutputStream output = new FileOutputStream(classFileName);
 		output.write(bytecode);
 		output.close();
