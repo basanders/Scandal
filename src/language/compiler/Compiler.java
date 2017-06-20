@@ -2,7 +2,6 @@ package language.compiler;
 
 import java.io.FileOutputStream;
 import java.io.OutputStream;
-import java.io.PrintStream;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.lang.reflect.Constructor;
@@ -44,22 +43,16 @@ public class Compiler {
 		return bytecode;
 	}
 
-	public String decompile(byte[] bytecode) {
+	public String print(byte[] bytecode) {
 		ClassReader cr = new ClassReader(bytecode);
 		StringWriter out = new StringWriter();
 		cr.accept(new TraceClassVisitor(new PrintWriter(out)), ClassReader.SKIP_DEBUG);
+		cr.accept(new TraceClassVisitor(new PrintWriter(System.out)), ClassReader.SKIP_DEBUG);
 		return out.toString();
 	}
 
-	public void print(byte[] bytecode) {
-		ClassReader cr = new ClassReader(bytecode);
-		PrintStream out = System.out;
-		cr.accept(new TraceClassVisitor(new PrintWriter(out)), ClassReader.SKIP_DEBUG);
-	}
-
 	public void save(String name, byte[] bytecode) throws Exception {
-		String classFileName = name;
-		OutputStream output = new FileOutputStream(classFileName);
+		OutputStream output = new FileOutputStream(name);
 		output.write(bytecode);
 		output.close();
 	}

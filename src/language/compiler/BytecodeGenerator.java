@@ -17,6 +17,7 @@ import language.tree.Expression;
 import language.tree.FloatLitExpression;
 import language.tree.IdentExpression;
 import language.tree.IfStatement;
+import language.tree.InfoExpression;
 import language.tree.IntLitExpression;
 import language.tree.Node.Type;
 import language.tree.NodeVisitor;
@@ -192,6 +193,13 @@ public class BytecodeGenerator implements NodeVisitor, Opcodes {
 		MethodVisitor mv = (MethodVisitor) arg;
 		if (identExpression.type == Type.FLOAT) mv.visitVarInsn(FLOAD, identExpression.declaration.slotNumber);
 		else mv.visitVarInsn(ILOAD, identExpression.declaration.slotNumber);
+		return null;
+	}
+	
+	@Override
+	public Object visitInfoExpression(InfoExpression infoExpression, Object arg) throws Exception {
+		MethodVisitor mv = (MethodVisitor) arg;
+		mv.visitLdcInsn(infoExpression.value);
 		return null;
 	}
 

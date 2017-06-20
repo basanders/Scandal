@@ -19,6 +19,8 @@ public interface NodeVisitor {
 	Object visitPrintStatement(PrintStatement printStatement, Object argument) throws Exception;
 
 	Object visitIdentExpression(IdentExpression identExpression, Object argument) throws Exception;
+	
+	Object visitInfoExpression(InfoExpression infoExpression, Object argument) throws Exception;
 
 	Object visitIntLitExpression(IntLitExpression intLitExpression, Object argument) throws Exception;
 

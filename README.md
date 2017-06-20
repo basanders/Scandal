@@ -2,9 +2,16 @@
 
 [![Build Status](https://travis-ci.org/lufevida/Scandal.svg?branch=master)](https://travis-ci.org/lufevida/Scandal)
 
-![Screenshot](https://raw.githubusercontent.com/lufevida/Scandal/master/doc/sublime.png)
+![Screenshot](https://raw.githubusercontent.com/lufevida/Scandal/master/doc/PrintInfo.png)
 	
 ## Framework
+
+### Printing device, settings and file information
+
+```java
+System.out.println(Settings.getInfo());
+new WaveFile("wav/monoLisa.wav").printInfo();
+```
 
 ### Plotting waveforms and functions
 
@@ -14,15 +21,6 @@ WavetableResidual.getSharedInstance().plot(500, 1);
 new BreakpointFunction(512, new double[]{0, 0.5, 0, 1, 0, 1, 0, 0.5, 0}).plot();
 new BiquadPeak().plotMagnitudeResponse(1000, 100, 3);
 new WaveFile("wav/monoLisa.wav").plot(1000);
-```
-
-### Printing device, settings and file information
-
-```java
-Settings.printInfo();
-Settings.printDeviceList();
-Settings.printMidiDeviceList();
-new WaveFile("wav/monoLisa.wav").printInfo();
 ```
 
 ### Using the AudioTask class for timed real-time recording
@@ -243,6 +241,8 @@ System.exit(0);
 
 ## Language
 
+A complete description of Scandal's syntax is outlined in this [document](https://raw.githubusercontent.com/lufevida/Scandal/master/doc/Syntax.md).
+
 ### Using the Compiler class
 
 ```java
@@ -252,78 +252,10 @@ compiler.print(bytecode);
 compiler.save("bin/NaivePrimeFinder.class", bytecode);
 ```
 
-### Concrete syntax
-
-- program := ( declaration | statement )*
-- block := LBRACE ( declaration | statement )* RBRACE
-- type := KW\_INT | KW\_FLOAT | KW\_BOOL
-- unassignedDeclaration := type IDENT
-- assignmentDeclaration := type IDENT ASSIGN expression
-- statement := assignmentStatement | ifStatement | whileStatement
-- assignmentStatement := IDENT ASSIGN expression
-- ifStatement := KW\_IF LPAREN expression RPAREN block
-- whileStatement := KW\_WHILE LPAREN expression RPAREN block
-- printStatement := KW\_PRINT LPAREN expression RPAREN
-- expression := term ( termOperator term )*
-- term := summand ( summandOperator summand )*
-- summand := factor ( factorOperator factor )*
-- termOperator := LT | LE | GT | GE | EQUAL | NOTEQUAL
-- summandOperator := PLUS | MINUS | OR
-- factorOperator := TIMES | DIV | MOD | AND
-
-### Abstract syntax
-
-- Program := ( Declaration | Statement )*
-- Block := ( Declaration | Statement )*
-- Type := INT | FLOAT | BOOL
-- Declaration := UnassignedDeclaration | AssignmentDeclaration
-- UnassignedDeclaration := Type IDENT
-- AssignmentDeclaration := Type IDENT Expression
-- Statement := AssignmentStatement | IfStatement | WhileStatement | PrintStatement
-- AssignmentStatement := IDENT Expression
-- IfStatement := Expression Block
-- WhileStatement := Expression Block
-- PrintStatement := Expression Block
-- Expression := IdentExpression | IntLitExpression | FloatLitExpression | BoolLitExpression | BinaryExpression
-- IdentExpression := IDENT
-- IntLitExpression := INT\_LIT
-- FloatLitExpression := FLOAT\_LIT
-- BoolLitExpression := BOOL\_LIT
-- BinaryExpression := Expression operator Expression
-- operator := termOperator | summandOperator | factorOperator
-
-### TypeChecker rules
-
-- UnassignedDeclaration:
-	+ Variable may not be declared more than once in the same scope
-- AssignmentDeclaration:
-	+ Variable may not be declared more than once in the same scope
-	+ Declaration.type == Expression.type
-- AssignmentStatement:
-	+ Variable must have been declared in some enclosing scope
-	+ Declaration.type == Expression.type
-- IfStatement:
-	+ Expression.type == BOOL
-- WhileStatement:
-	+ Expression.type == BOOL
-- IdentExpression:
-	+ Variable must have been declared in some enclosing scope
-	+ IdentExpression.type = Declaration.type
-- IntLitExpression:
-	+ IntLitExpression.type = INT
-- FloatLitExpression:
-	+ FloatLitExpression.type = FLOAT
-- BoolLitExpression:
-	+ BoolLitExpression.type = BOOL
-- BinaryExpression:
-	+ (INT | FLOAT) (MOD | PLUS | MINUS | TIMES | DIV) (INT | FLOAT) ==> FLOAT
-	+ INT (summandOperator | factorOperator) INT ==> INT
-	+ Type termOperator Type ==> BOOL
-
 #### Tasks
 
 - Unary expression class (MINUS and NOT)
-- String, array and buffer types
+- String, table and buffer types
 - Exponential functions
 - Antialiased triangle generator
 - Test antialiased waveforms with a sweep

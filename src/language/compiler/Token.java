@@ -47,7 +47,8 @@ public class Token {
 		KW_FALSE("false"),
 		KW_IF("if"),
 		KW_WHILE("while"),
-		KW_PRINT("print");
+		KW_PRINT("print"),
+		KW_INFO("info");
 
 		final String text;
 

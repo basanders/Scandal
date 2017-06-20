@@ -4,7 +4,7 @@ import language.compiler.Token;
 
 public abstract class Node {
 	
-	public static enum Type { INT, FLOAT, BOOL }
+	public static enum Type { INT, FLOAT, BOOL, STRING }
 
 	public final Token firstToken;
 	public Type type;

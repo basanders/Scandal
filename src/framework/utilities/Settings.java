@@ -23,27 +23,24 @@ public final class Settings {
 		return sharedInstance;
 	}
 	
-	public static void printInfo() {
-		System.out.println(
-				"Sampling rate: " + samplingRate + "\n" +
-				"Bit depth: " + bitDepth + "\n" +
-				"Vector size: " + vectorSize);
-	}
-
-	public static void printDeviceList() {
+	public static String getInfo() {
+		String output = "Sampling rate: " + samplingRate + "\n";
+		output += "Bit depth: " + bitDepth + "\n";
+		output += "Vector size: " + vectorSize + "\n";
+		output += "MIDI controller: " + midiController + "\n";
 		int index = 0;
+		output += "Audio devices:\n";
 		Mixer.Info[] mixers = AudioSystem.getMixerInfo();
 		for (Mixer.Info mixer : mixers) {
-			System.out.println(index++ + ": " + mixer.getName());
+			output += index++ + ": " + mixer.getName() + "\n";
 		}
-	}
-
-	public static void printMidiDeviceList() {
-		int index = 0;
+		index = 0;
+		output += "MIDI devices:\n";
 		MidiDevice.Info[] infos = MidiSystem.getMidiDeviceInfo();
 		for (MidiDevice.Info info : infos) {
-			System.out.println(index++ + ": " + info.getName());
+			output += index++ + ": " + info.getName() + "\n";
 		}
+		return output;
 	}
 
 }

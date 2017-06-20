@@ -14,6 +14,7 @@ import language.tree.Expression;
 import language.tree.FloatLitExpression;
 import language.tree.IdentExpression;
 import language.tree.IfStatement;
+import language.tree.InfoExpression;
 import language.tree.IntLitExpression;
 import language.tree.Node.Type;
 import language.tree.NodeVisitor;
@@ -102,6 +103,11 @@ public class TypeChecker implements NodeVisitor {
 		if (declaration == null) throw new Exception("Variable must have been declared in some enclosing scope");
 		identExpression.declaration = declaration;
 		return identExpression.type = declaration.type;
+	}
+	
+	@Override
+	public Object visitInfoExpression(InfoExpression infoExpression, Object argument) throws Exception {
+		return infoExpression.type;
 	}
 
 	@Override

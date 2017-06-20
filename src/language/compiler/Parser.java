@@ -209,6 +209,10 @@ public class Parser {
 			expression = new IdentExpression(token);
 			consume();
 		} break;
+		case KW_INFO: {
+			expression = new InfoExpression(token);
+			consume();
+		} break;
 		case INT_LIT: {
 			expression = new IntLitExpression(token);
 			consume();
