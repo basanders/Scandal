@@ -11,11 +11,11 @@ public class NaiveOscillator {
 		this.waveform = waveform;
 	}
 
-	public double[] get(int duration, double amplitude, double frequency) {
+	public float[] get(int duration, float amplitude, float frequency) {
 		int samples = duration * Settings.samplingRate / 1000;
-		double oscFreq = frequency * waveform.twoPi / Settings.samplingRate;
-		double oscPhase = 0;
-		double[] buffer = new double[samples];
+		float oscFreq = frequency * waveform.twoPi / Settings.samplingRate;
+		float oscPhase = 0;
+		float[] buffer = new float[samples];
 		for (int i = 0; i < samples; i++) {
 			buffer[i] = amplitude * waveform.getSample(oscPhase, oscFreq);
 			oscPhase += oscFreq;

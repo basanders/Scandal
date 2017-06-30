@@ -86,8 +86,8 @@ public abstract class MidiKeyboardController implements Receiver {
 
 	public abstract void handlePitchBend(int lsb, int msb, int channel);
 
-	public double midiToFrequency(int note) {
-		return 440 * Math.pow(2, ((double) note - 69) / 12);
+	public float midiToFrequency(int note) {
+		return 440.0f * (float) Math.pow(2, ((float) note - 69) / 12);
 	}
 
 	void playSequence(File file) throws Exception {

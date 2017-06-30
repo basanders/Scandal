@@ -26,6 +26,7 @@ import language.tree.Program;
 import language.tree.Statement;
 import language.tree.StringLitExpression;
 import language.tree.UnassignedDeclaration;
+import language.tree.WaveFileExpression;
 import language.tree.WhileStatement;
 
 public class BytecodeGenerator implements NodeVisitor, Opcodes {
@@ -137,7 +138,9 @@ public class BytecodeGenerator implements NodeVisitor, Opcodes {
 		declaration.slotNumber = slotCount++;
 		Expression expr = ((AssignmentDeclaration) declaration).expression;
 		expr.visit(this, mv);
-		if (expr.type == Type.STRING) mv.visitVarInsn(ASTORE, declaration.slotNumber);
+		if (expr.type == Type.STRING || expr.type == Type.ARRAY) {
+			mv.visitVarInsn(ASTORE, declaration.slotNumber);
+		}
 		else if (expr.type == Type.FLOAT) mv.visitVarInsn(FSTORE, declaration.slotNumber);
 		else mv.visitVarInsn(ISTORE, declaration.slotNumber);
 		return null;
@@ -148,7 +151,9 @@ public class BytecodeGenerator implements NodeVisitor, Opcodes {
 		MethodVisitor mv = (MethodVisitor) arg;
 		Expression expr = assignmentStatement.expression;
 		expr.visit(this, mv);
-		if (expr.type == Type.STRING) mv.visitVarInsn(ASTORE, assignmentStatement.declaration.slotNumber);
+		if (expr.type == Type.STRING || expr.type == Type.ARRAY) {
+			mv.visitVarInsn(ASTORE, assignmentStatement.declaration.slotNumber);
+		}
 		else if (expr.type == Type.FLOAT) mv.visitVarInsn(FSTORE, assignmentStatement.declaration.slotNumber);
 		else mv.visitVarInsn(ISTORE, assignmentStatement.declaration.slotNumber);
 		return null;
@@ -194,7 +199,9 @@ public class BytecodeGenerator implements NodeVisitor, Opcodes {
 	@Override
 	public Object visitIdentExpression(IdentExpression identExpression, Object arg) throws Exception {
 		MethodVisitor mv = (MethodVisitor) arg;
-		if (identExpression.type == Type.STRING) mv.visitVarInsn(ALOAD, identExpression.declaration.slotNumber);
+		if (identExpression.type == Type.STRING || identExpression.type == Type.ARRAY) {
+			mv.visitVarInsn(ALOAD, identExpression.declaration.slotNumber);
+		}
 		else if (identExpression.type == Type.FLOAT) mv.visitVarInsn(FLOAD, identExpression.declaration.slotNumber);
 		else mv.visitVarInsn(ILOAD, identExpression.declaration.slotNumber);
 		return null;
@@ -233,6 +240,17 @@ public class BytecodeGenerator implements NodeVisitor, Opcodes {
 	public Object visitStringLitExpression(StringLitExpression stringLitExpression, Object arg) throws Exception {
 		MethodVisitor mv = (MethodVisitor) arg;
 		mv.visitLdcInsn(stringLitExpression.firstToken.text);
+		return null;
+	}
+	
+	@Override
+	public Object visitWaveFileExpression(WaveFileExpression waveFileExpression, Object arg) throws Exception {
+		MethodVisitor mv = (MethodVisitor) arg;
+		mv.visitTypeInsn(NEW, "framework/generators/WaveFile");
+		mv.visitInsn(DUP);
+		waveFileExpression.expression.visit(this, arg);
+		mv.visitMethodInsn(INVOKESPECIAL, "framework/generators/WaveFile", "<init>", "(Ljava/lang/String;)V", false);
+		mv.visitMethodInsn(INVOKEVIRTUAL, "framework/generators/WaveFile", "getMonoSum", "()[F", false);
 		return null;
 	}
 

@@ -3,8 +3,8 @@ package framework.waveforms;
 public class NaiveWhite extends NaiveWaveform {
 
 	@Override
-	public double getSample(double phase, double frequency) {
-		return 2.0 * Math.random() - 1.0;
+	public float getSample(float phase, float frequency) {
+		return 2 * (float) Math.random() - 1;
 	}
 
 }

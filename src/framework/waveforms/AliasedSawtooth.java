@@ -13,12 +13,12 @@ public class AliasedSawtooth extends AliasedWavetable {
 	@Override
 	public void fillTable() {
 		for (int i = 0; i < tableSize; i++) {
-			wavetable[i] = 2 * (1 - (double) i / tableSize) - 1;
+			wavetable[i] = 2 * (1 - (float) i / tableSize) - 1;
 		}
 	}
 
 	@Override
-	public double getSample(double phase, double frequency) {
+	public float getSample(float phase, float frequency) {
 		return wavetable[(int) phase];
 	}
 

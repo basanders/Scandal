@@ -50,6 +50,8 @@ public class Token {
 		KW_WHILE("while"),
 		KW_PRINT("print"),
 		KW_STRING("string"),
+		KW_ARRAY("array"),
+		KW_WAVE("wave"),
 		KW_INFO("info");
 
 		final String text;

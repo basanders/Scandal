@@ -12,7 +12,7 @@ public final class PlotUtility extends JFrame {
 
 	private static final long serialVersionUID = 1L;
 
-	public PlotUtility(String title, double[] array) {
+	public PlotUtility(String title, float[] array) {
 		final XYSeries series = new XYSeries(title);
 		for (int i = 0; i < array.length; i++) {
 			series.add(i, array[i]);

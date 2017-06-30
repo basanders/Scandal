@@ -31,10 +31,10 @@ contexts:
     - match: \b(true|false|info)\b
       scope: constant.language.scandal
 
-    - match: \b(int|float|bool|string)\b
+    - match: \b(int|float|bool|string|array)\b
       scope: storage.type.scandal
 
-    - match: \b(print)\b
+    - match: \b(print|wave)\b
       scope: support.function.scandal
 
     - match: '"'

@@ -17,16 +17,16 @@ public class WavetableWhite extends Wavetable implements WavetableNoise {
 	@Override
 	public void fillTable() {
 		for (int i = 0; i < tableSize; i++) {
-			wavetable[i] = 2.0 * Math.random() - 1.0;
+			wavetable[i] = 2 * (float) Math.random() - 1;
 		}
 	}
 
 	@Override
-	public double getSample(double phase, double frequency) {
+	public float getSample(float phase, float frequency) {
 		return getSample();
 	}
 
-	public double getSample() {
+	public float getSample() {
 		if (runningIndex >= tableSize) runningIndex -= tableSize;
 		return wavetable[runningIndex++];
 	}

@@ -4,15 +4,15 @@ import framework.utilities.Settings;
 
 public class Delay implements EffectsProcessor {
 
-	public double[] process(double[] buffer, double time, double feedback) {
-		return process(buffer, time, feedback, 0.5);
+	public float[] process(float[] buffer, float time, float feedback) {
+		return process(buffer, time, feedback, 0.5f);
 	}
 
-	public double[] process(double[] buffer, double time, double feedback, double mix) {
-		double samples = time * (double) Settings.samplingRate / 1000; // ms to samples
+	public float[] process(float[] buffer, float time, float feedback, float mix) {
+		float samples = time * (float) Settings.samplingRate / 1000; // ms to samples
 		if (samples <= 0 || samples >= buffer.length) return buffer; // sanity check
-		double[] processedBuffer = new double[buffer.length];
-		double[] circularBuffer = new double[buffer.length];
+		float[] processedBuffer = new float[buffer.length];
+		float[] circularBuffer = new float[buffer.length];
 		int readIndex = 0;
 		int writeIndex = (int) samples;
 		for (int i = 0; i < buffer.length; i++) {
@@ -26,15 +26,15 @@ public class Delay implements EffectsProcessor {
 		return processedBuffer;
 	}
 
-	public double[] process(double[] buffer, double time, double[] feedbacks, double mix) {
-		double samples = time * (double) Settings.samplingRate / 1000;
+	public float[] process(float[] buffer, float time, float[] feedbacks, float mix) {
+		float samples = time * (float) Settings.samplingRate / 1000;
 		if (samples <= 0 || samples >= buffer.length) return buffer;
-		double[] processedBuffer = new double[buffer.length];
-		double[] circularBuffer = new double[buffer.length];
+		float[] processedBuffer = new float[buffer.length];
+		float[] circularBuffer = new float[buffer.length];
 		int readIndex = 0;
 		int writeIndex = (int) samples;
-		double feedbackIndex = 0;
-		double feedbackIncrement = (double) feedbacks.length / buffer.length;
+		float feedbackIndex = 0;
+		float feedbackIncrement = (float) feedbacks.length / buffer.length;
 		for (int i = 0; i < buffer.length; i++) {
 			processedBuffer[i] = mix * circularBuffer[readIndex] + (1 - mix) * buffer[i];
 			circularBuffer[writeIndex] = buffer[i] + circularBuffer[readIndex] * feedbacks[(int) feedbackIndex];
@@ -47,15 +47,15 @@ public class Delay implements EffectsProcessor {
 		return processedBuffer;
 	}
 
-	public double[] process(double[] buffer, double time, double feedback, double[] mixes) {
-		double samples = time * (double) Settings.samplingRate / 1000; // ms to samples
+	public float[] process(float[] buffer, float time, float feedback, float[] mixes) {
+		float samples = time * (float) Settings.samplingRate / 1000; // ms to samples
 		if (samples <= 0 || samples >= buffer.length) return buffer; // sanity check
-		double[] processedBuffer = new double[buffer.length];
-		double[] circularBuffer = new double[buffer.length];
+		float[] processedBuffer = new float[buffer.length];
+		float[] circularBuffer = new float[buffer.length];
 		int readIndex = 0;
 		int writeIndex = (int) samples;
-		double mixIndex = 0;
-		double mixIncrement = (double) mixes.length / buffer.length;
+		float mixIndex = 0;
+		float mixIncrement = (float) mixes.length / buffer.length;
 		for (int i = 0; i < buffer.length; i++) {
 			processedBuffer[i] = mixes[(int) mixIndex] * circularBuffer[readIndex] + (1 - mixes[(int) mixIndex]) * buffer[i];
 			circularBuffer[writeIndex] = buffer[i] + circularBuffer[readIndex] * feedback;
@@ -68,17 +68,17 @@ public class Delay implements EffectsProcessor {
 		return processedBuffer;
 	}
 
-	public double[] process(double[] buffer, double time, double[] feedbacks, double[] mixes) {
-		double samples = time * (double) Settings.samplingRate / 1000; // ms to samples
+	public float[] process(float[] buffer, float time, float[] feedbacks, float[] mixes) {
+		float samples = time * (float) Settings.samplingRate / 1000; // ms to samples
 		if (samples <= 0 || samples >= buffer.length) return buffer; // sanity check
-		double[] processedBuffer = new double[buffer.length];
-		double[] circularBuffer = new double[buffer.length];
+		float[] processedBuffer = new float[buffer.length];
+		float[] circularBuffer = new float[buffer.length];
 		int readIndex = 0;
 		int writeIndex = (int) samples;
-		double feedbackIndex = 0;
-		double feedbackIncrement = (double) feedbacks.length / buffer.length;
-		double mixIndex = 0;
-		double mixIncrement = (double) mixes.length / buffer.length;
+		float feedbackIndex = 0;
+		float feedbackIncrement = (float) feedbacks.length / buffer.length;
+		float mixIndex = 0;
+		float mixIncrement = (float) mixes.length / buffer.length;
 		for (int i = 0; i < buffer.length; i++) {
 			processedBuffer[i] = mixes[(int) mixIndex] * circularBuffer[readIndex] + (1 - mixes[(int) mixIndex]) * buffer[i];
 			circularBuffer[writeIndex] = buffer[i] + circularBuffer[readIndex] * feedbacks[(int) feedbackIndex];

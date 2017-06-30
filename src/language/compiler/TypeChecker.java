@@ -1,8 +1,6 @@
 package language.compiler;
 
-import static language.tree.Node.Type.BOOL;
-import static language.tree.Node.Type.FLOAT;
-import static language.tree.Node.Type.INT;
+import static language.tree.Node.Type.*;
 
 import language.tree.AssignmentDeclaration;
 import language.tree.AssignmentStatement;
@@ -23,6 +21,7 @@ import language.tree.Program;
 import language.tree.Statement;
 import language.tree.StringLitExpression;
 import language.tree.UnassignedDeclaration;
+import language.tree.WaveFileExpression;
 import language.tree.WhileStatement;
 
 public class TypeChecker implements NodeVisitor {
@@ -94,6 +93,7 @@ public class TypeChecker implements NodeVisitor {
 	@Override
 	public Object visitPrintStatement(PrintStatement printStatement, Object argument) throws Exception {
 		printStatement.expression.visit(this, null);
+		if (printStatement.expression.type == ARRAY) throw new Exception("Invalid PrintStatement");
 		return null;
 	}
 
@@ -129,6 +129,13 @@ public class TypeChecker implements NodeVisitor {
 	@Override
 	public Object visitStringLitExpression(StringLitExpression stringLitExpression, Object argument) throws Exception {
 		return stringLitExpression.type;
+	}
+	
+	@Override
+	public Object visitWaveFileExpression(WaveFileExpression waveFileExpression, Object argument) throws Exception {
+		waveFileExpression.expression.visit(this, null);
+		if (waveFileExpression.expression.type != STRING) throw new Exception("Invalid WaveFileExpression");
+		return waveFileExpression.type;
 	}
 
 	@Override

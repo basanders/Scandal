@@ -8,12 +8,12 @@ import framework.waveforms.WavetableWhite;
 public class KarplusStrong extends PolyphonicSynthesizer {
 
 	private final RingModulator tremolo = new RingModulator(new WavetableCosine());
-	public double tremoloSpeed;
+	public float tremoloSpeed;
 
 	public KarplusStrong(int controller) throws Exception {
 		super(controller, new WavetableWhite());
 		attackSamples = decaySamples = releaseSamples = 44;
-		sustainLevel = 1.0;
+		sustainLevel = 1.0f;
 	}
 
 	@Override
@@ -25,9 +25,9 @@ public class KarplusStrong extends PolyphonicSynthesizer {
 
 		int index = 0;
 		int nextIndex;
-		final double delaySamples = Math.ceil((double) Settings.samplingRate / frequency);
-		final double[] circularBuffer = new double[(int) delaySamples];
-		double feedback = 0.99;
+		final float delaySamples = (float) Math.ceil(Settings.samplingRate / frequency);
+		final float[] circularBuffer = new float[(int) delaySamples];
+		float feedback = 0.99f;
 
 		KarplusStrongNote(int midiNoteNumber) {
 			super(midiNoteNumber);
@@ -41,7 +41,7 @@ public class KarplusStrong extends PolyphonicSynthesizer {
 		}
 
 		@Override
-		double[] get() {
+		float[] get() {
 			for (int i = 0; i < vector.length; i++) {
 				vector[i] = circularBuffer[index] * envelopeLevel * amplitude;
 				nextIndex = (index + 1) % circularBuffer.length;
@@ -58,12 +58,12 @@ public class KarplusStrong extends PolyphonicSynthesizer {
 
 	@Override
 	public void processMasterEffects() {
-		mixVector = tremolo.processVector(mixVector, 0.99, tremoloSpeed);
+		mixVector = tremolo.processVector(mixVector, 0.99f, tremoloSpeed);
 	}
 
 	@Override
 	public void handleModulationWheelChange(int value, int channel) {
-		tremoloSpeed = 0.05 * value;
+		tremoloSpeed = 0.05f * value;
 	}
 	
 	@Override

@@ -12,8 +12,8 @@ public class AdditiveSawtooth extends AdditiveWavetable {
 
 	@Override
 	public void fillTable() {
-		double radians = 0;
-		double maximum = 0;
+		float radians = 0;
+		float maximum = 0;
 		for (int i = 0; i < tableSize; i++) {
 			radians = i * twoPi / tableSize;
 			for (int j = 1; j <= harmonicCount; j++) {
@@ -21,12 +21,12 @@ public class AdditiveSawtooth extends AdditiveWavetable {
 			}
 			if (wavetable[i] >= maximum) maximum = wavetable[i];
 		}
-		double inverseMaximum = 1 / maximum;
+		float inverseMaximum = 1 / maximum;
 		for (int k = 0; k < tableSize; k++) wavetable[k] *= inverseMaximum; // normalize
 	}
 
 	@Override
-	public double getSample(double phase, double frequency) {
+	public float getSample(float phase, float frequency) {
 		return wavetable[(int) phase];
 	}
 

@@ -15,7 +15,7 @@ public class WaveFile {
 	public final int bitDepth;
 	private final int dataStartIndex;
 	private final int dataLength;
-	private final double[] interleavedBuffer;
+	private final float[] interleavedBuffer;
 	
 	public WaveFile(String name) throws Exception {
 		this.path = FileSystems.getDefault().getPath(name);
@@ -41,7 +41,7 @@ public class WaveFile {
 				(byteArray[dataStartIndex - 2] & 0xff) << 16 |
 				byteArray[dataStartIndex - 1] << 24;
 		// fill interleaved buffer
-		interleavedBuffer = new double[dataLength / 2];
+		interleavedBuffer = new float[dataLength / 2];
 		for (int i = 0, j = dataStartIndex; j < dataStartIndex + dataLength; i++, j += 2) {
 			// This is little endian.
 			interleavedBuffer[i] = (byteArray[j] & 0xff) | byteArray[j + 1] << 8;
@@ -49,36 +49,36 @@ public class WaveFile {
 		}
 	}
 	
-	public double[] getLeftChannel() {
+	public float[] getLeftChannel() {
 		if (numberOfChannels == 1) return interleavedBuffer;
-		double[] left = new double[interleavedBuffer.length / 2];
+		float[] left = new float[interleavedBuffer.length / 2];
 		for (int i = 0, j = 0; i < interleavedBuffer.length; i += 2, j++) {
 			left[j] = interleavedBuffer[i];
 		}
 		return left;
 	}
 	
-	public double[] getRightChannel() {
+	public float[] getRightChannel() {
 		if (numberOfChannels == 1) return interleavedBuffer;
-		double[] right = new double[interleavedBuffer.length / 2];
+		float[] right = new float[interleavedBuffer.length / 2];
 		for (int i = 1, j = 0; i < interleavedBuffer.length - 1; i += 2, j++) {
 			right[j] = interleavedBuffer[i];
 		}
 		return right;
 	}
 	
-	public double[] getMonoSum() {
+	public float[] getMonoSum() {
 		if (numberOfChannels == 1) return interleavedBuffer;
-		double[] sum = new double[interleavedBuffer.length / 2];
+		float[] sum = new float[interleavedBuffer.length / 2];
 		for (int i = 1, j = 0; i < interleavedBuffer.length - 1; i += 2, j++) {
-			sum[j] = (interleavedBuffer[i] + interleavedBuffer[i - 1]) * 0.5;
+			sum[j] = (interleavedBuffer[i] + interleavedBuffer[i - 1]) * 0.5f;
 		}
 		return sum;
 	}
 	
 	public void plot(int size) {
-		double[] data = new double[size];
-		double[] sum = getMonoSum();
+		float[] data = new float[size];
+		float[] sum = getMonoSum();
 		float increment = (float) sum.length / size;
 		for (int i = 0; i < size; i++) data[i] = sum[(int) (i * increment)];
 		new PlotUtility(path.getFileName().toString(), data);

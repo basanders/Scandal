@@ -7,49 +7,49 @@ public class AudioTrack {
 
 	public int start;
 	public int end;
-	private double[] vector;
+	private float[] vector;
 
-	public AudioTrack(double[] buffer, int start, double gain, double pan) {
+	public AudioTrack(float[] buffer, int start, float gain, float pan) {
 		this.start = start * (Settings.samplingRate / 500);
 		this.end = 2 * buffer.length + this.start;
 		fillVector(buffer, gain, pan);
 	}
 
-	public AudioTrack(double[] buffer, int start, double[] gains, double pan) {
+	public AudioTrack(float[] buffer, int start, float[] gains, float pan) {
 		this.start = start * Settings.samplingRate / 500;
 		this.end = 2 * buffer.length + this.start;
 		fillVector(buffer, gains, pan);
 	}
 
-	public AudioTrack(double[] buffer, int start, double gain, double[] pans) {
+	public AudioTrack(float[] buffer, int start, float gain, float[] pans) {
 		this.start = start * Settings.samplingRate / 500;
 		this.end = 2 * buffer.length + this.start;
 		fillVector(buffer, gain, pans);
 	}
 
-	public AudioTrack(double[] buffer, int start, double[] gains, double[] pans) {
+	public AudioTrack(float[] buffer, int start, float[] gains, float[] pans) {
 		this.start = start * Settings.samplingRate / 500;
 		this.end = 2 * buffer.length + this.start;
 		fillVector(buffer, gains, pans);
 	}
 
-	public double[] getVector() {
+	public float[] getVector() {
 		return vector;
 	}
 
-	private void fillVector(double[] buffer, double gain, double pan) {
+	private void fillVector(float[] buffer, float gain, float pan) {
 		vector = new StereoPanner().process(new Gain().process(buffer, gain), pan);
 	}
 
-	private void fillVector(double[] buffer, double[] gains, double pan) {
+	private void fillVector(float[] buffer, float[] gains, float pan) {
 		vector = new StereoPanner().process(new Gain().process(buffer, gains), pan);
 	}
 
-	private void fillVector(double[] buffer, double gain, double[] pans) {
+	private void fillVector(float[] buffer, float gain, float[] pans) {
 		vector = new StereoPanner().process(new Gain().process(buffer, gain), pans);
 	}
 
-	private void fillVector(double[] buffer, double[] gains, double[] pans) {
+	private void fillVector(float[] buffer, float[] gains, float[] pans) {
 		vector = new StereoPanner().process(new Gain().process(buffer, gains), pans);
 	}
 

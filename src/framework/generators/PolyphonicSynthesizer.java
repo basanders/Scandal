@@ -11,15 +11,15 @@ public class PolyphonicSynthesizer extends MidiKeyboardController implements Rea
 
 	public final Wavetable baseWavetable;
 	public final ArrayList<MidiNote> midiNotes = new ArrayList<MidiNote>();
-	public double masterVolume = 0.5;
-	public double masterLeft = Math.sqrt(2) / 2;
-	public double masterRight = Math.sqrt(2) / 2;
+	public float masterVolume = 0.5f;
+	public float masterLeft = (float) Math.sqrt(2) / 2;
+	public float masterRight = (float) Math.sqrt(2) / 2;
 	public int attackSamples = 44;
 	public int decaySamples = 2205;
-	public double sustainLevel = 0.5;
+	public float sustainLevel = 0.5f;
 	public int releaseSamples = 22050;
-	private double[] noteVector;
-	public double[] mixVector = new double[2 * Settings.vectorSize];
+	private float[] noteVector;
+	public float[] mixVector = new float[2 * Settings.vectorSize];
 	private final ByteBuffer buffer = ByteBuffer.allocate(2 * Settings.vectorSize * Settings.bitDepth / 8);
 
 	public static enum ADSR { ATTACK, DECAY, SUSTAIN, RELEASE, OFF }
@@ -36,27 +36,27 @@ public class PolyphonicSynthesizer extends MidiKeyboardController implements Rea
 
 	public class MidiNote {
 
-		double amplitude;
-		final double frequency;
-		double phase = 0;
-		double phaseIncrement;
+		float amplitude;
+		final float frequency;
+		float phase = 0;
+		float phaseIncrement;
 		ADSR envelopeStage = ADSR.OFF;
 		int envelopeSamples;
-		double envelopeSlope;
-		double envelopeLevel;
-		final double[] vector = new double[Settings.vectorSize];
+		float envelopeSlope;
+		float envelopeLevel;
+		final float[] vector = new float[Settings.vectorSize];
 
 		MidiNote(int midiNoteNumber) {
 			frequency = midiToFrequency(midiNoteNumber);
-			phaseIncrement = frequency * (double) baseWavetable.tableSize / Settings.samplingRate;
+			phaseIncrement = frequency * (float) baseWavetable.tableSize / Settings.samplingRate;
 		}
 
 		void updateVelocity(int velocity) {
 			if (velocity != 0) {
-				amplitude = (double) velocity / 127;
+				amplitude = (float) velocity / 127;
 				envelopeStage = ADSR.ATTACK;
 				envelopeSamples = attackSamples;
-				envelopeSlope = (1.0 - envelopeLevel) / attackSamples;
+				envelopeSlope = (1.0f - envelopeLevel) / attackSamples;
 			} else {
 				envelopeStage = ADSR.RELEASE;
 				envelopeSamples = releaseSamples;
@@ -92,7 +92,7 @@ public class PolyphonicSynthesizer extends MidiKeyboardController implements Rea
 			}
 		}
 
-		double[] get() {
+		float[] get() {
 			for (int i = 0; i < vector.length; i++) {
 				vector[i] = baseWavetable.getSample(phase, phaseIncrement);
 				vector[i] *= envelopeLevel * amplitude;
@@ -146,14 +146,14 @@ public class PolyphonicSynthesizer extends MidiKeyboardController implements Rea
 
 	@Override
 	public void handleVolumeChange(int value, int channel) {
-		this.masterVolume = (double) value / 127;
+		this.masterVolume = (float) value / 127;
 	}
 
 	@Override
 	public void handlePanoramaChange(int value, int channel) {
-		double scaledValue = (2.0 * value / 127) - 1;
-		masterLeft = Math.cos(Math.PI * (scaledValue + 1) / 4);
-		masterRight = Math.sin(Math.PI * (scaledValue + 1) / 4);
+		float scaledValue = (2.0f * value / 127) - 1;
+		masterLeft = (float) Math.cos(Math.PI * (scaledValue + 1) / 4);
+		masterRight = (float) Math.sin(Math.PI * (scaledValue + 1) / 4);
 	}
 
 	@Override

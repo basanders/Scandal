@@ -78,7 +78,12 @@ public class Parser {
 
 	public Declaration declaration() throws Exception {
 		Token firstToken = token;
-		if (token.kind == KW_INT || token.kind == KW_FLOAT || token.kind == KW_BOOL || token.kind == KW_STRING) {			
+		if (
+				token.kind == KW_INT |
+				token.kind == KW_FLOAT |
+				token.kind == KW_BOOL |
+				token.kind == KW_STRING |
+				token.kind == KW_ARRAY) {			
 			consume();
 			Token identToken = token;
 			match(IDENT);
@@ -224,6 +229,13 @@ public class Parser {
 		case STRING_LIT: {
 			expression = new StringLitExpression(token);
 			consume();
+		} break;
+		case KW_WAVE: {
+			consume();
+			match(LPAREN);
+			Expression fileName = expression();
+			expression = new WaveFileExpression(token, fileName);
+			match(RPAREN);
 		} break;
 		case KW_FALSE:
 		case KW_TRUE: {

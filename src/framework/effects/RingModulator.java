@@ -6,19 +6,19 @@ import framework.waveforms.Wavetable;
 public class RingModulator implements EffectsProcessor {
 	
 	private Wavetable table;
-	public double runningPhase = 0;
+	public float runningPhase = 0;
 	
 	public RingModulator(Wavetable table) {
 		this.table = table;
 	}
 	
-	public double[] processVector(double[] buffer, double depth, double speed) {
+	public float[] processVector(float[] buffer, float depth, float speed) {
 		int samples = buffer.length;
-		double freq = speed * table.tableSize / Settings.samplingRate;
-		double[] processedBuffer = new double[buffer.length];
-		double tableSample = 0;
+		float freq = speed * table.tableSize / Settings.samplingRate;
+		float[] processedBuffer = new float[buffer.length];
+		float tableSample = 0;
 		for (int i = 0; i < samples; i++) {
-			tableSample = (table.getSample(runningPhase, freq) + 1) * 0.5;
+			tableSample = (table.getSample(runningPhase, freq) + 1) * 0.5f;
 			processedBuffer[i] = buffer[i] * (tableSample * depth - depth + 1); 
 			runningPhase += freq;
 			if (runningPhase >= table.tableSize) runningPhase -= table.tableSize;
@@ -26,14 +26,14 @@ public class RingModulator implements EffectsProcessor {
 		return processedBuffer;
 	}
 
-	public double[] process(double[] buffer, double depth, double speed) {
+	public float[] process(float[] buffer, float depth, float speed) {
 		int samples = buffer.length;
-		double freq = speed * table.tableSize / Settings.samplingRate;
-		double[] processedBuffer = new double[buffer.length];
-		double phase = 0;
-		double tableSample = 0;
+		float freq = speed * table.tableSize / Settings.samplingRate;
+		float[] processedBuffer = new float[buffer.length];
+		float phase = 0;
+		float tableSample = 0;
 		for (int i = 0; i < samples; i++) {
-			tableSample = (table.getSample(phase, freq) + 1) * 0.5;
+			tableSample = (table.getSample(phase, freq) + 1) * 0.5f;
 			processedBuffer[i] = buffer[i] * (tableSample * depth - depth + 1); 
 			phase += freq;
 			if (phase >= table.tableSize) phase -= table.tableSize;
@@ -41,18 +41,18 @@ public class RingModulator implements EffectsProcessor {
 		return processedBuffer;
 	}
 	
-	public double[] process(double[] buffer, double[] depths, double speed) {
+	public float[] process(float[] buffer, float[] depths, float speed) {
 		int samples = buffer.length;
-		double freq = speed * table.tableSize / Settings.samplingRate;
-		double[] processedBuffer = new double[buffer.length];
-		double phase = 0;
-		double tableSample = 0;
-		double depthIndex = 0;
-		double depthIncrement = (double) depths.length / samples;
-		double depth = 0;
+		float freq = speed * table.tableSize / Settings.samplingRate;
+		float[] processedBuffer = new float[buffer.length];
+		float phase = 0;
+		float tableSample = 0;
+		float depthIndex = 0;
+		float depthIncrement = (float) depths.length / samples;
+		float depth = 0;
 		for (int i = 0; i < samples; i++) {
 			depth = depths[(int) depthIndex];
-			tableSample = (table.getSample(phase, freq) + 1) * 0.5;
+			tableSample = (table.getSample(phase, freq) + 1) * 0.5f;
 			processedBuffer[i] = buffer[i] * (tableSample * depth - depth + 1);
 			depthIndex += depthIncrement;
 			phase += freq;
@@ -61,18 +61,18 @@ public class RingModulator implements EffectsProcessor {
 		return processedBuffer;
 	}
 	
-	public double[] process(double[] buffer, double depth, double[] speeds) {
+	public float[] process(float[] buffer, float depth, float[] speeds) {
 		int samples = buffer.length;
-		double[] processedBuffer = new double[buffer.length];
-		double phase = 0;
-		double freq = 0;
-		double freqIndex = 0;
-		double freqIncrement = (double) speeds.length / samples;
-		double freqScale = (double) table.tableSize / Settings.samplingRate;
-		double tableSample = 0;
+		float[] processedBuffer = new float[buffer.length];
+		float phase = 0;
+		float freq = 0;
+		float freqIndex = 0;
+		float freqIncrement = (float) speeds.length / samples;
+		float freqScale = (float) table.tableSize / Settings.samplingRate;
+		float tableSample = 0;
 		for (int i = 0; i < samples; i++) {
 			freq = speeds[(int) freqIndex] * freqScale;
-			tableSample = (table.getSample(phase, freq) + 1) * 0.5;
+			tableSample = (table.getSample(phase, freq) + 1) * 0.5f;
 			processedBuffer[i] = buffer[i] * (tableSample * depth - depth + 1);
 			freqIndex += freqIncrement;
 			phase += freq;
@@ -81,21 +81,21 @@ public class RingModulator implements EffectsProcessor {
 		return processedBuffer;
 	}
 	
-	public double[] process(double[] buffer, double[] depths, double[] speeds) {
+	public float[] process(float[] buffer, float[] depths, float[] speeds) {
 		int samples = buffer.length;
-		double depth = 0;
-		double depthIndex = 0;
-		double depthIncrement = (double) depths.length / samples;
-		double freq = 0;
-		double freqIndex = 0;
-		double freqIncrement = (double) speeds.length / samples;
-		double freqScale = (double) table.tableSize / Settings.samplingRate;
-		double phase = 0;
-		double[] processedBuffer = new double[buffer.length];
-		double tableSample = 0;
+		float depth = 0;
+		float depthIndex = 0;
+		float depthIncrement = (float) depths.length / samples;
+		float freq = 0;
+		float freqIndex = 0;
+		float freqIncrement = (float) speeds.length / samples;
+		float freqScale = (float) table.tableSize / Settings.samplingRate;
+		float phase = 0;
+		float[] processedBuffer = new float[buffer.length];
+		float tableSample = 0;
 		for (int i = 0; i < samples; i++) {
 			depth = depths[(int) depthIndex];
-			tableSample = (table.getSample(phase, freq) + 1) * 0.5;
+			tableSample = (table.getSample(phase, freq) + 1) * 0.5f;
 			freq = speeds[(int) freqIndex] * freqScale;
 			processedBuffer[i] = buffer[i] * (tableSample * depth - depth + 1); 
 			depthIndex += depthIncrement;

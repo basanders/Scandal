@@ -33,26 +33,26 @@ public class AudioTask {
 		scheduler.schedule(() -> null, 0, MILLISECONDS);
 	}
 
-	public void playMono(double[] doubles) {
-		playInterleaved(0, doubles, Settings.mono);
+	public void playMono(float[] floats) {
+		playInterleaved(0, floats, Settings.mono);
 	}
 
-	public void playMono(int delay, double[] doubles) {
-		playInterleaved(delay, doubles, Settings.mono);
+	public void playMono(int delay, float[] floats) {
+		playInterleaved(delay, floats, Settings.mono);
 	}
 
-	public void playStereo(double[] doubles) {
-		playInterleaved(0, doubles, Settings.stereo);
+	public void playStereo(float[] floats) {
+		playInterleaved(0, floats, Settings.stereo);
 	}
 
-	public void playStereo(int delay, double[] doubles) {
-		playInterleaved(delay, doubles, Settings.stereo);
+	public void playStereo(int delay, float[] floats) {
+		playInterleaved(delay, floats, Settings.stereo);
 	}
 
-	private void playInterleaved(int delay, double[] doubles, AudioFormat format) {
-		ByteBuffer buffer = ByteBuffer.allocate(doubles.length * Settings.bitDepth / 8);
-		for (int i = 0; i < doubles.length; i++) {
-			buffer.putShort((short) (doubles[i] * Short.MAX_VALUE));
+	private void playInterleaved(int delay, float[] floats, AudioFormat format) {
+		ByteBuffer buffer = ByteBuffer.allocate(floats.length * Settings.bitDepth / 8);
+		for (int i = 0; i < floats.length; i++) {
+			buffer.putShort((short) (floats[i] * Short.MAX_VALUE));
 		}
 		scheduler.schedule(() -> {
 			try {
@@ -78,16 +78,16 @@ public class AudioTask {
 		scheduler.shutdown();
 	}
 
-	public double[] record(int duration) throws Exception {
+	public float[] record(int duration) throws Exception {
 		return scheduler.submit(() -> this.recordTask(duration)).get();
 	}
 
-	private double[] recordTask(int duration) throws Exception {
+	private float[] recordTask(int duration) throws Exception {
 		TargetDataLine targetDataLine = AudioSystem.getTargetDataLine(Settings.mono);
 		targetDataLine.open();
 		targetDataLine.start();
 		int samples = duration * Settings.samplingRate / 1000;
-		double[] buffer = new double[samples];
+		float[] buffer = new float[samples];
 		int vectorBytes = Settings.vectorSize * Settings.bitDepth / 8;
 		byte[] data = new byte[vectorBytes];
 		int offset = 0;
@@ -106,14 +106,14 @@ public class AudioTask {
 		return buffer;
 	}
 
-	public void exportStereo(String name, double[] doubles) throws Exception {
+	public void exportStereo(String name, float[] floats) throws Exception {
 		File file = new File("wav", name);
-		ByteBuffer buffer = ByteBuffer.allocate(doubles.length * Settings.bitDepth / 8);
-		for (int i = 0; i < doubles.length; i++) {
-			buffer.putShort((short) (doubles[i] * Short.MAX_VALUE));
+		ByteBuffer buffer = ByteBuffer.allocate(floats.length * Settings.bitDepth / 8);
+		for (int i = 0; i < floats.length; i++) {
+			buffer.putShort((short) (floats[i] * Short.MAX_VALUE));
 		}
 		InputStream is = new ByteArrayInputStream(buffer.array());
-		AudioInputStream ais = new AudioInputStream(is, Settings.stereo, doubles.length / 2);
+		AudioInputStream ais = new AudioInputStream(is, Settings.stereo, floats.length / 2);
 		int result = AudioSystem.write(ais, AudioFileFormat.Type.WAVE, file);
 		System.out.println(result + " bytes written to " + file.getName());
 	}

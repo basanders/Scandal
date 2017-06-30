@@ -2,15 +2,15 @@ package framework.waveforms;
 
 public class ClassicSquare extends AliasedSquare {
 	
-	static final double[] residuals = WavetableResidual.getSharedInstance().wavetable;
+	static final float[] residuals = WavetableResidual.getSharedInstance().wavetable;
 	static final int tableCenter = residuals.length / 2 - 1;
 
 	@Override
-	public double getSample(double phase, double frequency) {
-		double distance = 0;
-		double index = 0;
-		double residual = 0;
-		double halfSize = 0.5 * tableSize;
+	public float getSample(float phase, float frequency) {
+		float distance = 0;
+		float index = 0;
+		float residual = 0;
+		float halfSize = 0.5f * tableSize;
 		// Handle the discontinuity between center = length / 2 - 1 and center + 1.
 		if (phase > halfSize - frequency && phase < halfSize + frequency) {
 			distance = (phase - halfSize) / frequency;

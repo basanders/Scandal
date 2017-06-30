@@ -4,7 +4,7 @@ import language.compiler.Token;
 
 public abstract class Node {
 	
-	public static enum Type { INT, FLOAT, BOOL, STRING }
+	public static enum Type { INT, FLOAT, BOOL, STRING, ARRAY }
 
 	public final Token firstToken;
 	public Type type;
@@ -20,6 +20,7 @@ public abstract class Node {
 		case KW_FLOAT: return Type.FLOAT;
 		case KW_BOOL: return Type.BOOL;
 		case KW_STRING: return Type.STRING;
+		case KW_ARRAY: return Type.ARRAY;
 		default: return null;
 		}
 	}
@@ -30,6 +31,7 @@ public abstract class Node {
 		case KW_FLOAT: return "F";
 		case KW_BOOL: return "Z";
 		case KW_STRING: return "Ljava/lang/String;";
+		case KW_ARRAY: return "[F";
 		default: return null;
 		}
 	}

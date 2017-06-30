@@ -2,14 +2,14 @@ package framework.waveforms;
 
 public class ClassicSawtooth extends AliasedSawtooth {
 	
-	static final double[] residuals = WavetableResidual.getSharedInstance().wavetable;
+	static final float[] residuals = WavetableResidual.getSharedInstance().wavetable;
 	static final int tableCenter = residuals.length / 2 - 1;
 	
 	@Override
-	public double getSample(double phase, double frequency) {
-		double distance = 0;
-		double index = 0;
-		double residual = 0;
+	public float getSample(float phase, float frequency) {
+		float distance = 0;
+		float index = 0;
+		float residual = 0;
 		if (phase > tableSize - frequency) { // Handle left side of the discontinuity.
 			distance = (phase - tableSize) / frequency;
 			index = tableCenter * (distance + 1);

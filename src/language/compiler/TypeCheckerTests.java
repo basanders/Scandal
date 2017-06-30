@@ -1,8 +1,6 @@
 package language.compiler;
 
-import static language.tree.Node.Type.INT;
-import static language.tree.Node.Type.FLOAT;
-import static language.tree.Node.Type.BOOL;
+import static language.tree.Node.Type.*;
 import static org.junit.Assert.assertEquals;
 
 import org.junit.Test;
@@ -70,6 +68,17 @@ public class TypeCheckerTests {
 		TypeChecker checker = new TypeChecker();
 		expression.visit(checker, null);
 		assertEquals(BOOL, expression.type);
+	}
+	
+	@Test
+	public void testWaveFileExpression() throws Exception {
+		String input = "array name = wave(\"name.wav\")";
+		Scanner scanner = new Scanner(input);
+		scanner.scan();
+		Parser parser = new Parser(scanner);
+		Program program = parser.parse();
+		TypeChecker checker = new TypeChecker();
+		program.visit(checker, null);
 	}
 	
 	@Test

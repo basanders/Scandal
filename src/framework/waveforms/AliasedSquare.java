@@ -18,7 +18,7 @@ public class AliasedSquare extends AliasedWavetable {
 	}
 
 	@Override
-	public double getSample(double phase, double frequency) {
+	public float getSample(float phase, float frequency) {
 		return wavetable[(int) phase];
 	}
 

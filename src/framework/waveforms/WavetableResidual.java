@@ -18,14 +18,14 @@ public final class WavetableResidual extends Wavetable {
 	@Override
 	public void fillTable() {
 		int center = tableSize / 2 - 1;
-		double maximum = 0;
-		double minimum = 0;
-		double[] step = new double[tableSize];
-		double[] array = new double[tableSize];
+		float maximum = 0;
+		float minimum = 0;
+		float[] step = new float[tableSize];
+		float[] array = new float[tableSize];
 		for (int i = 0; i < array.length; i++) {
-			double index = i - center; // center on table
+			float index = i - center; // center on table
 			index *= ripples * Math.PI / array.length;
-			array[i] = Math.sin(index) / index; // compute sinc
+			array[i] = (float) Math.sin(index) / index; // compute sinc
 			if (i == center) array[i] = 1; // resolve discontinuity
 			if (i > 0) array[i] += array[i - 1]; // integrate
 			if (array[i] >= maximum) maximum = array[i];
@@ -41,7 +41,7 @@ public final class WavetableResidual extends Wavetable {
 	}
 
 	@Override
-	public double getSample(double index, double frequency) {
+	public float getSample(float index, float frequency) {
 		return wavetable[(int) index];
 	}
 

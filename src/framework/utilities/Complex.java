@@ -2,24 +2,24 @@ package framework.utilities;
 
 public class Complex {
 
-	private double x;
-	private double y;
+	private float x;
+	private float y;
 
-	public Complex(double x, double y) {
+	public Complex(float x, float y) {
 		this.x = x;
 		this.y = y;
 	}
 
-	public double getRealPart() {
+	public float getRealPart() {
 		return x;
 	}
 
-	public double getImaginaryPart() {
+	public float getImaginaryPart() {
 		return y;
 	}
 
-	public double getMagnitude() {
-		return Math.sqrt(x * x + y * y);
+	public float getMagnitude() {
+		return (float) Math.sqrt(x * x + y * y);
 	}
 
 	public Complex add(Complex summand) {
@@ -35,9 +35,9 @@ public class Complex {
 	}
 
 	public Complex divideBy(Complex factor) {
-		double denominator = factor.getMagnitude();
-		double realPart = (x * factor.x + y * factor.y) / denominator;
-		double imaginaryPart = (y * factor.x + x * factor.y) / denominator;
+		float denominator = factor.getMagnitude();
+		float realPart = (x * factor.x + y * factor.y) / denominator;
+		float imaginaryPart = (y * factor.x + x * factor.y) / denominator;
 		return new Complex(realPart, imaginaryPart);
 	}
 

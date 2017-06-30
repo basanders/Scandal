@@ -15,12 +15,12 @@ public class WavetableCosine extends Wavetable {
 	@Override
 	public void fillTable() {
 		for (int i = 0; i < tableSize; i++) {
-			wavetable[i] = Math.cos(i * twoPi / tableSize);
+			wavetable[i] = (float) Math.cos(i * twoPi / tableSize);
 		}
 	}
 
 	@Override
-	public double getSample(double phase, double frequency) {
+	public float getSample(float phase, float frequency) {
 		return wavetable[(int) phase];
 	}
 	

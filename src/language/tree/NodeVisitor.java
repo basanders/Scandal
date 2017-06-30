@@ -29,6 +29,8 @@ public interface NodeVisitor {
 	Object visitBoolLitExpression(BoolLitExpression boolLitExpression, Object argument) throws Exception;
 	
 	Object visitStringLitExpression(StringLitExpression stringLitExpression, Object argument) throws Exception;
+	
+	Object visitWaveFileExpression(WaveFileExpression waveFileExpression, Object argument) throws Exception;
 
 	Object visitBinaryExpression(BinaryExpression binaryExpression, Object argument) throws Exception;
 

@@ -1,11 +1,27 @@
 package language.compiler;
 
-import static language.compiler.Token.Kind.*;
-import static org.junit.Assert.*;
+import static language.compiler.Token.Kind.IDENT;
+import static language.compiler.Token.Kind.KW_FLOAT;
+import static language.compiler.Token.Kind.KW_IF;
+import static language.compiler.Token.Kind.KW_INT;
+import static language.compiler.Token.Kind.KW_WHILE;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 
 import org.junit.Test;
 
-import language.tree.*;
+import language.tree.AssignmentDeclaration;
+import language.tree.AssignmentStatement;
+import language.tree.BinaryExpression;
+import language.tree.BoolLitExpression;
+import language.tree.Declaration;
+import language.tree.Expression;
+import language.tree.FloatLitExpression;
+import language.tree.IfStatement;
+import language.tree.IntLitExpression;
+import language.tree.Program;
+import language.tree.WaveFileExpression;
+import language.tree.WhileStatement;
 
 public class ParserTests {
 	
@@ -92,7 +108,16 @@ public class ParserTests {
 		scanner.scan();
 		new Parser(scanner).parse();
 	}
-	
-	
+
+	@Test
+	public void testWaveFileExpression() throws Exception {
+		String input = " array sound = wave(\"fileName.wav\")";
+		Scanner scanner = new Scanner(input);
+		scanner.scan();
+		Declaration declaration = new Parser(scanner).declaration();
+		AssignmentDeclaration ad = (AssignmentDeclaration) declaration;
+		Expression e = ad.expression;
+		assertEquals(WaveFileExpression.class, e.getClass());
+	}
 
 }

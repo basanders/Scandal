@@ -7,22 +7,22 @@ import framework.waveforms.Wavetable;
 
 public class WavetableOscillator implements RealTimePerformer {
 
-	private double amplitude;
-	private double frequency;
-	private double runningPhase = 0;
-	public final double frequencyScale;
+	private float amplitude;
+	private float frequency;
+	private float runningPhase = 0;
+	public final float frequencyScale;
 	public final Wavetable wavetable;
 
 	public WavetableOscillator(Wavetable wavetable) {
 		this.wavetable = wavetable;
-		frequencyScale = (double) wavetable.tableSize / Settings.samplingRate;
+		frequencyScale = (float) wavetable.tableSize / Settings.samplingRate;
 	}
 
-	public void setAmplitude(double amplitude) {
+	public void setAmplitude(float amplitude) {
 		this.amplitude = amplitude;
 	}
 
-	public void setFrequency(double frequency) {
+	public void setFrequency(float frequency) {
 		this.frequency = frequency;
 	}
 
@@ -36,8 +36,8 @@ public class WavetableOscillator implements RealTimePerformer {
 	@Override
 	public ByteBuffer getVector() {
 		int samples = Settings.vectorSize;
-		double oscAmp = amplitude * Short.MAX_VALUE;
-		double oscFreq = frequency * frequencyScale;
+		float oscAmp = amplitude * Short.MAX_VALUE;
+		float oscFreq = frequency * frequencyScale;
 		ByteBuffer buffer = ByteBuffer.allocate(samples * Settings.bitDepth / 8); // 16-bit mono
 		for (int i = 0; i < samples; i++) {
 			buffer.putShort((short) (oscAmp * wavetable.getSample(runningPhase, oscFreq)));
@@ -47,11 +47,11 @@ public class WavetableOscillator implements RealTimePerformer {
 		return buffer;
 	}
 
-	public double[] get(int duration, double amplitude, double frequency) {
+	public float[] get(int duration, float amplitude, float frequency) {
 		int samples = duration * Settings.samplingRate / 1000;
-		double oscFreq = frequency * frequencyScale;
-		double oscPhase = 0;
-		double[] buffer = new double[samples];
+		float oscFreq = frequency * frequencyScale;
+		float oscPhase = 0;
+		float[] buffer = new float[samples];
 		for (int i = 0; i < samples; i++) {
 			buffer[i] = amplitude * wavetable.getSample(oscPhase, oscFreq);
 			oscPhase += oscFreq;
@@ -60,14 +60,14 @@ public class WavetableOscillator implements RealTimePerformer {
 		return buffer;
 	}
 
-	public double[] get(int duration, double[] envelope, double frequency) {
+	public float[] get(int duration, float[] envelope, float frequency) {
 		int samples = duration * Settings.samplingRate / 1000;
-		double oscAmp = 0;
-		double oscFreq = frequency * frequencyScale;
-		double oscPhase = 0;
-		double envelopeIndex = 0;
-		double envelopeIncrement = (double) envelope.length / samples;
-		double[] buffer = new double[samples];
+		float oscAmp = 0;
+		float oscFreq = frequency * frequencyScale;
+		float oscPhase = 0;
+		float envelopeIndex = 0;
+		float envelopeIncrement = (float) envelope.length / samples;
+		float[] buffer = new float[samples];
 		for (int i = 0; i < samples; i++) {
 			oscAmp = envelope[(int) envelopeIndex];
 			buffer[i] = oscAmp * wavetable.getSample(oscPhase, oscFreq);
@@ -78,13 +78,13 @@ public class WavetableOscillator implements RealTimePerformer {
 		return buffer;
 	}
 
-	public double[] get(int duration, double amplitude, double[] glide) {
+	public float[] get(int duration, float amplitude, float[] glide) {
 		int samples = duration * Settings.samplingRate / 1000;
-		double oscFreq = 0;
-		double oscPhase = 0;
-		double glideIndex = 0;
-		double glideIncrement = (double) glide.length / samples;
-		double[] buffer = new double[samples];
+		float oscFreq = 0;
+		float oscPhase = 0;
+		float glideIndex = 0;
+		float glideIncrement = (float) glide.length / samples;
+		float[] buffer = new float[samples];
 		for (int i = 0; i < samples; i++) {
 			oscFreq = glide[(int) glideIndex] * frequencyScale;
 			buffer[i] = amplitude * wavetable.getSample(oscPhase, oscFreq);
@@ -95,16 +95,16 @@ public class WavetableOscillator implements RealTimePerformer {
 		return buffer;
 	}
 
-	public double[] get(int duration, double[] envelope, double[] glide) {
+	public float[] get(int duration, float[] envelope, float[] glide) {
 		int samples = duration * Settings.samplingRate / 1000;
-		double oscAmp = 0;
-		double oscFreq = 0;
-		double oscPhase = 0;
-		double envelopeIndex = 0;
-		double envelopeIncrement = (double) envelope.length / samples;
-		double glideIndex = 0;
-		double glideIncrement = (double) glide.length / samples;
-		double[] buffer = new double[samples];
+		float oscAmp = 0;
+		float oscFreq = 0;
+		float oscPhase = 0;
+		float envelopeIndex = 0;
+		float envelopeIncrement = (float) envelope.length / samples;
+		float glideIndex = 0;
+		float glideIncrement = (float) glide.length / samples;
+		float[] buffer = new float[samples];
 		for (int i = 0; i < samples; i++) {
 			oscAmp = envelope[(int) envelopeIndex];
 			oscFreq = glide[(int) glideIndex] * frequencyScale;

@@ -4,12 +4,12 @@ import java.util.Arrays;
 
 public class StereoMixer {
 	
-	public double[] render(AudioTrack... tracks) {
+	public float[] render(AudioTrack... tracks) {
 		int duration = 0;
 		for (AudioTrack track : tracks) if (track.end >= duration) duration = track.end;
-		double[] mixdown = new double[duration];
+		float[] mixdown = new float[duration];
 		Arrays.fill(mixdown, 0);
-		double[] vector;
+		float[] vector;
 		for (AudioTrack track : tracks) {
 			vector = track.getVector();
 			for (int i = track.start; i < track.end; i++) {
