@@ -10,7 +10,7 @@ public class Scanner {
 	private final String chars;
 	private int tokenNum;
 
-	private static enum State { START, IDENT, DIGIT, FLOAT }
+	private static enum State { START, IDENT, DIGIT, FLOAT, STRING }
 
 	public Scanner(String chars) {
 		// Make sure there is always one character of look-ahead.
@@ -51,6 +51,9 @@ public class Scanner {
 		} break;
 		case "info": {
 			token = new Token(Kind.KW_INFO, startPos, endPos, lineNum, lineNumPos);
+		} break;
+		case "string": {
+			token = new Token(Kind.KW_STRING, startPos, endPos, lineNum, lineNumPos);
 		} break;
 		default: {
 			token = new Token(Kind.IDENT, substring, startPos, endPos, lineNum, lineNumPos);
@@ -265,12 +268,16 @@ public class Scanner {
 						state = State.IDENT;
 						pos++;
 						lineNumPos++;
+					} else if (character == '"') {
+						state = State.STRING;
+						pos++;
+						lineNumPos++;
 					} else {
 						throw new Exception("Illegal character " + character + " at pos " + pos);
 					}
 				} break;
 				} // switch (character)
-			} break; // case START
+			} break;
 			case IDENT: {
 				if (!Character.isJavaIdentifierPart(character)) {
 					String substring = chars.substring(startPos, pos);
@@ -282,7 +289,7 @@ public class Scanner {
 				}
 				pos++;
 				lineNumPos++;
-			} break; // case IDENT
+			} break;
 			case DIGIT: {
 				if (!Character.isDigit(character) && character != '.') {
 					String substring = chars.substring(startPos, pos);
@@ -291,16 +298,16 @@ public class Scanner {
 					} catch (NumberFormatException exception) {
 						throw new Exception("Illegal integer " + substring + " at pos " + pos);
 					}
-					Token newToken = new Token(Kind.INT_LIT, substring, startPos, pos - startPos,
+					Token token = new Token(Kind.INT_LIT, substring, startPos, pos - startPos,
 							lineNum, lineNumPos - substring.length());
-					tokens.add(newToken);
+					tokens.add(token);
 					state = State.START;
 					break;
 				}
 				if (character == '.') state = State.FLOAT;
 				pos++;
 				lineNumPos++;
-			} break; // case DIGIT
+			} break;
 			case FLOAT: {
 				if (!Character.isDigit(character)) {
 					String substring = chars.substring(startPos, pos);
@@ -309,15 +316,29 @@ public class Scanner {
 					} catch (NumberFormatException exception) {
 						throw new Exception("Illegal float " + substring + " at pos " + pos);
 					}
-					Token newToken = new Token(Kind.FLOAT_LIT, substring, startPos, pos - startPos,
+					Token token = new Token(Kind.FLOAT_LIT, substring, startPos, pos - startPos,
 							lineNum, lineNumPos - substring.length());
-					tokens.add(newToken);
+					tokens.add(token);
 					state = State.START;
 					break;
 				}
 				pos++;
 				lineNumPos++;
-			} break; // case FLOAT
+			} break;
+			case STRING: {
+				if (character == '"') {
+					String substring = String.valueOf(chars.substring(startPos + 1, pos));
+					Token token = new Token(Kind.STRING_LIT, substring, startPos + 1, pos - startPos - 1,
+							lineNum, lineNumPos - substring.length());
+					tokens.add(token);
+					state = State.START;
+					pos++;
+					lineNumPos++;
+					break;
+				}
+				pos++;
+				lineNumPos++;
+			} break;
 			default: assert false;
 			} // switch (state)
 		} // while (pos < length)

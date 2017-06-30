@@ -10,6 +10,7 @@ public class BreakpointFunction {
 	public final double[] weights;
 	
 	// TODO add more constructors
+	// TODO Exponential functions
 	
 	public BreakpointFunction(int length, double[] breakpoints) {
 		this.length = length; // between each breakpoint

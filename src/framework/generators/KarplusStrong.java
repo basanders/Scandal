@@ -24,7 +24,7 @@ public class KarplusStrong extends PolyphonicSynthesizer {
 	class KarplusStrongNote extends PolyphonicSynthesizer.MidiNote {
 
 		int index = 0;
-		int newIndex;
+		int nextIndex;
 		final double delaySamples = Math.ceil((double) Settings.samplingRate / frequency);
 		final double[] circularBuffer = new double[(int) delaySamples];
 		double feedback = 0.99;
@@ -44,10 +44,10 @@ public class KarplusStrong extends PolyphonicSynthesizer {
 		double[] get() {
 			for (int i = 0; i < vector.length; i++) {
 				vector[i] = circularBuffer[index] * envelopeLevel * amplitude;
-				newIndex = (index + 1) % circularBuffer.length;
-				circularBuffer[index] += circularBuffer[newIndex];
+				nextIndex = (index + 1) % circularBuffer.length;
+				circularBuffer[index] += circularBuffer[nextIndex];
 				circularBuffer[index] *= 0.5 * feedback;
-				index = newIndex;
+				index = nextIndex;
 				updateEnvelope();
 				if (envelopeStage == ADSR.OFF) reset();
 			}
@@ -64,6 +64,11 @@ public class KarplusStrong extends PolyphonicSynthesizer {
 	@Override
 	public void handleModulationWheelChange(int value, int channel) {
 		tremoloSpeed = 0.05 * value;
+	}
+	
+	@Override
+	public void handlePitchBend(int lsb, int msb, int channel) {
+		System.out.println((msb * 128.0f + lsb) / 8192 - 1);
 	}
 
 }

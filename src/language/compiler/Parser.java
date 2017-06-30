@@ -78,7 +78,7 @@ public class Parser {
 
 	public Declaration declaration() throws Exception {
 		Token firstToken = token;
-		if (token.kind == KW_INT || token.kind == KW_FLOAT || token.kind == KW_BOOL) {			
+		if (token.kind == KW_INT || token.kind == KW_FLOAT || token.kind == KW_BOOL || token.kind == KW_STRING) {			
 			consume();
 			Token identToken = token;
 			match(IDENT);
@@ -219,6 +219,10 @@ public class Parser {
 		} break;
 		case FLOAT_LIT: {
 			expression = new FloatLitExpression(token);
+			consume();
+		} break;
+		case STRING_LIT: {
+			expression = new StringLitExpression(token);
 			consume();
 		} break;
 		case KW_FALSE:

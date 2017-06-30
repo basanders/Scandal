@@ -4,6 +4,8 @@ import static org.junit.Assert.assertEquals;
 import org.junit.Test;
 
 public class WaveformTests {
+	
+	// TODO Test antialiased waveforms with a sweep
 
 	private double[] naiveCases = new double[] {0, Math.PI * 0.5, Math.PI, Math.PI * 1.5, Math.PI * 2};
 	private double[] aliasedCases = new double[] {0, 1024, 2048, 3072, 4095};

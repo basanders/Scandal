@@ -11,7 +11,7 @@ public abstract class Node {
 	public String jvmType;
 
 	public Node(Token firstToken) {
-		this.firstToken = firstToken;
+		this.firstToken = firstToken;		
 	}
 	
 	public Type getType() {
@@ -19,6 +19,7 @@ public abstract class Node {
 		case KW_INT: return Type.INT;
 		case KW_FLOAT: return Type.FLOAT;
 		case KW_BOOL: return Type.BOOL;
+		case KW_STRING: return Type.STRING;
 		default: return null;
 		}
 	}
@@ -28,6 +29,7 @@ public abstract class Node {
 		case KW_INT: return "I";
 		case KW_FLOAT: return "F";
 		case KW_BOOL: return "Z";
+		case KW_STRING: return "Ljava/lang/String;";
 		default: return null;
 		}
 	}

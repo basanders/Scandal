@@ -21,6 +21,7 @@ import language.tree.NodeVisitor;
 import language.tree.PrintStatement;
 import language.tree.Program;
 import language.tree.Statement;
+import language.tree.StringLitExpression;
 import language.tree.UnassignedDeclaration;
 import language.tree.WhileStatement;
 
@@ -123,6 +124,11 @@ public class TypeChecker implements NodeVisitor {
 	@Override
 	public Object visitBoolLitExpression(BoolLitExpression boolLitExpression, Object arg) throws Exception {
 		return boolLitExpression.type;
+	}
+	
+	@Override
+	public Object visitStringLitExpression(StringLitExpression stringLitExpression, Object argument) throws Exception {
+		return stringLitExpression.type;
 	}
 
 	@Override

@@ -31,7 +31,7 @@ contexts:
     - match: \b(true|false|info)\b
       scope: constant.language.scandal
 
-    - match: \b(int|float|bool|string)
+    - match: \b(int|float|bool|string)\b
       scope: storage.type.scandal
 
     - match: \b(print)\b

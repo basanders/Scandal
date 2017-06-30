@@ -14,6 +14,7 @@ public class Token {
 		IDENT(""),
 		INT_LIT(""),
 		FLOAT_LIT(""),
+		STRING_LIT(""),
 		// Single-character
 		PLUS("+"),
 		TIMES("*"),
@@ -48,6 +49,7 @@ public class Token {
 		KW_IF("if"),
 		KW_WHILE("while"),
 		KW_PRINT("print"),
+		KW_STRING("string"),
 		KW_INFO("info");
 
 		final String text;

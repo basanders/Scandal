@@ -27,6 +27,8 @@ public interface NodeVisitor {
 	Object visitFloatLitExpression(FloatLitExpression floatLitExpression, Object argument) throws Exception;
 
 	Object visitBoolLitExpression(BoolLitExpression boolLitExpression, Object argument) throws Exception;
+	
+	Object visitStringLitExpression(StringLitExpression stringLitExpression, Object argument) throws Exception;
 
 	Object visitBinaryExpression(BinaryExpression binaryExpression, Object argument) throws Exception;
 

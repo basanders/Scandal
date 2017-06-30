@@ -241,7 +241,7 @@ System.exit(0);
 
 ## Language
 
-A complete description of Scandal's syntax is outlined in this [document](https://raw.githubusercontent.com/lufevida/Scandal/master/doc/Syntax.md).
+A complete description of Scandal's syntax is outlined in this [document](https://github.com/lufevida/Scandal/blob/master/doc/Syntax.md).
 
 ### Using the Compiler class
 
@@ -251,11 +251,3 @@ byte[] bytecode = compiler.compile("doc/NaivePrimeFinder.scandal", args);
 compiler.print(bytecode);
 compiler.save("bin/NaivePrimeFinder.class", bytecode);
 ```
-
-#### Tasks
-
-- Unary expression class (MINUS and NOT)
-- String, table and buffer types
-- Exponential functions
-- Antialiased triangle generator
-- Test antialiased waveforms with a sweep

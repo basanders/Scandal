@@ -1,6 +1,8 @@
 package framework.waveforms;
 
 public class AliasedTriangle extends AliasedWavetable {
+	
+	// TODO Antialiased triangle generator
 
 	public AliasedTriangle() {
 		super(4096);

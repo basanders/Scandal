@@ -2,7 +2,7 @@
 
 - program := ( declaration | statement )*
 - block := LBRACE ( declaration | statement )* RBRACE
-- type := KW\_INT | KW\_FLOAT | KW\_BOOL
+- type := KW\_INT | KW\_FLOAT | KW\_BOOL | KW\_STRING
 - unassignedDeclaration := type IDENT
 - assignmentDeclaration := type IDENT ASSIGN expression
 - statement := assignmentStatement | ifStatement | whileStatement

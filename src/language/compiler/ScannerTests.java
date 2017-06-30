@@ -70,6 +70,20 @@ public class ScannerTests {
 		assertEquals(2, token.lineNumberPosition);
 		assertEquals(555.123, token.getFloatValue(), 0.0001);
 	}
+	
+	@Test
+	public void testString() throws Exception {
+		String input = " \"Hello, world!\"";
+		Scanner scanner = new Scanner(input);
+		scanner.scan();
+		Token token = scanner.nextToken();
+		assertEquals(STRING_LIT, token.kind);
+		assertEquals(13, token.length);
+		assertEquals("Hello, world!", token.text);
+		token = scanner.nextToken();
+		assertEquals(EOF, token.kind);
+		assertEquals(16, token.position);
+	}
 
 	@Test
 	public void testComment() throws Exception {
