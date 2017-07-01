@@ -77,11 +77,7 @@ public class WaveFile {
 	}
 	
 	public void plot(int size) {
-		float[] data = new float[size];
-		float[] sum = getMonoSum();
-		float increment = (float) sum.length / size;
-		for (int i = 0; i < size; i++) data[i] = sum[(int) (i * increment)];
-		new PlotUtility(path.getFileName().toString(), data);
+		new PlotUtility(path.getFileName().toString(), getMonoSum(), size);
 	}
 	
 	public void printInfo() {

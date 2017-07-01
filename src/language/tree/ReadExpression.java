@@ -2,11 +2,11 @@ package language.tree;
 
 import language.compiler.Token;
 
-public class WaveFileExpression extends Expression {
+public class ReadExpression extends Expression {
 	
 	public final Expression expression;
 
-	public WaveFileExpression(Token firstToken, Expression expression) {
+	public ReadExpression(Token firstToken, Expression expression) {
 		super(firstToken);
 		this.expression = expression;
 		this.type = Type.ARRAY;
@@ -14,7 +14,7 @@ public class WaveFileExpression extends Expression {
 
 	@Override
 	public Object visit(NodeVisitor visitor, Object argument) throws Exception {
-		return visitor.visitWaveFileExpression(this, argument);
+		return visitor.visitReadExpression(this, argument);
 	}
 
 }

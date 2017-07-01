@@ -21,12 +21,13 @@ import language.tree.InfoExpression;
 import language.tree.IntLitExpression;
 import language.tree.Node.Type;
 import language.tree.NodeVisitor;
+import language.tree.PlotStatement;
 import language.tree.PrintStatement;
 import language.tree.Program;
 import language.tree.Statement;
 import language.tree.StringLitExpression;
 import language.tree.UnassignedDeclaration;
-import language.tree.WaveFileExpression;
+import language.tree.ReadExpression;
 import language.tree.WhileStatement;
 
 public class BytecodeGenerator implements NodeVisitor, Opcodes {
@@ -185,14 +186,25 @@ public class BytecodeGenerator implements NodeVisitor, Opcodes {
 		mv.visitLabel(l2);
 		return null;
 	}
-	
+
 	@Override
 	public Object visitPrintStatement(PrintStatement printStatement, Object arg) throws Exception {
-		String type = printStatement.expression.getJvmType();
 		MethodVisitor mv = (MethodVisitor) arg;
+		String type = printStatement.expression.getJvmType();
 		mv.visitFieldInsn(GETSTATIC, "java/lang/System", "out", "Ljava/io/PrintStream;");
 		printStatement.expression.visit(this, mv);
 		mv.visitMethodInsn(INVOKEVIRTUAL, "java/io/PrintStream", "println", "(" + type + ")V", false);
+		return null;
+	}
+
+	@Override
+	public Object visitPlotStatement(PlotStatement plotStatement, Object arg) throws Exception {
+		MethodVisitor mv = (MethodVisitor) arg;
+		mv.visitTypeInsn(NEW, "framework/utilities/PlotUtility");
+		plotStatement.expression.visit(this, arg);
+		plotStatement.array.visit(this, arg);
+		plotStatement.points.visit(this, arg);
+		mv.visitMethodInsn(INVOKESPECIAL, "framework/utilities/PlotUtility", "<init>", "(Ljava/lang/String;[FI)V", false);
 		return null;
 	}
 
@@ -206,7 +218,7 @@ public class BytecodeGenerator implements NodeVisitor, Opcodes {
 		else mv.visitVarInsn(ILOAD, identExpression.declaration.slotNumber);
 		return null;
 	}
-	
+
 	@Override
 	public Object visitInfoExpression(InfoExpression infoExpression, Object arg) throws Exception {
 		MethodVisitor mv = (MethodVisitor) arg;
@@ -235,20 +247,20 @@ public class BytecodeGenerator implements NodeVisitor, Opcodes {
 		else mv.visitInsn(ICONST_0);
 		return null;
 	}
-	
+
 	@Override
 	public Object visitStringLitExpression(StringLitExpression stringLitExpression, Object arg) throws Exception {
 		MethodVisitor mv = (MethodVisitor) arg;
 		mv.visitLdcInsn(stringLitExpression.firstToken.text);
 		return null;
 	}
-	
+
 	@Override
-	public Object visitWaveFileExpression(WaveFileExpression waveFileExpression, Object arg) throws Exception {
+	public Object visitReadExpression(ReadExpression readExpression, Object arg) throws Exception {
 		MethodVisitor mv = (MethodVisitor) arg;
 		mv.visitTypeInsn(NEW, "framework/generators/WaveFile");
 		mv.visitInsn(DUP);
-		waveFileExpression.expression.visit(this, arg);
+		readExpression.expression.visit(this, arg);
 		mv.visitMethodInsn(INVOKESPECIAL, "framework/generators/WaveFile", "<init>", "(Ljava/lang/String;)V", false);
 		mv.visitMethodInsn(INVOKEVIRTUAL, "framework/generators/WaveFile", "getMonoSum", "()[F", false);
 		return null;

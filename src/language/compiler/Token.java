@@ -51,7 +51,8 @@ public class Token {
 		KW_PRINT("print"),
 		KW_STRING("string"),
 		KW_ARRAY("array"),
-		KW_WAVE("wave"),
+		KW_READ("read"),
+		KW_PLOT("plot"),
 		KW_INFO("info");
 
 		final String text;

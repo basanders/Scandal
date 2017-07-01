@@ -16,12 +16,13 @@ import language.tree.InfoExpression;
 import language.tree.IntLitExpression;
 import language.tree.Node.Type;
 import language.tree.NodeVisitor;
+import language.tree.PlotStatement;
 import language.tree.PrintStatement;
 import language.tree.Program;
 import language.tree.Statement;
 import language.tree.StringLitExpression;
 import language.tree.UnassignedDeclaration;
-import language.tree.WaveFileExpression;
+import language.tree.ReadExpression;
 import language.tree.WhileStatement;
 
 public class TypeChecker implements NodeVisitor {
@@ -89,11 +90,22 @@ public class TypeChecker implements NodeVisitor {
 		whileStatement.block.visit(this, null);
 		return null;
 	}
-	
+
 	@Override
 	public Object visitPrintStatement(PrintStatement printStatement, Object argument) throws Exception {
 		printStatement.expression.visit(this, null);
 		if (printStatement.expression.type == ARRAY) throw new Exception("Invalid PrintStatement");
+		return null;
+	}
+
+	@Override
+	public Object visitPlotStatement(PlotStatement plotStatement, Object argument) throws Exception {
+		plotStatement.expression.visit(this, null);
+		if (plotStatement.expression.type != STRING) throw new Exception("Invalid PlotStatement");
+		plotStatement.array.visit(this, null);
+		if (plotStatement.array.type != ARRAY) throw new Exception("Invalid PlotStatement");
+		plotStatement.points.visit(this, null);
+		if (plotStatement.points.type != INT) throw new Exception("Invalid PlotStatement");
 		return null;
 	}
 
@@ -105,7 +117,7 @@ public class TypeChecker implements NodeVisitor {
 		identExpression.declaration = declaration;
 		return identExpression.type = declaration.type;
 	}
-	
+
 	@Override
 	public Object visitInfoExpression(InfoExpression infoExpression, Object argument) throws Exception {
 		return infoExpression.type;
@@ -125,17 +137,17 @@ public class TypeChecker implements NodeVisitor {
 	public Object visitBoolLitExpression(BoolLitExpression boolLitExpression, Object arg) throws Exception {
 		return boolLitExpression.type;
 	}
-	
+
 	@Override
 	public Object visitStringLitExpression(StringLitExpression stringLitExpression, Object argument) throws Exception {
 		return stringLitExpression.type;
 	}
-	
+
 	@Override
-	public Object visitWaveFileExpression(WaveFileExpression waveFileExpression, Object argument) throws Exception {
-		waveFileExpression.expression.visit(this, null);
-		if (waveFileExpression.expression.type != STRING) throw new Exception("Invalid WaveFileExpression");
-		return waveFileExpression.type;
+	public Object visitReadExpression(ReadExpression readExpression, Object argument) throws Exception {
+		readExpression.expression.visit(this, null);
+		if (readExpression.expression.type != STRING) throw new Exception("Invalid WaveFileExpression");
+		return readExpression.type;
 	}
 
 	@Override

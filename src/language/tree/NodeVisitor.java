@@ -17,6 +17,8 @@ public interface NodeVisitor {
 	Object visitWhileStatement(WhileStatement whileStatement, Object argument) throws Exception;
 	
 	Object visitPrintStatement(PrintStatement printStatement, Object argument) throws Exception;
+	
+	Object visitPlotStatement(PlotStatement plotStatement, Object argument) throws Exception;
 
 	Object visitIdentExpression(IdentExpression identExpression, Object argument) throws Exception;
 	
@@ -30,7 +32,7 @@ public interface NodeVisitor {
 	
 	Object visitStringLitExpression(StringLitExpression stringLitExpression, Object argument) throws Exception;
 	
-	Object visitWaveFileExpression(WaveFileExpression waveFileExpression, Object argument) throws Exception;
+	Object visitReadExpression(ReadExpression readExpression, Object argument) throws Exception;
 
 	Object visitBinaryExpression(BinaryExpression binaryExpression, Object argument) throws Exception;
 

@@ -114,6 +114,9 @@ public class Parser {
 		case KW_PRINT: {
 			statement = printStatement();
 		} break;
+		case KW_PLOT: {
+			statement = plotStatement();
+		} break;
 		default: throw new Exception("Illegal statement: " + token.lineNumberPosition);
 		}
 		return statement;
@@ -154,6 +157,19 @@ public class Parser {
 		Expression expression = expression();
 		match(RPAREN);
 		return new PrintStatement(firstToken, expression);
+	}
+	
+	public PlotStatement plotStatement() throws Exception {
+		Token firstToken = token;
+		match(KW_PLOT);
+		match(LPAREN);
+		Expression title = expression();
+		match(COMMA);
+		Expression array = expression();
+		match(COMMA);
+		Expression points = expression();
+		match(RPAREN);
+		return new PlotStatement(firstToken, title, array, points);
 	}
 
 	public Expression expression() throws Exception {
@@ -230,11 +246,11 @@ public class Parser {
 			expression = new StringLitExpression(token);
 			consume();
 		} break;
-		case KW_WAVE: {
+		case KW_READ: {
 			consume();
 			match(LPAREN);
 			Expression fileName = expression();
-			expression = new WaveFileExpression(token, fileName);
+			expression = new ReadExpression(token, fileName);
 			match(RPAREN);
 		} break;
 		case KW_FALSE:

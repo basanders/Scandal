@@ -1,3 +1,6 @@
 /* Wave File */
 
-array monoLisa = wave("wav/monoLisa.wav")
+string title = "A scandalous wave file"
+array monoLisa = read("wav/monoLisa.wav")
+int points = 1000
+plot(title, monoLisa, points)

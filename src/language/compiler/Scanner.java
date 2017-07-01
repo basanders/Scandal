@@ -58,8 +58,11 @@ public class Scanner {
 		case "array": {
 			token = new Token(Kind.KW_ARRAY, startPos, endPos, lineNum, lineNumPos);
 		} break;
-		case "wave": {
-			token = new Token(Kind.KW_WAVE, startPos, endPos, lineNum, lineNumPos);
+		case "read": {
+			token = new Token(Kind.KW_READ, startPos, endPos, lineNum, lineNumPos);
+		} break;
+		case "plot": {
+			token = new Token(Kind.KW_PLOT, startPos, endPos, lineNum, lineNumPos);
 		} break;
 		default: {
 			token = new Token(Kind.IDENT, substring, startPos, endPos, lineNum, lineNumPos);

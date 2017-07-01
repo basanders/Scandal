@@ -20,7 +20,7 @@ import language.tree.FloatLitExpression;
 import language.tree.IfStatement;
 import language.tree.IntLitExpression;
 import language.tree.Program;
-import language.tree.WaveFileExpression;
+import language.tree.ReadExpression;
 import language.tree.WhileStatement;
 
 public class ParserTests {
@@ -117,7 +117,7 @@ public class ParserTests {
 		Declaration declaration = new Parser(scanner).declaration();
 		AssignmentDeclaration ad = (AssignmentDeclaration) declaration;
 		Expression e = ad.expression;
-		assertEquals(WaveFileExpression.class, e.getClass());
+		assertEquals(ReadExpression.class, e.getClass());
 	}
 
 }
