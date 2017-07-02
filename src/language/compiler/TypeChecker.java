@@ -140,8 +140,10 @@ public class TypeChecker implements NodeVisitor {
 
 	@Override
 	public Object visitReadExpression(ReadExpression readExpression, Object argument) throws Exception {
-		readExpression.expression.visit(this, null);
-		if (readExpression.expression.type != STRING) throw new Exception("Invalid ReadExpression");
+		readExpression.fileName.visit(this, null);
+		if (readExpression.fileName.type != STRING) throw new Exception("Invalid ReadExpression");
+		readExpression.format.visit(this, null);
+		if (readExpression.format.type != FORMAT) throw new Exception("Invalid ReadExpression");
 		return readExpression.type;
 	}
 	
@@ -157,7 +159,7 @@ public class TypeChecker implements NodeVisitor {
 		Token op = binaryExpression.operator;
 		e0.visit(this, null);
 		e1.visit(this, null);		
-		if (e0.type != BOOL && e1.type != BOOL) {
+		if ((e0.type == INT || e0.type == FLOAT) && (e1.type == INT || e1.type == FLOAT)) {
 			switch(op.kind) {
 			case MOD:
 			case PLUS:
@@ -171,7 +173,7 @@ public class TypeChecker implements NodeVisitor {
 			default: break;
 			}
 		}
-		if (e0.type != FLOAT && e1.type != FLOAT) {
+		if ((e0.type == INT || e0.type == BOOL) && (e1.type == INT || e1.type == BOOL)) {
 			switch(op.kind) {
 			case AND:
 			case OR: {
@@ -180,17 +182,18 @@ public class TypeChecker implements NodeVisitor {
 			default: break;
 			}
 		}
-		//if (e0.type == e1.type || e0.type != BOOL && e1.type != BOOL) {}
-		switch(op.kind) {
-		case LT:
-		case LE:
-		case GT:
-		case GE:
-		case EQUAL:
-		case NOTEQUAL: {
-			binaryExpression.type = BOOL;
-		} break;
-		default: break;
+		if ((e0.type != STRING && e0.type != ARRAY) && (e1.type != STRING && e1.type != ARRAY)) {
+			switch(op.kind) {
+			case LT:
+			case LE:
+			case GT:
+			case GE:
+			case EQUAL:
+			case NOTEQUAL: {
+				binaryExpression.type = BOOL;
+			} break;
+			default: break;
+			}
 		}
 		if (binaryExpression.type == null) {
 			throw new Exception("Invalid BinaryExpression");

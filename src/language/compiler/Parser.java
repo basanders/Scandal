@@ -137,9 +137,7 @@ public class Parser {
 	public IfStatement ifStatement() throws Exception {
 		Token firstToken = token;
 		match(KW_IF);
-		match(LPAREN);
 		Expression expression = expression();
-		match(RPAREN);
 		Block block = block();
 		return new IfStatement(firstToken, expression, block);
 	}
@@ -147,9 +145,7 @@ public class Parser {
 	public WhileStatement whileStatement() throws Exception {
 		Token firstToken = token;
 		match(KW_WHILE);
-		match(LPAREN);
 		Expression expression = expression();
-		match(RPAREN);
 		Block block = block();
 		return new WhileStatement(firstToken, expression, block);
 	}
@@ -265,8 +261,10 @@ public class Parser {
 			consume();
 			match(LPAREN);
 			Expression fileName = expression();
-			expression = new ReadExpression(token, fileName);
+			match(COMMA);
+			Expression format = expression();
 			match(RPAREN);
+			expression = new ReadExpression(token, fileName, format);
 		} break;
 		case KW_MONO:
 		case KW_STEREO: {

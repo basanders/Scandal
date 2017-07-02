@@ -76,6 +76,18 @@ public class WaveFile {
 		return sum;
 	}
 	
+	public float[] get(int channels) {
+		if (channels == numberOfChannels) return interleavedBuffer;
+		else if (channels == 2) {
+			float[] interleaved = new float[interleavedBuffer.length * 2];
+			for (int i = 0; i < interleaved.length; i++) {
+				interleaved[i] = interleavedBuffer[(int) (i * 0.5f)];
+			}
+			return interleaved;
+		}
+		else return getMonoSum();
+	}
+	
 	public void plot(int size) {
 		new PlotUtility(path.getFileName().toString(), getMonoSum(), size);
 	}

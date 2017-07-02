@@ -252,9 +252,10 @@ public class BytecodeGenerator implements NodeVisitor, Opcodes {
 		MethodVisitor mv = (MethodVisitor) arg;
 		mv.visitTypeInsn(NEW, "framework/generators/WaveFile");
 		mv.visitInsn(DUP);
-		readExpression.expression.visit(this, arg);
+		readExpression.fileName.visit(this, arg);
 		mv.visitMethodInsn(INVOKESPECIAL, "framework/generators/WaveFile", "<init>", "(Ljava/lang/String;)V", false);
-		mv.visitMethodInsn(INVOKEVIRTUAL, "framework/generators/WaveFile", "getMonoSum", "()[F", false);
+		readExpression.format.visit(this, arg);
+		mv.visitMethodInsn(INVOKEVIRTUAL, "framework/generators/WaveFile", "get", "(I)[F", false);
 		return null;
 	}
 	

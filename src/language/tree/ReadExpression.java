@@ -4,11 +4,13 @@ import language.compiler.Token;
 
 public class ReadExpression extends Expression {
 	
-	public final Expression expression;
+	public final Expression fileName;
+	public final Expression format;
 
-	public ReadExpression(Token firstToken, Expression expression) {
+	public ReadExpression(Token firstToken, Expression fileName, Expression format) {
 		super(firstToken);
-		this.expression = expression;
+		this.fileName = fileName;
+		this.format = format;
 		this.type = Type.ARRAY;
 	}
 
