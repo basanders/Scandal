@@ -1,6 +1,8 @@
 /* Wave File */
 
 string title = "A scandalous wave file"
-array monoLisa = read("wav/monoLisa.wav")
+array monoLisa = read("/Users/luisfelipe/Desktop/Scandal/wav/monoLisa.wav")
 int points = 1000
 plot(title, monoLisa, points)
+format channels = mono
+play(monoLisa, channels)

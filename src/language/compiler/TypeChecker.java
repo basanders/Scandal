@@ -2,28 +2,8 @@ package language.compiler;
 
 import static language.tree.Node.Type.*;
 
-import language.tree.AssignmentDeclaration;
-import language.tree.AssignmentStatement;
-import language.tree.BinaryExpression;
-import language.tree.Block;
-import language.tree.BoolLitExpression;
-import language.tree.Declaration;
-import language.tree.Expression;
-import language.tree.FloatLitExpression;
-import language.tree.IdentExpression;
-import language.tree.IfStatement;
-import language.tree.InfoExpression;
-import language.tree.IntLitExpression;
+import language.tree.*;
 import language.tree.Node.Type;
-import language.tree.NodeVisitor;
-import language.tree.PlotStatement;
-import language.tree.PrintStatement;
-import language.tree.Program;
-import language.tree.Statement;
-import language.tree.StringLitExpression;
-import language.tree.UnassignedDeclaration;
-import language.tree.ReadExpression;
-import language.tree.WhileStatement;
 
 public class TypeChecker implements NodeVisitor {
 
@@ -94,7 +74,13 @@ public class TypeChecker implements NodeVisitor {
 	@Override
 	public Object visitPrintStatement(PrintStatement printStatement, Object argument) throws Exception {
 		printStatement.expression.visit(this, null);
-		if (printStatement.expression.type == ARRAY) throw new Exception("Invalid PrintStatement");
+		switch (printStatement.expression.type) {
+		case ARRAY:
+		case FORMAT: {
+			throw new Exception("Invalid PrintStatement");
+		}
+		default: break;
+		}
 		return null;
 	}
 
@@ -106,6 +92,15 @@ public class TypeChecker implements NodeVisitor {
 		if (plotStatement.array.type != ARRAY) throw new Exception("Invalid PlotStatement");
 		plotStatement.points.visit(this, null);
 		if (plotStatement.points.type != INT) throw new Exception("Invalid PlotStatement");
+		return null;
+	}
+	
+	@Override
+	public Object visitPlayStatement(PlayStatement playStatement, Object argument) throws Exception {
+		playStatement.expression.visit(this, null);
+		if (playStatement.expression.type != ARRAY) throw new Exception("Invalid PlayStatement");
+		playStatement.format.visit(this, null);
+		if (playStatement.format.type != FORMAT) throw new Exception("Invalid PlayStatement");
 		return null;
 	}
 
@@ -146,8 +141,13 @@ public class TypeChecker implements NodeVisitor {
 	@Override
 	public Object visitReadExpression(ReadExpression readExpression, Object argument) throws Exception {
 		readExpression.expression.visit(this, null);
-		if (readExpression.expression.type != STRING) throw new Exception("Invalid WaveFileExpression");
+		if (readExpression.expression.type != STRING) throw new Exception("Invalid ReadExpression");
 		return readExpression.type;
+	}
+	
+	@Override
+	public Object visitFormatExpression(FormatExpression formatExpression, Object argument) throws Exception {
+		return formatExpression.type;
 	}
 
 	@Override

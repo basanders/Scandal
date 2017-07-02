@@ -13,13 +13,13 @@ contexts:
     - match: \b\s*(\-|\+|\*|\/|\%)\s*\b
       scope: keyword.operator.arithmetic.scandal
 
-    - match: \s*(=|->)\s*
+    - match: (=|->)
       scope: keyword.operator.assignment.scandal
 
-    - match: \s*(==|!=|<|>|<=|>=)\s*
+    - match: (==|!=|<|>|<=|>=)
       scope: keyword.operator.comparison.scandal
 
-    - match: \s*(!|\&|\|)\s*
+    - match: (!|\&|\|)
       scope: keyword.operator.logical.scandal
 
     - match: \b(?:[0-9]+\.?[0-9]*)\b
@@ -28,13 +28,13 @@ contexts:
     - match: \b[0-9]+\.?[0-9]*(?:(e|E)(\+|-)?[0-9]+)?\b
       scope: constant.numeric.float.decimal.scandal
 
-    - match: \b(true|false|info)\b
+    - match: \b(true|false|info|mono|stereo)\b
       scope: constant.language.scandal
 
-    - match: \b(int|float|bool|string|array)\b
+    - match: \b(int|float|bool|string|array|format)\b
       scope: storage.type.scandal
 
-    - match: \b(print|plot|read)\b
+    - match: \b(print|plot|read|play)\b
       scope: support.function.scandal
 
     - match: '"'

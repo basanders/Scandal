@@ -7,28 +7,8 @@ import org.objectweb.asm.Label;
 import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Opcodes;
 
-import language.tree.AssignmentDeclaration;
-import language.tree.AssignmentStatement;
-import language.tree.BinaryExpression;
-import language.tree.Block;
-import language.tree.BoolLitExpression;
-import language.tree.Declaration;
-import language.tree.Expression;
-import language.tree.FloatLitExpression;
-import language.tree.IdentExpression;
-import language.tree.IfStatement;
-import language.tree.InfoExpression;
-import language.tree.IntLitExpression;
+import language.tree.*;
 import language.tree.Node.Type;
-import language.tree.NodeVisitor;
-import language.tree.PlotStatement;
-import language.tree.PrintStatement;
-import language.tree.Program;
-import language.tree.Statement;
-import language.tree.StringLitExpression;
-import language.tree.UnassignedDeclaration;
-import language.tree.ReadExpression;
-import language.tree.WhileStatement;
 
 public class BytecodeGenerator implements NodeVisitor, Opcodes {
 
@@ -207,6 +187,18 @@ public class BytecodeGenerator implements NodeVisitor, Opcodes {
 		mv.visitMethodInsn(INVOKESPECIAL, "framework/utilities/PlotUtility", "<init>", "(Ljava/lang/String;[FI)V", false);
 		return null;
 	}
+	
+	@Override
+	public Object visitPlayStatement(PlayStatement playStatement, Object arg) throws Exception {
+		MethodVisitor mv = (MethodVisitor) arg;
+		mv.visitTypeInsn(NEW, "framework/generators/AudioTask");
+		mv.visitInsn(DUP);
+		mv.visitMethodInsn(INVOKESPECIAL, "framework/generators/AudioTask", "<init>", "()V", false);
+		playStatement.expression.visit(this, arg);
+		playStatement.format.visit(this, arg);
+		mv.visitMethodInsn(INVOKEVIRTUAL, "framework/generators/AudioTask", "play", "([FI)V", false);	
+		return null;
+	}
 
 	@Override
 	public Object visitIdentExpression(IdentExpression identExpression, Object arg) throws Exception {
@@ -263,6 +255,13 @@ public class BytecodeGenerator implements NodeVisitor, Opcodes {
 		readExpression.expression.visit(this, arg);
 		mv.visitMethodInsn(INVOKESPECIAL, "framework/generators/WaveFile", "<init>", "(Ljava/lang/String;)V", false);
 		mv.visitMethodInsn(INVOKEVIRTUAL, "framework/generators/WaveFile", "getMonoSum", "()[F", false);
+		return null;
+	}
+	
+	@Override
+	public Object visitFormatExpression(FormatExpression formatExpression, Object arg) throws Exception {
+		MethodVisitor mv = (MethodVisitor) arg;
+		mv.visitLdcInsn(formatExpression.channels);
 		return null;
 	}
 

@@ -64,6 +64,18 @@ public class Scanner {
 		case "plot": {
 			token = new Token(Kind.KW_PLOT, startPos, endPos, lineNum, lineNumPos);
 		} break;
+		case "play": {
+			token = new Token(Kind.KW_PLAY, startPos, endPos, lineNum, lineNumPos);
+		} break;
+		case "mono": {
+			token = new Token(Kind.KW_MONO, startPos, endPos, lineNum, lineNumPos);
+		} break;
+		case "stereo": {
+			token = new Token(Kind.KW_STEREO, startPos, endPos, lineNum, lineNumPos);
+		} break;
+		case "format": {
+			token = new Token(Kind.KW_FORMAT, startPos, endPos, lineNum, lineNumPos);
+		} break;
 		default: {
 			token = new Token(Kind.IDENT, substring, startPos, endPos, lineNum, lineNumPos);
 		} break;

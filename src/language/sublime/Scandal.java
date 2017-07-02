@@ -11,6 +11,9 @@ public class Scandal {
 
 	public static void main(String[] args) throws Exception {
 		new Compiler().compile(args[0], args);
+		//Compiler compiler = new Compiler();
+		//byte[] bytecode = compiler.compile("doc/WaveFile.scandal", args);
+		//compiler.print(bytecode);
 	}
 
 }

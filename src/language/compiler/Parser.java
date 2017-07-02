@@ -83,6 +83,7 @@ public class Parser {
 				token.kind == KW_FLOAT |
 				token.kind == KW_BOOL |
 				token.kind == KW_STRING |
+				token.kind == KW_FORMAT |
 				token.kind == KW_ARRAY) {			
 			consume();
 			Token identToken = token;
@@ -116,6 +117,9 @@ public class Parser {
 		} break;
 		case KW_PLOT: {
 			statement = plotStatement();
+		} break;
+		case KW_PLAY: {
+			statement = playStatement();
 		} break;
 		default: throw new Exception("Illegal statement: " + token.lineNumberPosition);
 		}
@@ -170,6 +174,17 @@ public class Parser {
 		Expression points = expression();
 		match(RPAREN);
 		return new PlotStatement(firstToken, title, array, points);
+	}
+	
+	public PlayStatement playStatement() throws Exception {
+		Token firstToken = token;
+		match(KW_PLAY);
+		match(LPAREN);
+		Expression array = expression();
+		match(COMMA);
+		Expression format = expression();
+		match(RPAREN);
+		return new PlayStatement(firstToken, array, format);
 	}
 
 	public Expression expression() throws Exception {
@@ -252,6 +267,11 @@ public class Parser {
 			Expression fileName = expression();
 			expression = new ReadExpression(token, fileName);
 			match(RPAREN);
+		} break;
+		case KW_MONO:
+		case KW_STEREO: {
+			expression = new FormatExpression(token);
+			consume();
 		} break;
 		case KW_FALSE:
 		case KW_TRUE: {

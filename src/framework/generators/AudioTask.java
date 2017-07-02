@@ -32,6 +32,11 @@ public class AudioTask {
 		AudioTask.scheduler = Executors.newScheduledThreadPool(voices);
 		scheduler.schedule(() -> null, 0, MILLISECONDS);
 	}
+	
+	public void play(float[] floats, int channels) {
+		if (channels == 1) playInterleaved(0, floats, Settings.mono);
+		else if (channels == 2) playInterleaved(0, floats, Settings.stereo);
+	}
 
 	public void playMono(float[] floats) {
 		playInterleaved(0, floats, Settings.mono);

@@ -10,7 +10,6 @@ public abstract class Declaration extends Node {
 	public Declaration(Token firstToken, Token identToken) {
 		super(firstToken);
 		this.identToken = identToken;
-		type = super.getType();
 		jvmType = super.getJvmType();
 	}
 

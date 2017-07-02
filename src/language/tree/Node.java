@@ -4,14 +4,15 @@ import language.compiler.Token;
 
 public abstract class Node {
 	
-	public static enum Type { INT, FLOAT, BOOL, STRING, ARRAY }
+	public static enum Type { INT, FLOAT, BOOL, STRING, ARRAY, FORMAT }
 
 	public final Token firstToken;
 	public Type type;
 	public String jvmType;
 
 	public Node(Token firstToken) {
-		this.firstToken = firstToken;		
+		this.firstToken = firstToken;
+		this.type = getType();
 	}
 	
 	public Type getType() {
@@ -21,6 +22,7 @@ public abstract class Node {
 		case KW_BOOL: return Type.BOOL;
 		case KW_STRING: return Type.STRING;
 		case KW_ARRAY: return Type.ARRAY;
+		case KW_FORMAT: return Type.FORMAT;
 		default: return null;
 		}
 	}
@@ -32,6 +34,7 @@ public abstract class Node {
 		case KW_BOOL: return "Z";
 		case KW_STRING: return "Ljava/lang/String;";
 		case KW_ARRAY: return "[F";
+		case KW_FORMAT: return "I";
 		default: return null;
 		}
 	}

@@ -53,6 +53,10 @@ public class Token {
 		KW_ARRAY("array"),
 		KW_READ("read"),
 		KW_PLOT("plot"),
+		KW_PLAY("play"),
+		KW_FORMAT("format"),
+		KW_MONO("mono"),
+		KW_STEREO("stereo"),
 		KW_INFO("info");
 
 		final String text;
