@@ -36,6 +36,16 @@ public interface NodeVisitor {
 	
 	Object visitReadExpression(ReadExpression readExpression, Object argument) throws Exception;
 	
+	Object visitReverseExpression(ReverseExpression reverseExpression, Object argument) throws Exception;
+	
+	Object visitSpeedExpression(SpeedExpression speedExpression, Object argument) throws Exception;
+	
+	Object visitLoopExpression(LoopExpression loopExpression, Object argument) throws Exception;
+	
+	Object visitDelayExpression(DelayExpression delayExpression, Object argument) throws Exception;
+	
+	Object visitSpliceExpression(SpliceExpression spliceExpression, Object argument) throws Exception;
+	
 	Object visitFormatExpression(FormatExpression formatExpression, Object argument) throws Exception;
 
 	Object visitBinaryExpression(BinaryExpression binaryExpression, Object argument) throws Exception;

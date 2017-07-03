@@ -57,6 +57,11 @@ public class Token {
 		KW_FORMAT("format"),
 		KW_MONO("mono"),
 		KW_STEREO("stereo"),
+		KW_REVERSE("reverse"),
+		KW_SPEED("speed"),
+		KW_LOOP("loop"),
+		KW_SPLICE("splice"),
+		KW_DELAY("delay"),
 		KW_INFO("info");
 
 		final String text;

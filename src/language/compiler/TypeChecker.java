@@ -148,6 +148,13 @@ public class TypeChecker implements NodeVisitor {
 	}
 	
 	@Override
+	public Object visitReverseExpression(ReverseExpression reverseExpression, Object argument) throws Exception {
+		reverseExpression.array.visit(this, null);
+		if (reverseExpression.array.type != ARRAY) throw new Exception("Invalid ReverseExpression");
+		return reverseExpression.type;
+	}
+	
+	@Override
 	public Object visitFormatExpression(FormatExpression formatExpression, Object argument) throws Exception {
 		return formatExpression.type;
 	}
@@ -199,6 +206,30 @@ public class TypeChecker implements NodeVisitor {
 			throw new Exception("Invalid BinaryExpression");
 		}
 		return binaryExpression.type;
+	}
+
+	@Override
+	public Object visitSpeedExpression(SpeedExpression speedExpression, Object argument) throws Exception {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public Object visitLoopExpression(LoopExpression loopExpression, Object argument) throws Exception {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public Object visitDelayExpression(DelayExpression delayExpression, Object argument) throws Exception {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public Object visitSpliceExpression(SpliceExpression spliceExpression, Object argument) throws Exception {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 }

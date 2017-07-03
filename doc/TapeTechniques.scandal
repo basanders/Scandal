@@ -1,0 +1,6 @@
+/* Five Classic Tape Techniques */
+
+format channels = stereo
+array lisa = read("/Users/luisfelipe/Desktop/Scandal/wav/stereoLisa.wav", channels)
+lisa = reverse(lisa)
+play(lisa, channels)

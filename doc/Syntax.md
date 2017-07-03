@@ -27,10 +27,16 @@
 - floatLitExpression := FLOAT\_LIT
 - boolLitExpression := KW\_TRUE | KW\_FALSE
 - stringLitExpression := STRING\_LIT
-- frameworkExpression := infoExpression | readExpression | formatExpression
+- frameworkExpression := infoExpression | readExpression | formatExpression | reverseExpression
+- frameworkExpression := speedExpression | spliceExpression | loopExpression | delayExpression
 - infoExpression := KW\_INFO
 - readExpression := KW\_READ LPAREN expression COMMA expression RPAREN
 - formatExpression := KW\_MONO | KW\_STEREO
+- reverseExpression := KW\_REVERSE LPAREN expression RPAREN
+- speedExpression := KW\_SPEED LPAREN expression COMMA expression RPAREN
+- loopExpression := KW\_LOOP LPAREN expression COMMA expression COMMA expression COMMA expression RPAREN
+- delayExpression := KW\_DELAY LPAREN expression COMMA expression COMMA expression COMMA expression RPAREN
+- spliceExpression := KW\_SPLICE LPAREN expression (COMMA expression)* RPAREN
 
 ### Abstract syntax
 
@@ -51,6 +57,11 @@
 - Expression := BinaryExpression | IdentExpression | LiteralExpression | FrameworkExpression
 - BinaryExpression := Expression\_0 (termOperator | summandOperator | factorOperator) Expression\_1
 - ReadExpression := Expression\_0 Expression\_1
+- ReverseExpression := Expression
+- SpeedExpression := Expression\_0 Expression\_1
+- LoopExpression := Expression\_0 Expression\_1 Expression\_2 Expression\_3
+- DelayExpression := Expression\_0 Expression\_1 Expression\_2 Expression\_3
+- SpliceExpression := Expression+
 
 ### TypeChecker rules
 
@@ -58,14 +69,14 @@
 	+ Variable may not be declared more than once in the same scope
 - AssignmentDeclaration:
 	+ Variable may not be declared more than once in the same scope
-	+ Declaration.type == Expression.type
+	+ Type = Expression.type
 - AssignmentStatement:
 	+ Variable must have been declared in some enclosing scope
-	+ Declaration.type == Expression.type
+	+ Declaration.Type = Expression.type
 - IfStatement:
-	+ Expression.type == BOOL
+	+ Expression.type = BOOL
 - WhileStatement:
-	+ Expression.type == BOOL
+	+ Expression.type = BOOL
 - PrintStatement:
 	+ Expression.type != ARRAY | FORMAT
 - PlotStatement:
@@ -82,20 +93,42 @@
 	+ !(ARRAY | STRING) (termOperator) !(STRING | ARRAY) ==> BOOL
 - IdentExpression:
 	+ Variable must have been declared in some enclosing scope
-	+ IdentExpression.type = Declaration.type
+	+ Type = Declaration.type
 - IntLitExpression:
-	+ IntLitExpression.type = INT
+	+ Type = INT
 - FloatLitExpression:
-	+ FloatLitExpression.type = FLOAT
+	+ Type = FLOAT
 - BoolLitExpression:
-	+ BoolLitExpression.type = BOOL
+	+ Type = BOOL
 - StringLitExpression:
-	+ StringLitExpression.type = STRING
+	+ Type = STRING
 - InfoExpression:
-	+ InfoExpression.type = STRING
+	+ Type = STRING
 - FormatExpression:
-	+ FormatExpression.type = FORMAT
+	+ Type = FORMAT
 - ReadExpression:
-	+ ReadExpression.type = ARRAY
+	+ Type = ARRAY
 	+ Expression\_0.type = STRING
 	+ Expression\_1.type = FORMAT
+- ReverseExpression:
+	+ Type = ARRAY
+	+ Expression.type = ARRAY
+- SpeedExpression:
+	+ Type = ARRAY
+	+ Expression\_0.type = ARRAY
+	+ Expression\_1.type = INT | FLOAT
+- LoopExpression:
+	+ Type = ARRAY
+	+ Expression\_0.type = ARRAY
+	+ Expression\_1.type = INT
+	+ Expression\_2.type = INT
+	+ Expression\_3.type = INT
+- DelayExpression:
+	+ Type = ARRAY
+	+ Expression\_0.type = ARRAY
+	+ Expression\_1.type = INT | FLOAT | ARRAY
+	+ Expression\_2.type = INT | FLOAT | ARRAY
+	+ Expression\_3.type = INT | FLOAT | ARRAY
+- SpliceExpression:
+	+ Type = ARRAY
+	+ Expression.type = ARRAY

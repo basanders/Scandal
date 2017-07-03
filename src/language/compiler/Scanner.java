@@ -76,6 +76,21 @@ public class Scanner {
 		case "format": {
 			token = new Token(Kind.KW_FORMAT, startPos, endPos, lineNum, lineNumPos);
 		} break;
+		case "reverse": {
+			token = new Token(Kind.KW_REVERSE, startPos, endPos, lineNum, lineNumPos);
+		} break;
+		case "speed": {
+			token = new Token(Kind.KW_SPEED, startPos, endPos, lineNum, lineNumPos);
+		} break;
+		case "loop": {
+			token = new Token(Kind.KW_LOOP, startPos, endPos, lineNum, lineNumPos);
+		} break;
+		case "splice": {
+			token = new Token(Kind.KW_SPLICE, startPos, endPos, lineNum, lineNumPos);
+		} break;
+		case "delay": {
+			token = new Token(Kind.KW_DELAY, startPos, endPos, lineNum, lineNumPos);
+		} break;
 		default: {
 			token = new Token(Kind.IDENT, substring, startPos, endPos, lineNum, lineNumPos);
 		} break;

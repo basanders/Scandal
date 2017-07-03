@@ -187,7 +187,7 @@ public class BytecodeGenerator implements NodeVisitor, Opcodes {
 		mv.visitMethodInsn(INVOKESPECIAL, "framework/utilities/PlotUtility", "<init>", "(Ljava/lang/String;[FI)V", false);
 		return null;
 	}
-	
+
 	@Override
 	public Object visitPlayStatement(PlayStatement playStatement, Object arg) throws Exception {
 		MethodVisitor mv = (MethodVisitor) arg;
@@ -258,7 +258,18 @@ public class BytecodeGenerator implements NodeVisitor, Opcodes {
 		mv.visitMethodInsn(INVOKEVIRTUAL, "framework/generators/WaveFile", "get", "(I)[F", false);
 		return null;
 	}
-	
+
+	@Override
+	public Object visitReverseExpression(ReverseExpression reverseExpression, Object arg) throws Exception {
+		MethodVisitor mv = (MethodVisitor) arg;
+		mv.visitTypeInsn(NEW, "framework/effects/Reverse");
+		mv.visitInsn(DUP);
+		mv.visitMethodInsn(INVOKESPECIAL, "framework/effects/Reverse", "<init>", "()V", false);
+		reverseExpression.array.visit(this, arg);
+		mv.visitMethodInsn(INVOKEVIRTUAL, "framework/effects/Reverse", "process", "([F)[F", false);
+		return null;
+	}
+
 	@Override
 	public Object visitFormatExpression(FormatExpression formatExpression, Object arg) throws Exception {
 		MethodVisitor mv = (MethodVisitor) arg;
@@ -329,6 +340,30 @@ public class BytecodeGenerator implements NodeVisitor, Opcodes {
 			mv.visitLabel(l2);
 		} break;
 		}
+		return null;
+	}
+
+	@Override
+	public Object visitSpeedExpression(SpeedExpression speedExpression, Object argument) throws Exception {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public Object visitLoopExpression(LoopExpression loopExpression, Object argument) throws Exception {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public Object visitDelayExpression(DelayExpression delayExpression, Object argument) throws Exception {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public Object visitSpliceExpression(SpliceExpression spliceExpression, Object argument) throws Exception {
+		// TODO Auto-generated method stub
 		return null;
 	}
 

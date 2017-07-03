@@ -266,6 +266,53 @@ public class Parser {
 			match(RPAREN);
 			expression = new ReadExpression(token, fileName, format);
 		} break;
+		case KW_REVERSE: {
+			consume();
+			match(LPAREN);
+			Expression array = expression();
+			match(RPAREN);
+			expression = new ReverseExpression(token, array);
+		} break;
+		case KW_SPEED: {
+			consume();
+			match(LPAREN);
+			Expression speed = expression();
+			match(RPAREN);
+			expression = new SpeedExpression(token, speed);
+		} break;
+		case KW_LOOP: {
+			consume();
+			match(LPAREN);
+			Expression start = expression();
+			match(COMMA);
+			Expression end = expression();
+			match(COMMA);
+			Expression count = expression();
+			match(RPAREN);
+			expression = new LoopExpression(token, start, end, count);
+		} break;
+		case KW_DELAY: {
+			consume();
+			match(LPAREN);
+			Expression time = expression();
+			match(COMMA);
+			Expression feedback = expression();
+			match(COMMA);
+			Expression mix = expression();
+			match(RPAREN);
+			expression = new DelayExpression(token, time, feedback, mix);
+		} break;
+		case KW_SPLICE: {
+			consume();
+			match(LPAREN);
+			ArrayList<Expression> expressions = new ArrayList<>();
+			while (token.kind != RPAREN) {
+				Expression expr = expression();
+				expressions.add(expr);
+			}
+			match(RPAREN);
+			expression = new SpliceExpression(token, expressions);
+		} break;
 		case KW_MONO:
 		case KW_STEREO: {
 			expression = new FormatExpression(token);
