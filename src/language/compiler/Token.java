@@ -62,6 +62,7 @@ public class Token {
 		KW_LOOP("loop"),
 		KW_SPLICE("splice"),
 		KW_DELAY("delay"),
+		KW_GAIN("gain"),
 		KW_INFO("info");
 
 		final String text;

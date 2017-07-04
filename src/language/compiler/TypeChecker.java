@@ -195,6 +195,16 @@ public class TypeChecker implements NodeVisitor {
 			throw new Exception("Invalid DelayExpression");
 		return delayExpression.type;
 	}
+	
+	@Override
+	public Object visitGainExpression(GainExpression gainExpression, Object argument) throws Exception {
+		gainExpression.array.visit(this, null);
+		if (gainExpression.array.type != ARRAY) throw new Exception("Invalid GainExpression");
+		gainExpression.gain.visit(this, null);
+		if (gainExpression.gain.type != INT && gainExpression.gain.type != FLOAT && gainExpression.gain.type != ARRAY)
+				throw new Exception("Invalid GainExpression");
+		return gainExpression.type;
+	}
 
 	@Override
 	public Object visitSpliceExpression(SpliceExpression spliceExpression, Object argument) throws Exception {

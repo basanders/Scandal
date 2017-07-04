@@ -46,6 +46,8 @@ public interface NodeVisitor {
 	
 	Object visitSpliceExpression(SpliceExpression spliceExpression, Object argument) throws Exception;
 	
+	Object visitGainExpression(GainExpression gainExpression, Object argument) throws Exception;
+	
 	Object visitFormatExpression(FormatExpression formatExpression, Object argument) throws Exception;
 
 	Object visitBinaryExpression(BinaryExpression binaryExpression, Object argument) throws Exception;

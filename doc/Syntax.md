@@ -27,8 +27,8 @@
 - floatLitExpression := FLOAT\_LIT
 - boolLitExpression := KW\_TRUE | KW\_FALSE
 - stringLitExpression := STRING\_LIT
-- frameworkExpression := infoExpression | readExpression | formatExpression | reverseExpression
-- frameworkExpression := speedExpression | spliceExpression | loopExpression | delayExpression
+- frameworkExpression := infoExpression | readExpression | formatExpression | gainExpression
+- frameworkExpression := reverseExpression | speedExpression | spliceExpression | loopExpression | delayExpression
 - infoExpression := KW\_INFO
 - readExpression := KW\_READ LPAREN expression COMMA expression RPAREN
 - formatExpression := KW\_MONO | KW\_STEREO
@@ -37,6 +37,7 @@
 - loopExpression := KW\_LOOP LPAREN expression COMMA expression COMMA expression COMMA expression RPAREN
 - delayExpression := KW\_DELAY LPAREN expression COMMA expression COMMA expression COMMA expression RPAREN
 - spliceExpression := KW\_SPLICE LPAREN expression (COMMA expression)* RPAREN
+- gainExpression := KW\_GAIN LPAREN expression COMMA expression RPAREN
 
 ### Abstract syntax
 
@@ -62,6 +63,7 @@
 - LoopExpression := Expression\_0 Expression\_1 Expression\_2 Expression\_3
 - DelayExpression := Expression\_0 Expression\_1 Expression\_2 Expression\_3
 - SpliceExpression := Expression+
+- GainExpression := Expression\_0 Expression\_1
 
 ### TypeChecker rules
 
@@ -132,3 +134,7 @@
 - SpliceExpression:
 	+ Type = ARRAY
 	+ Expression.type = ARRAY
+- GainExpression:
+	+ Type = ARRAY
+	+ Expression\_0.type = ARRAY
+	+ Expression\_1.type = INT | FLOAT | ARRAY

@@ -1,0 +1,6 @@
+/* Gain */
+
+format channels = mono
+array lisa = read("/Users/luisfelipe/Desktop/Scandal/wav/stereoLisa.wav", channels)
+lisa = gain(lisa, 0.5)
+play(lisa, channels)

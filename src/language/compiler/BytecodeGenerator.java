@@ -313,6 +313,19 @@ public class BytecodeGenerator implements NodeVisitor, Opcodes {
 		mv.visitMethodInsn(INVOKEVIRTUAL, "framework/effects/Delay", "process", "([F" + type + ")[F", false);
 		return null;
 	}
+	
+	@Override
+	public Object visitGainExpression(GainExpression gainExpression, Object arg) throws Exception {
+		MethodVisitor mv = (MethodVisitor) arg;
+		mv.visitTypeInsn(NEW, "framework/effects/Gain");
+		mv.visitInsn(DUP);
+		mv.visitMethodInsn(INVOKESPECIAL, "framework/effects/Gain", "<init>", "()V", false);
+		gainExpression.array.visit(this, arg);
+		gainExpression.gain.visit(this, arg);
+		String type = gainExpression.gain.getJvmType();
+		mv.visitMethodInsn(INVOKEVIRTUAL, "framework/effects/Gain", "process", "([F" + type + ")[F", false);
+		return null;
+	}
 
 	@Override
 	public Object visitSpliceExpression(SpliceExpression spliceExpression, Object arg) throws Exception {

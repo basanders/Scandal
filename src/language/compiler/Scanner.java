@@ -91,6 +91,9 @@ public class Scanner {
 		case "delay": {
 			token = new Token(Kind.KW_DELAY, startPos, endPos, lineNum, lineNumPos);
 		} break;
+		case "gain": {
+			token = new Token(Kind.KW_GAIN, startPos, endPos, lineNum, lineNumPos);
+		} break;
 		default: {
 			token = new Token(Kind.IDENT, substring, startPos, endPos, lineNum, lineNumPos);
 		} break;

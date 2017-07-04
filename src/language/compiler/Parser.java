@@ -309,6 +309,15 @@ public class Parser {
 			match(RPAREN);
 			expression = new DelayExpression(firstToken, array, time, feedback, mix);
 		} break;
+		case KW_GAIN: {
+			consume();
+			match(LPAREN);
+			Expression array = expression();
+			match(COMMA);
+			Expression gain = expression();
+			match(RPAREN);
+			expression = new GainExpression(firstToken, array, gain);
+		} break;
 		case KW_SPLICE: {
 			consume();
 			match(LPAREN);
