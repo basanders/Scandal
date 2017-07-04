@@ -269,6 +269,68 @@ public class BytecodeGenerator implements NodeVisitor, Opcodes {
 		mv.visitMethodInsn(INVOKEVIRTUAL, "framework/effects/Reverse", "process", "([F)[F", false);
 		return null;
 	}
+	
+	@Override
+	public Object visitSpeedExpression(SpeedExpression speedExpression, Object arg) throws Exception {
+		MethodVisitor mv = (MethodVisitor) arg;
+		mv.visitTypeInsn(NEW, "framework/effects/Speed");
+		mv.visitInsn(DUP);
+		mv.visitMethodInsn(INVOKESPECIAL, "framework/effects/Speed", "<init>", "()V", false);
+		speedExpression.array.visit(this, arg);
+		speedExpression.speed.visit(this, arg);
+		String type = speedExpression.speed.getJvmType();
+		mv.visitMethodInsn(INVOKEVIRTUAL, "framework/effects/Speed", "process", "([F" + type + ")[F", false);
+		return null;
+	}
+
+	@Override
+	public Object visitLoopExpression(LoopExpression loopExpression, Object arg) throws Exception {
+		MethodVisitor mv = (MethodVisitor) arg;
+		mv.visitTypeInsn(NEW, "framework/effects/Loop");
+		mv.visitInsn(DUP);
+		mv.visitMethodInsn(INVOKESPECIAL, "framework/effects/Loop", "<init>", "()V", false);
+		loopExpression.array.visit(this, arg);
+		loopExpression.start.visit(this, arg);
+		loopExpression.end.visit(this, arg);
+		loopExpression.count.visit(this, arg);
+		mv.visitMethodInsn(INVOKEVIRTUAL, "framework/effects/Loop", "process", "([FIII)[F", false);
+		return null;
+	}
+
+	@Override
+	public Object visitDelayExpression(DelayExpression delayExpression, Object arg) throws Exception {
+		MethodVisitor mv = (MethodVisitor) arg;
+		mv.visitTypeInsn(NEW, "framework/effects/Delay");
+		mv.visitInsn(DUP);
+		mv.visitMethodInsn(INVOKESPECIAL, "framework/effects/Delay", "<init>", "()V", false);
+		delayExpression.array.visit(this, arg);
+		delayExpression.time.visit(this, arg);
+		String type = delayExpression.time.getJvmType();
+		delayExpression.feedback.visit(this, arg);
+		type += delayExpression.feedback.getJvmType();
+		delayExpression.mix.visit(this, arg);
+		type += delayExpression.mix.getJvmType();
+		mv.visitMethodInsn(INVOKEVIRTUAL, "framework/effects/Delay", "process", "([F" + type + ")[F", false);
+		return null;
+	}
+
+	@Override
+	public Object visitSpliceExpression(SpliceExpression spliceExpression, Object arg) throws Exception {
+		MethodVisitor mv = (MethodVisitor) arg;
+		mv.visitTypeInsn(NEW, "framework/effects/Splice");
+		mv.visitInsn(DUP);
+		mv.visitMethodInsn(INVOKESPECIAL, "framework/effects/Splice", "<init>", "()V", false);
+		mv.visitInsn(ICONST_0 + spliceExpression.expressions.size());
+		mv.visitTypeInsn(ANEWARRAY, "[F");
+		for (int i = 0; i < spliceExpression.expressions.size(); i++) {
+			mv.visitInsn(DUP);
+			mv.visitInsn(ICONST_0 + i);
+			spliceExpression.expressions.get(i).visit(this, arg);
+			mv.visitInsn(AASTORE);
+		}
+		mv.visitMethodInsn(INVOKEVIRTUAL, "framework/effects/Splice", "process", "([[F)[F", false);
+		return null;
+	}
 
 	@Override
 	public Object visitFormatExpression(FormatExpression formatExpression, Object arg) throws Exception {
@@ -340,30 +402,6 @@ public class BytecodeGenerator implements NodeVisitor, Opcodes {
 			mv.visitLabel(l2);
 		} break;
 		}
-		return null;
-	}
-
-	@Override
-	public Object visitSpeedExpression(SpeedExpression speedExpression, Object argument) throws Exception {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public Object visitLoopExpression(LoopExpression loopExpression, Object argument) throws Exception {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public Object visitDelayExpression(DelayExpression delayExpression, Object argument) throws Exception {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public Object visitSpliceExpression(SpliceExpression spliceExpression, Object argument) throws Exception {
-		// TODO Auto-generated method stub
 		return null;
 	}
 

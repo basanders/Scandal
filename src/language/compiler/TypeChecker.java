@@ -155,6 +155,57 @@ public class TypeChecker implements NodeVisitor {
 	}
 	
 	@Override
+	public Object visitSpeedExpression(SpeedExpression speedExpression, Object argument) throws Exception {
+		speedExpression.array.visit(this, null);
+		if (speedExpression.array.type != ARRAY) throw new Exception("Invalid SpeedExpression");
+		speedExpression.speed.visit(this, null);
+		if (speedExpression.speed.type != INT && speedExpression.speed.type != FLOAT)
+				throw new Exception("Invalid SpeedExpression");
+		return speedExpression.type;
+	}
+
+	@Override
+	public Object visitLoopExpression(LoopExpression loopExpression, Object argument) throws Exception {
+		loopExpression.array.visit(this, null);
+		if (loopExpression.array.type != ARRAY) throw new Exception("Invalid LoopExpression");
+		loopExpression.start.visit(this, null);
+		if (loopExpression.start.type != INT) throw new Exception("Invalid LoopExpression");
+		loopExpression.end.visit(this, null);
+		if (loopExpression.end.type != INT) throw new Exception("Invalid LoopExpression");
+		loopExpression.count.visit(this, null);
+		if (loopExpression.count.type != INT) throw new Exception("Invalid LoopExpression");
+		return loopExpression.type;
+	}
+
+	@Override
+	public Object visitDelayExpression(DelayExpression delayExpression, Object argument) throws Exception {
+		delayExpression.array.visit(this, null);
+		if (delayExpression.array.type != ARRAY) throw new Exception("Invalid DelayExpression");
+		delayExpression.time.visit(this, null);
+		if (delayExpression.time.type != FLOAT && delayExpression.time.type != INT)
+			throw new Exception("Invalid DelayExpression");
+		delayExpression.feedback.visit(this, null);
+		if (
+				delayExpression.feedback.type != ARRAY &&
+				delayExpression.feedback.type != FLOAT &&
+				delayExpression.feedback.type != INT)
+			throw new Exception("Invalid DelayExpression");
+		delayExpression.mix.visit(this, null);
+		if (delayExpression.mix.type != ARRAY && delayExpression.mix.type != FLOAT && delayExpression.mix.type != INT)
+			throw new Exception("Invalid DelayExpression");
+		return delayExpression.type;
+	}
+
+	@Override
+	public Object visitSpliceExpression(SpliceExpression spliceExpression, Object argument) throws Exception {
+		for (Expression expr : spliceExpression.expressions) {
+			expr.visit(this, null);
+			if (expr.type != ARRAY) throw new Exception("Invalid SpliceExpression");
+		}
+		return spliceExpression.type;
+	}
+	
+	@Override
 	public Object visitFormatExpression(FormatExpression formatExpression, Object argument) throws Exception {
 		return formatExpression.type;
 	}
@@ -206,30 +257,6 @@ public class TypeChecker implements NodeVisitor {
 			throw new Exception("Invalid BinaryExpression");
 		}
 		return binaryExpression.type;
-	}
-
-	@Override
-	public Object visitSpeedExpression(SpeedExpression speedExpression, Object argument) throws Exception {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public Object visitLoopExpression(LoopExpression loopExpression, Object argument) throws Exception {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public Object visitDelayExpression(DelayExpression delayExpression, Object argument) throws Exception {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public Object visitSpliceExpression(SpliceExpression spliceExpression, Object argument) throws Exception {
-		// TODO Auto-generated method stub
-		return null;
 	}
 
 }

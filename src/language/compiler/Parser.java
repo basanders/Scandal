@@ -236,26 +236,27 @@ public class Parser {
 
 	private Expression factor() throws Exception {
 		Expression expression;
+		Token firstToken = token;
 		switch (token.kind) {
 		case IDENT: {
-			expression = new IdentExpression(token);
 			consume();
+			expression = new IdentExpression(firstToken);
 		} break;
 		case KW_INFO: {
-			expression = new InfoExpression(token);
 			consume();
+			expression = new InfoExpression(firstToken);
 		} break;
 		case INT_LIT: {
-			expression = new IntLitExpression(token);
 			consume();
+			expression = new IntLitExpression(firstToken);
 		} break;
 		case FLOAT_LIT: {
-			expression = new FloatLitExpression(token);
 			consume();
+			expression = new FloatLitExpression(firstToken);
 		} break;
 		case STRING_LIT: {
-			expression = new StringLitExpression(token);
 			consume();
+			expression = new StringLitExpression(firstToken);
 		} break;
 		case KW_READ: {
 			consume();
@@ -264,43 +265,49 @@ public class Parser {
 			match(COMMA);
 			Expression format = expression();
 			match(RPAREN);
-			expression = new ReadExpression(token, fileName, format);
+			expression = new ReadExpression(firstToken, fileName, format);
 		} break;
 		case KW_REVERSE: {
 			consume();
 			match(LPAREN);
 			Expression array = expression();
 			match(RPAREN);
-			expression = new ReverseExpression(token, array);
+			expression = new ReverseExpression(firstToken, array);
 		} break;
 		case KW_SPEED: {
 			consume();
 			match(LPAREN);
+			Expression array = expression();
+			match(COMMA);
 			Expression speed = expression();
 			match(RPAREN);
-			expression = new SpeedExpression(token, speed);
+			expression = new SpeedExpression(firstToken, array, speed);
 		} break;
 		case KW_LOOP: {
 			consume();
 			match(LPAREN);
+			Expression array = expression();
+			match(COMMA);
 			Expression start = expression();
 			match(COMMA);
 			Expression end = expression();
 			match(COMMA);
 			Expression count = expression();
 			match(RPAREN);
-			expression = new LoopExpression(token, start, end, count);
+			expression = new LoopExpression(firstToken, array, start, end, count);
 		} break;
 		case KW_DELAY: {
 			consume();
 			match(LPAREN);
+			Expression array = expression();
+			match(COMMA);
 			Expression time = expression();
 			match(COMMA);
 			Expression feedback = expression();
 			match(COMMA);
 			Expression mix = expression();
 			match(RPAREN);
-			expression = new DelayExpression(token, time, feedback, mix);
+			expression = new DelayExpression(firstToken, array, time, feedback, mix);
 		} break;
 		case KW_SPLICE: {
 			consume();
@@ -309,19 +316,24 @@ public class Parser {
 			while (token.kind != RPAREN) {
 				Expression expr = expression();
 				expressions.add(expr);
+				try {
+					match(COMMA);
+				} catch (Exception e) {
+					break;
+				}
 			}
 			match(RPAREN);
-			expression = new SpliceExpression(token, expressions);
+			expression = new SpliceExpression(firstToken, expressions);
 		} break;
 		case KW_MONO:
 		case KW_STEREO: {
-			expression = new FormatExpression(token);
 			consume();
+			expression = new FormatExpression(firstToken);
 		} break;
 		case KW_FALSE:
 		case KW_TRUE: {
-			expression = new BoolLitExpression(token);
 			consume();
+			expression = new BoolLitExpression(firstToken);
 		} break;
 		case LPAREN: {
 			consume();

@@ -16,7 +16,7 @@ public class SpliceExpression extends Expression {
 
 	@Override
 	public Object visit(NodeVisitor visitor, Object argument) throws Exception {
-		return null;
+		return visitor.visitSpliceExpression(this, argument);
 	}
 
 }

@@ -126,7 +126,7 @@
 - DelayExpression:
 	+ Type = ARRAY
 	+ Expression\_0.type = ARRAY
-	+ Expression\_1.type = INT | FLOAT | ARRAY
+	+ Expression\_1.type = INT | FLOAT
 	+ Expression\_2.type = INT | FLOAT | ARRAY
 	+ Expression\_3.type = INT | FLOAT | ARRAY
 - SpliceExpression:
