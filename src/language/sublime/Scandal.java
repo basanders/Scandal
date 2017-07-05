@@ -4,7 +4,6 @@ import language.compiler.Compiler;
 
 public class Scandal {
 
-	// TODO Array literal
 	// TODO Array indexing
 	// TODO Array operations (for loops?)
 	// TODO Unary expression class (MINUS and NOT)

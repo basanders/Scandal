@@ -119,9 +119,8 @@ public class BytecodeGenerator implements NodeVisitor, Opcodes {
 		declaration.slotNumber = slotCount++;
 		Expression expr = ((AssignmentDeclaration) declaration).expression;
 		expr.visit(this, mv);
-		if (expr.type == Type.STRING || expr.type == Type.ARRAY) {
+		if (expr.type == Type.STRING || expr.type == Type.ARRAY)
 			mv.visitVarInsn(ASTORE, declaration.slotNumber);
-		}
 		else if (expr.type == Type.FLOAT) mv.visitVarInsn(FSTORE, declaration.slotNumber);
 		else mv.visitVarInsn(ISTORE, declaration.slotNumber);
 		return null;
@@ -132,9 +131,8 @@ public class BytecodeGenerator implements NodeVisitor, Opcodes {
 		MethodVisitor mv = (MethodVisitor) arg;
 		Expression expr = assignmentStatement.expression;
 		expr.visit(this, mv);
-		if (expr.type == Type.STRING || expr.type == Type.ARRAY) {
+		if (expr.type == Type.STRING || expr.type == Type.ARRAY)
 			mv.visitVarInsn(ASTORE, assignmentStatement.declaration.slotNumber);
-		}
 		else if (expr.type == Type.FLOAT) mv.visitVarInsn(FSTORE, assignmentStatement.declaration.slotNumber);
 		else mv.visitVarInsn(ISTORE, assignmentStatement.declaration.slotNumber);
 		return null;
@@ -203,9 +201,8 @@ public class BytecodeGenerator implements NodeVisitor, Opcodes {
 	@Override
 	public Object visitIdentExpression(IdentExpression identExpression, Object arg) throws Exception {
 		MethodVisitor mv = (MethodVisitor) arg;
-		if (identExpression.type == Type.STRING || identExpression.type == Type.ARRAY) {
+		if (identExpression.type == Type.STRING || identExpression.type == Type.ARRAY)
 			mv.visitVarInsn(ALOAD, identExpression.declaration.slotNumber);
-		}
 		else if (identExpression.type == Type.FLOAT) mv.visitVarInsn(FLOAD, identExpression.declaration.slotNumber);
 		else mv.visitVarInsn(ILOAD, identExpression.declaration.slotNumber);
 		return null;
@@ -244,6 +241,20 @@ public class BytecodeGenerator implements NodeVisitor, Opcodes {
 	public Object visitStringLitExpression(StringLitExpression stringLitExpression, Object arg) throws Exception {
 		MethodVisitor mv = (MethodVisitor) arg;
 		mv.visitLdcInsn(stringLitExpression.firstToken.text);
+		return null;
+	}
+	
+	@Override
+	public Object visitArrayLitExpression(ArrayLitExpression arrayLitExpression, Object arg) throws Exception {
+		MethodVisitor mv = (MethodVisitor) arg;
+		mv.visitLdcInsn(arrayLitExpression.floats.size());
+		mv.visitIntInsn(NEWARRAY, T_FLOAT);
+		for (int i = 0; i < arrayLitExpression.floats.size(); i++) {
+			mv.visitInsn(DUP);
+			mv.visitLdcInsn(i);
+			mv.visitLdcInsn(arrayLitExpression.floats.get(i));
+			mv.visitInsn(FASTORE);
+		}
 		return null;
 	}
 
@@ -326,6 +337,18 @@ public class BytecodeGenerator implements NodeVisitor, Opcodes {
 		mv.visitMethodInsn(INVOKEVIRTUAL, "framework/effects/Gain", "process", "([F" + type + ")[F", false);
 		return null;
 	}
+	
+	@Override
+	public Object visitLineExpression(LineExpression lineExpression, Object arg) throws Exception {
+		MethodVisitor mv = (MethodVisitor) arg;
+		mv.visitTypeInsn(NEW, "framework/generators/BreakpointFunction");
+		mv.visitInsn(DUP);
+		lineExpression.size.visit(this, arg);
+		lineExpression.breakpoints.visit(this, arg);
+		mv.visitMethodInsn(INVOKESPECIAL, "framework/generators/BreakpointFunction", "<init>", "(I[F)V", false);
+		mv.visitMethodInsn(INVOKEVIRTUAL, "framework/generators/BreakpointFunction", "get", "()[F", false);		
+		return null;
+	}
 
 	@Override
 	public Object visitSpliceExpression(SpliceExpression spliceExpression, Object arg) throws Exception {
@@ -333,11 +356,11 @@ public class BytecodeGenerator implements NodeVisitor, Opcodes {
 		mv.visitTypeInsn(NEW, "framework/effects/Splice");
 		mv.visitInsn(DUP);
 		mv.visitMethodInsn(INVOKESPECIAL, "framework/effects/Splice", "<init>", "()V", false);
-		mv.visitInsn(ICONST_0 + spliceExpression.expressions.size());
+		mv.visitLdcInsn(spliceExpression.expressions.size());
 		mv.visitTypeInsn(ANEWARRAY, "[F");
 		for (int i = 0; i < spliceExpression.expressions.size(); i++) {
 			mv.visitInsn(DUP);
-			mv.visitInsn(ICONST_0 + i);
+			mv.visitLdcInsn(i);
 			spliceExpression.expressions.get(i).visit(this, arg);
 			mv.visitInsn(AASTORE);
 		}

@@ -2,54 +2,58 @@ package language.tree;
 
 public interface NodeVisitor {
 
-	Object visitProgram(Program program, Object argument) throws Exception;
+	Object visitProgram(Program program, Object arg) throws Exception;
 
-	Object visitBlock(Block block, Object argument) throws Exception;
+	Object visitBlock(Block block, Object arg) throws Exception;
 
 	Object visitUnassignedDeclaration(UnassignedDeclaration dec, Object arg) throws Exception;
 
 	Object visitAssignmentDeclaration(AssignmentDeclaration dec, Object arg) throws Exception;
 
-	Object visitAssignmentStatement(AssignmentStatement assignStatement, Object argument) throws Exception;
+	Object visitAssignmentStatement(AssignmentStatement assignStatement, Object arg) throws Exception;
 
-	Object visitIfStatement(IfStatement ifStatement, Object argument) throws Exception;
+	Object visitIfStatement(IfStatement ifStatement, Object arg) throws Exception;
 
-	Object visitWhileStatement(WhileStatement whileStatement, Object argument) throws Exception;
-	
-	Object visitPrintStatement(PrintStatement printStatement, Object argument) throws Exception;
-	
-	Object visitPlotStatement(PlotStatement plotStatement, Object argument) throws Exception;
-	
-	Object visitPlayStatement(PlayStatement playStatement, Object argument) throws Exception;
+	Object visitWhileStatement(WhileStatement whileStatement, Object arg) throws Exception;
 
-	Object visitIdentExpression(IdentExpression identExpression, Object argument) throws Exception;
-	
-	Object visitInfoExpression(InfoExpression infoExpression, Object argument) throws Exception;
+	Object visitPrintStatement(PrintStatement printStatement, Object arg) throws Exception;
 
-	Object visitIntLitExpression(IntLitExpression intLitExpression, Object argument) throws Exception;
+	Object visitPlotStatement(PlotStatement plotStatement, Object arg) throws Exception;
 
-	Object visitFloatLitExpression(FloatLitExpression floatLitExpression, Object argument) throws Exception;
+	Object visitPlayStatement(PlayStatement playStatement, Object arg) throws Exception;
 
-	Object visitBoolLitExpression(BoolLitExpression boolLitExpression, Object argument) throws Exception;
-	
-	Object visitStringLitExpression(StringLitExpression stringLitExpression, Object argument) throws Exception;
-	
-	Object visitReadExpression(ReadExpression readExpression, Object argument) throws Exception;
-	
-	Object visitReverseExpression(ReverseExpression reverseExpression, Object argument) throws Exception;
-	
-	Object visitSpeedExpression(SpeedExpression speedExpression, Object argument) throws Exception;
-	
-	Object visitLoopExpression(LoopExpression loopExpression, Object argument) throws Exception;
-	
-	Object visitDelayExpression(DelayExpression delayExpression, Object argument) throws Exception;
-	
-	Object visitSpliceExpression(SpliceExpression spliceExpression, Object argument) throws Exception;
-	
-	Object visitGainExpression(GainExpression gainExpression, Object argument) throws Exception;
-	
-	Object visitFormatExpression(FormatExpression formatExpression, Object argument) throws Exception;
+	Object visitIdentExpression(IdentExpression identExpression, Object arg) throws Exception;
 
-	Object visitBinaryExpression(BinaryExpression binaryExpression, Object argument) throws Exception;
+	Object visitInfoExpression(InfoExpression infoExpression, Object arg) throws Exception;
+
+	Object visitIntLitExpression(IntLitExpression intLitExpression, Object arg) throws Exception;
+
+	Object visitFloatLitExpression(FloatLitExpression floatLitExpression, Object arg) throws Exception;
+
+	Object visitBoolLitExpression(BoolLitExpression boolLitExpression, Object arg) throws Exception;
+
+	Object visitStringLitExpression(StringLitExpression stringLitExpression, Object arg) throws Exception;
+
+	Object visitArrayLitExpression(ArrayLitExpression arrayLitExpression, Object arg) throws Exception;
+
+	Object visitReadExpression(ReadExpression readExpression, Object arg) throws Exception;
+
+	Object visitReverseExpression(ReverseExpression reverseExpression, Object arg) throws Exception;
+
+	Object visitSpeedExpression(SpeedExpression speedExpression, Object arg) throws Exception;
+
+	Object visitLoopExpression(LoopExpression loopExpression, Object arg) throws Exception;
+
+	Object visitDelayExpression(DelayExpression delayExpression, Object arg) throws Exception;
+
+	Object visitSpliceExpression(SpliceExpression spliceExpression, Object arg) throws Exception;
+
+	Object visitGainExpression(GainExpression gainExpression, Object arg) throws Exception;
+	
+	Object visitLineExpression(LineExpression lineExpression, Object arg) throws Exception;
+
+	Object visitFormatExpression(FormatExpression formatExpression, Object arg) throws Exception;
+
+	Object visitBinaryExpression(BinaryExpression binaryExpression, Object arg) throws Exception;
 
 }

@@ -258,6 +258,26 @@ public class Parser {
 			consume();
 			expression = new StringLitExpression(firstToken);
 		} break;
+		case LBRACKET: {
+			consume();
+			ArrayList<Float> floats = new ArrayList<>();
+			while (token.kind != RBRACKET) {
+				if (token.kind == INT_LIT || token.kind == FLOAT_LIT) {
+					if (token.kind == INT_LIT) floats.add((float) token.getIntValue());
+					else if (token.kind == FLOAT_LIT) floats.add(token.getFloatValue());
+					consume();
+					try {
+						match(COMMA);
+					} catch (Exception e) {
+						break;
+					}
+				} else {
+					throw new Exception("Illegal factor: " + token.lineNumberPosition);
+				}
+			}
+			expression = new ArrayLitExpression(firstToken, floats);
+			match(RBRACKET);
+		} break;
 		case KW_READ: {
 			consume();
 			match(LPAREN);
@@ -317,6 +337,15 @@ public class Parser {
 			Expression gain = expression();
 			match(RPAREN);
 			expression = new GainExpression(firstToken, array, gain);
+		} break;
+		case KW_LINE: {
+			consume();
+			match(LPAREN);
+			Expression size = expression();
+			match(COMMA);
+			Expression breakpoints = expression();
+			match(RPAREN);
+			expression = new LineExpression(firstToken, size, breakpoints);
 		} break;
 		case KW_SPLICE: {
 			consume();

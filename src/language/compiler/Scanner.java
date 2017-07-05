@@ -94,6 +94,9 @@ public class Scanner {
 		case "gain": {
 			token = new Token(Kind.KW_GAIN, startPos, endPos, lineNum, lineNumPos);
 		} break;
+		case "line": {
+			token = new Token(Kind.KW_LINE, startPos, endPos, lineNum, lineNumPos);
+		} break;
 		default: {
 			token = new Token(Kind.IDENT, substring, startPos, endPos, lineNum, lineNumPos);
 		} break;
@@ -215,6 +218,18 @@ public class Scanner {
 					pos++;
 					lineNumPos++;
 				} break;
+				case '[': {
+					Token token = new Token(Kind.LBRACKET, startPos, 1, lineNum, lineNumPos);
+					tokens.add(token);
+					pos++;
+					lineNumPos++;
+				} break;
+				case ']': {
+					Token token = new Token(Kind.RBRACKET, startPos, 1, lineNum, lineNumPos);
+					tokens.add(token);
+					pos++;
+					lineNumPos++;
+				} break;
 				// Single-character that precedes multiple-character
 				case '=': {
 					if (chars.charAt(pos + 1) == '=') {
@@ -228,7 +243,6 @@ public class Scanner {
 						pos++;
 						lineNumPos++;
 					}
-					state = State.START;
 				} break;
 				case '<': {
 					if (chars.charAt(pos + 1) == '=') {
@@ -242,7 +256,6 @@ public class Scanner {
 						pos++;
 						lineNumPos++;
 					}
-					state = State.START;					
 				} break;
 				case '>': {
 					if (chars.charAt(pos + 1) == '=') {
@@ -256,7 +269,6 @@ public class Scanner {
 						pos++;
 						lineNumPos++;
 					}
-					state = State.START;
 				} break;
 				case '!': {
 					if (chars.charAt(pos + 1) == '=') {
@@ -270,7 +282,6 @@ public class Scanner {
 						pos++;
 						lineNumPos++;
 					}
-					state = State.START;
 				} break;
 				case '-': {
 					if (chars.charAt(pos + 1) == '>') {
@@ -284,7 +295,6 @@ public class Scanner {
 						pos++;
 						lineNumPos++;
 					}
-					state = State.START;
 				} break;
 				case '0': {
 					if (chars.charAt(pos + 1) == '.') {

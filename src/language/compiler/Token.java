@@ -28,6 +28,8 @@ public class Token {
 		RPAREN(")"),
 		LBRACE("{"), 
 		RBRACE("}"),
+		LBRACKET("["), 
+		RBRACKET("]"),
 		// Single-character that precedes multiple-character
 		ASSIGN("="),
 		LT("<"),
@@ -63,6 +65,7 @@ public class Token {
 		KW_SPLICE("splice"),
 		KW_DELAY("delay"),
 		KW_GAIN("gain"),
+		KW_LINE("line"),
 		KW_INFO("info");
 
 		final String text;

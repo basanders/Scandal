@@ -114,7 +114,7 @@ public class TypeChecker implements NodeVisitor {
 	}
 
 	@Override
-	public Object visitInfoExpression(InfoExpression infoExpression, Object argument) throws Exception {
+	public Object visitInfoExpression(InfoExpression infoExpression, Object arg) throws Exception {
 		return infoExpression.type;
 	}
 
@@ -134,8 +134,13 @@ public class TypeChecker implements NodeVisitor {
 	}
 
 	@Override
-	public Object visitStringLitExpression(StringLitExpression stringLitExpression, Object argument) throws Exception {
+	public Object visitStringLitExpression(StringLitExpression stringLitExpression, Object arg) throws Exception {
 		return stringLitExpression.type;
+	}
+	
+	@Override
+	public Object visitArrayLitExpression(ArrayLitExpression arrayLitExpression, Object arg) throws Exception {
+		return arrayLitExpression.type;
 	}
 
 	@Override
@@ -204,6 +209,15 @@ public class TypeChecker implements NodeVisitor {
 		if (gainExpression.gain.type != INT && gainExpression.gain.type != FLOAT && gainExpression.gain.type != ARRAY)
 				throw new Exception("Invalid GainExpression");
 		return gainExpression.type;
+	}
+	
+	@Override
+	public Object visitLineExpression(LineExpression lineExpression, Object argument) throws Exception {
+		lineExpression.size.visit(this, null);
+		if (lineExpression.size.type != INT) throw new Exception("Invalid LineExpression");
+		lineExpression.breakpoints.visit(this, null);
+		if (lineExpression.breakpoints.type != ARRAY) throw new Exception("Invalid LineExpression");
+		return lineExpression.type;
 	}
 
 	@Override

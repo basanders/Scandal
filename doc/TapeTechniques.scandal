@@ -5,5 +5,5 @@ array lisa = read("/Users/luisfelipe/Desktop/Scandal/wav/stereoLisa.wav", channe
 array intro = loop(lisa, 0, 4410, 9) /* Arguments: array, start sample, end sample, count */
 array coda1 = reverse(intro)
 array coda2 = speed(coda1, 0.7)
-array final = splice(intro, coda1, coda2)
+array final = splice(intro, coda1, coda2, intro, coda2, coda1)
 play(delay(final, 700, 0.5, 0.5), channels) /* Arguments: array, milliseconds, feedback, mix */

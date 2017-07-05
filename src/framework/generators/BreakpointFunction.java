@@ -33,11 +33,8 @@ public class BreakpointFunction {
 		float increment = 0;
 		for (int i = 0; i < breakpoints.length - 1; i++) {
 			for (int j = 0; j < length; j++) {
-				if (i != breakpoints.length - 2) {
-					increment = (breakpoints[i + 1] - breakpoints[i]) / length;
-				} else {
-					increment = (breakpoints[i + 1] - breakpoints[i]) / (length - 1);
-				}
+				if (i != breakpoints.length - 2) increment = (breakpoints[i + 1] - breakpoints[i]) / length;
+				else increment = (breakpoints[i + 1] - breakpoints[i]) / (length - 1);
 				array[index] = value;
 				index += 1;
 				value += increment;

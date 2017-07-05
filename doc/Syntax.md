@@ -1,7 +1,7 @@
 ### Concrete syntax
 
-- program := (declaration | statement)*
-- block := LBRACE ( declaration | statement )* RBRACE
+- program := (declaration | statement)\*
+- block := LBRACE ( declaration | statement )\* RBRACE
 - declaration := unassignedDeclaration | assignmentDeclaration
 - unassignedDeclaration := type IDENT
 - assignmentDeclaration := type IDENT ASSIGN expression
@@ -14,20 +14,21 @@
 - printStatement := KW\_PRINT LPAREN expression RPAREN
 - plotStatement := KW\_PLOT LPAREN expression COMMA expression COMMA expression RPAREN
 - playStatement := KW\_PLAY LPAREN expression COMMA expression RPAREN
-- expression := term (termOperator term)*
+- expression := term (termOperator term)\*
 - termOperator := LT | LE | GT | GE | EQUAL | NOTEQUAL
-- term := summand (summandOperator summand)*
+- term := summand (summandOperator summand)\*
 - summandOperator := PLUS | MINUS | OR
-- summand := factor (factorOperator factor)*
+- summand := factor (factorOperator factor)\*
 - factorOperator := TIMES | DIV | MOD | AND
 - factor := LPAREN expression RPAREN | identExpression | literalExpression | frameworkExpression
 - identExpression := IDENT
-- literalExpression := intLitExpression | floatLitExpression | boolLitExpression | stringLitExpression
+- literalExpression := intLitExpression | floatLitExpression | boolLitExpression | stringLitExpression | arrayLitExpression
 - intLitExpression := INT\_LIT
 - floatLitExpression := FLOAT\_LIT
 - boolLitExpression := KW\_TRUE | KW\_FALSE
 - stringLitExpression := STRING\_LIT
-- frameworkExpression := infoExpression | readExpression | formatExpression | gainExpression
+- arrayLitExpression := LBRACKET ((FLOAT\_LIT | INT\_LIT) (COMMA (FLOAT\_LIT | INT\_LIT))\*)\* RBRACKET
+- frameworkExpression := infoExpression | readExpression | formatExpression | gainExpression | lineExpression
 - frameworkExpression := reverseExpression | speedExpression | spliceExpression | loopExpression | delayExpression
 - infoExpression := KW\_INFO
 - readExpression := KW\_READ LPAREN expression COMMA expression RPAREN
@@ -36,13 +37,14 @@
 - speedExpression := KW\_SPEED LPAREN expression COMMA expression RPAREN
 - loopExpression := KW\_LOOP LPAREN expression COMMA expression COMMA expression COMMA expression RPAREN
 - delayExpression := KW\_DELAY LPAREN expression COMMA expression COMMA expression COMMA expression RPAREN
-- spliceExpression := KW\_SPLICE LPAREN expression (COMMA expression)* RPAREN
+- spliceExpression := KW\_SPLICE LPAREN expression (COMMA expression)\* RPAREN
 - gainExpression := KW\_GAIN LPAREN expression COMMA expression RPAREN
+- lineExpression := KW\_LINE LPAREN expression COMMA expression RPAREN
 
 ### Abstract syntax
 
-- Program := (Declaration | Statement)*
-- Block := (Declaration | Statement)*
+- Program := (Declaration | Statement)\*
+- Block := (Declaration | Statement)\*
 - Declaration := UnassignedDeclaration | AssignmentDeclaration
 - UnassignedDeclaration := Type IDENT
 - AssignmentDeclaration := Type IDENT Expression
@@ -64,6 +66,7 @@
 - DelayExpression := Expression\_0 Expression\_1 Expression\_2 Expression\_3
 - SpliceExpression := Expression+
 - GainExpression := Expression\_0 Expression\_1
+- LineExpression := Expression\_0 Expression\_1
 
 ### TypeChecker rules
 
@@ -104,6 +107,8 @@
 	+ Type = BOOL
 - StringLitExpression:
 	+ Type = STRING
+- ArrayLitExpression:
+	+ Type = ARRAY
 - InfoExpression:
 	+ Type = STRING
 - FormatExpression:
@@ -138,3 +143,7 @@
 	+ Type = ARRAY
 	+ Expression\_0.type = ARRAY
 	+ Expression\_1.type = INT | FLOAT | ARRAY
+- LineExpression:
+	+ Type = ARRAY
+	+ Expression\_0.type = INT
+	+ Expression\_1.type = ARRAY
