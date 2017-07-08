@@ -76,6 +76,13 @@ public class Token {
 		KW_DELAY("delay"),
 		KW_GAIN("gain"),
 		KW_LINE("line"),
+		KW_WAVEFORM("waveform"),
+		KW_COSINE("cosine"),
+		KW_SAWTOOTH("sawtooth"),
+		KW_SQUARE("square"),
+		KW_TRIANGLE("triangle"),
+		KW_NOISE("noise"),
+		KW_OSCILLATOR("oscillator"),
 		KW_INFO("info");
 
 		final String text;

@@ -6,21 +6,6 @@ import java.util.ArrayList;
 
 import language.compiler.Token.Kind;
 import language.tree.*;
-import language.tree.function.BiquadExpression;
-import language.tree.function.DelayExpression;
-import language.tree.function.FilterExpression;
-import language.tree.function.FormatExpression;
-import language.tree.function.GainExpression;
-import language.tree.function.InfoExpression;
-import language.tree.function.LineExpression;
-import language.tree.function.LoopExpression;
-import language.tree.function.PlayStatement;
-import language.tree.function.PlotStatement;
-import language.tree.function.PrintStatement;
-import language.tree.function.ReadExpression;
-import language.tree.function.ReverseExpression;
-import language.tree.function.SpeedExpression;
-import language.tree.function.SpliceExpression;
 
 public class Parser {
 
@@ -100,6 +85,7 @@ public class Parser {
 				token.kind == KW_STRING |
 				token.kind == KW_FORMAT |
 				token.kind == KW_FILTER |
+				token.kind == KW_WAVEFORM |
 				token.kind == KW_ARRAY) {			
 			consume();
 			Token identToken = token;
@@ -345,6 +331,19 @@ public class Parser {
 			match(RPAREN);
 			expression = new DelayExpression(firstToken, array, time, feedback, mix);
 		} break;
+		case KW_OSCILLATOR: {
+			consume();
+			match(LPAREN);
+			Expression duration = expression();
+			match(COMMA);
+			Expression amplitude = expression();
+			match(COMMA);
+			Expression frequency = expression();
+			match(COMMA);
+			Expression shape = expression();
+			match(RPAREN);
+			expression = new OscillatorExpression(firstToken, duration, amplitude, frequency, shape);
+		} break;
 		case KW_BIQUAD: {
 			consume();
 			match(LPAREN);
@@ -407,6 +406,14 @@ public class Parser {
 		case KW_PEAKING: {
 			consume();
 			expression = new FilterExpression(firstToken);
+		} break;
+		case KW_COSINE:
+		case KW_SAWTOOTH:
+		case KW_SQUARE:
+		case KW_TRIANGLE:
+		case KW_NOISE: {
+			consume();
+			expression = new WaveformExpression(firstToken);
 		} break;
 		case KW_FALSE:
 		case KW_TRUE: {

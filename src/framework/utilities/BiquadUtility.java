@@ -1,6 +1,15 @@
-package framework.effects;
+package framework.utilities;
 
-public class BiquadConvenience {
+import framework.effects.BiquadAllPass;
+import framework.effects.BiquadBandPass;
+import framework.effects.BiquadHiPass;
+import framework.effects.BiquadHiShelf;
+import framework.effects.BiquadLowPass;
+import framework.effects.BiquadLowShelf;
+import framework.effects.BiquadNotch;
+import framework.effects.BiquadPeak;
+
+public class BiquadUtility {
 
 	public float[] process(float[] buffer, float cutoff, float resonance, int method) {
 		switch (method) {

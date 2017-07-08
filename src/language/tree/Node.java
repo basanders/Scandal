@@ -4,7 +4,7 @@ import language.compiler.Token;
 
 public abstract class Node {
 	
-	public static enum Type { INT, FLOAT, BOOL, STRING, ARRAY, FORMAT, FILTER }
+	public static enum Type { INT, FLOAT, BOOL, STRING, ARRAY, FORMAT, FILTER, WAVEFORM }
 
 	public final Token firstToken;
 	public Type type;
@@ -24,6 +24,7 @@ public abstract class Node {
 		case KW_ARRAY: return Type.ARRAY;
 		case KW_FORMAT: return Type.FORMAT;
 		case KW_FILTER: return Type.FILTER;
+		case KW_WAVEFORM: return Type.WAVEFORM;
 		default: return null;
 		}
 	}
@@ -37,10 +38,11 @@ public abstract class Node {
 		case KW_ARRAY: return "[F";
 		case KW_FORMAT: return "I";
 		case KW_FILTER: return "I";
+		case KW_WAVEFORM: return "I";
 		default: return null;
 		}
 	}
 
-	public abstract Object visit(NodeVisitor visitor, Object argument) throws Exception;
+	public abstract Object visit(NodeVisitor visitor, Object arg) throws Exception;
 
 }

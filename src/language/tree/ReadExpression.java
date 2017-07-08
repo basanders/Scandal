@@ -1,8 +1,6 @@
-package language.tree.function;
+package language.tree;
 
 import language.compiler.Token;
-import language.tree.Expression;
-import language.tree.NodeVisitor;
 
 public class ReadExpression extends Expression {
 	

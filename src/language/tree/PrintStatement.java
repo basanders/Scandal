@@ -1,9 +1,6 @@
-package language.tree.function;
+package language.tree;
 
 import language.compiler.Token;
-import language.tree.Expression;
-import language.tree.NodeVisitor;
-import language.tree.Statement;
 
 public class PrintStatement extends Statement {
 

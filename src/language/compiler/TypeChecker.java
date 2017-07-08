@@ -4,21 +4,6 @@ import static language.tree.Node.Type.*;
 
 import language.tree.*;
 import language.tree.Node.Type;
-import language.tree.function.BiquadExpression;
-import language.tree.function.DelayExpression;
-import language.tree.function.FilterExpression;
-import language.tree.function.FormatExpression;
-import language.tree.function.GainExpression;
-import language.tree.function.InfoExpression;
-import language.tree.function.LineExpression;
-import language.tree.function.LoopExpression;
-import language.tree.function.PlayStatement;
-import language.tree.function.PlotStatement;
-import language.tree.function.PrintStatement;
-import language.tree.function.ReadExpression;
-import language.tree.function.ReverseExpression;
-import language.tree.function.SpeedExpression;
-import language.tree.function.SpliceExpression;
 
 public class TypeChecker implements NodeVisitor {
 
@@ -218,6 +203,28 @@ public class TypeChecker implements NodeVisitor {
 	}
 	
 	@Override
+	public Object visitOscillatorExpression(OscillatorExpression oscillatorExpression, Object arg) throws Exception {
+		oscillatorExpression.duration.visit(this, null);
+		if (oscillatorExpression.duration.type != FLOAT && oscillatorExpression.duration.type != INT)
+			throw new Exception("Invalid OscillatorExpression");
+		oscillatorExpression.amplitude.visit(this, null);
+		if (
+				oscillatorExpression.amplitude.type != FLOAT &&
+				oscillatorExpression.amplitude.type != INT &&
+				oscillatorExpression.amplitude.type != ARRAY)
+			throw new Exception("Invalid OscillatorExpression");
+		oscillatorExpression.frequency.visit(this, null);
+		if (
+				oscillatorExpression.frequency.type != FLOAT &&
+				oscillatorExpression.frequency.type != INT &&
+				oscillatorExpression.frequency.type != ARRAY)
+			throw new Exception("Invalid OscillatorExpression");
+		oscillatorExpression.shape.visit(this, null);
+		if (oscillatorExpression.shape.type != WAVEFORM) throw new Exception("Invalid OscillatorExpression");
+		return oscillatorExpression.type;
+	}
+	
+	@Override
 	public Object visitGainExpression(GainExpression gainExpression, Object argument) throws Exception {
 		gainExpression.array.visit(this, null);
 		if (gainExpression.array.type != ARRAY) throw new Exception("Invalid GainExpression");
@@ -269,6 +276,11 @@ public class TypeChecker implements NodeVisitor {
 	@Override
 	public Object visitFormatExpression(FormatExpression formatExpression, Object argument) throws Exception {
 		return formatExpression.type;
+	}
+	
+	@Override
+	public Object visitWaveformExpression(WaveformExpression waveformExpression, Object arg) throws Exception {
+		return waveformExpression.type;
 	}
 	
 	@Override

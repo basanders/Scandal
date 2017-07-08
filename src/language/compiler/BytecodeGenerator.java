@@ -9,7 +9,6 @@ import org.objectweb.asm.Opcodes;
 
 import language.tree.*;
 import language.tree.Node.Type;
-import language.tree.function.*;
 
 public class BytecodeGenerator implements NodeVisitor, Opcodes {
 
@@ -327,6 +326,24 @@ public class BytecodeGenerator implements NodeVisitor, Opcodes {
 	}
 	
 	@Override
+	public Object visitOscillatorExpression(OscillatorExpression oscillatorExpression, Object arg) throws Exception {
+		MethodVisitor mv = (MethodVisitor) arg;
+		mv.visitTypeInsn(NEW, "framework/utilities/WavetableOscillatorUtility");
+		mv.visitInsn(DUP);
+		mv.visitMethodInsn(INVOKESPECIAL, "framework/utilities/WavetableOscillatorUtility", "<init>", "()V", false);
+		String type = "(I";
+		oscillatorExpression.duration.visit(this, arg);
+		oscillatorExpression.amplitude.visit(this, arg);
+		type += oscillatorExpression.amplitude.getJvmType();
+		oscillatorExpression.frequency.visit(this, arg);
+		type += oscillatorExpression.frequency.getJvmType();
+		oscillatorExpression.shape.visit(this, arg);
+		type += "I)[F";
+		mv.visitMethodInsn(INVOKEVIRTUAL, "framework/utilities/WavetableOscillatorUtility", "get", type, false);
+		return null;
+	}
+	
+	@Override
 	public Object visitGainExpression(GainExpression gainExpression, Object arg) throws Exception {
 		MethodVisitor mv = (MethodVisitor) arg;
 		mv.visitTypeInsn(NEW, "framework/effects/Gain");
@@ -342,16 +359,16 @@ public class BytecodeGenerator implements NodeVisitor, Opcodes {
 	@Override
 	public Object visitBiquadExpression(BiquadExpression biquadExpression, Object arg) throws Exception {
 		MethodVisitor mv = (MethodVisitor) arg;
-		mv.visitTypeInsn(NEW, "framework/effects/BiquadConvenience");
+		mv.visitTypeInsn(NEW, "framework/utilities/BiquadUtility");
 		mv.visitInsn(DUP);
-		mv.visitMethodInsn(INVOKESPECIAL, "framework/effects/BiquadConvenience", "<init>", "()V", false);
+		mv.visitMethodInsn(INVOKESPECIAL, "framework/utilities/BiquadUtility", "<init>", "()V", false);
 		biquadExpression.array.visit(this, arg);
 		biquadExpression.cutoff.visit(this, arg);
 		String type = biquadExpression.cutoff.getJvmType();
 		biquadExpression.resonance.visit(this, arg);
 		type += biquadExpression.resonance.getJvmType();
 		biquadExpression.method.visit(this, arg);
-		mv.visitMethodInsn(INVOKEVIRTUAL, "framework/effects/BiquadConvenience", "process", "([F" + type + "I)[F", false);
+		mv.visitMethodInsn(INVOKEVIRTUAL, "framework/utilities/BiquadUtility", "process", "([F" + type + "I)[F", false);
 		return null;
 	}
 	
@@ -389,6 +406,13 @@ public class BytecodeGenerator implements NodeVisitor, Opcodes {
 	public Object visitFormatExpression(FormatExpression formatExpression, Object arg) throws Exception {
 		MethodVisitor mv = (MethodVisitor) arg;
 		mv.visitLdcInsn(formatExpression.channels);
+		return null;
+	}
+	
+	@Override
+	public Object visitWaveformExpression(WaveformExpression waveformExpression, Object arg) throws Exception {
+		MethodVisitor mv = (MethodVisitor) arg;
+		mv.visitLdcInsn(waveformExpression.shape);
 		return null;
 	}
 	

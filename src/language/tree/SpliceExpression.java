@@ -1,10 +1,8 @@
-package language.tree.function;
+package language.tree;
 
 import java.util.ArrayList;
 
 import language.compiler.Token;
-import language.tree.Expression;
-import language.tree.NodeVisitor;
 
 public class SpliceExpression extends Expression {
 	

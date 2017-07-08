@@ -30,7 +30,7 @@
 - arrayLitExpression := LBRACKET ((FLOAT\_LIT | INT\_LIT) (COMMA (FLOAT\_LIT | INT\_LIT))\*)\* RBRACKET
 - frameworkExpression := infoExpression | readExpression | formatExpression | gainExpression | lineExpression
 - frameworkExpression := reverseExpression | speedExpression | spliceExpression | loopExpression | delayExpression
-- frameworkExpression := filterExpression | biquadExpression
+- frameworkExpression := filterExpression | biquadExpression | waveformExpression | oscillatorExpression
 - infoExpression := KW\_INFO
 - readExpression := KW\_READ LPAREN expression COMMA expression RPAREN
 - formatExpression := KW\_MONO | KW\_STEREO
@@ -44,6 +44,8 @@
 - filterExpression := KW\_ALLPASS | KW\_LOWPASS | KW\_HIPASS | KW\_BANDPASS
 - filterExpression := KW\_BANDSTOP | KW\_LOWSHELF | KW\_HISHELF | KW\_PEAKING
 - biquadExpression := KW\_BIQUAD LPAREN expression COMMA expression COMMA expression COMMA expression RPAREN
+- waveformExpression := KW\_COSINE | KW\_SAWTOOTH | KW\_SQUARE | KW\_TRIANGLE | KW\_NOISE
+- oscillatorExpression := KW\_OSCILLATOR LPAREN expression COMMA expression COMMA expression COMMA expression RPAREN
 
 ## Abstract syntax
 
@@ -72,6 +74,7 @@
 - GainExpression := Expression\_0 Expression\_1
 - LineExpression := Expression\_0 Expression\_1
 - BiquadExpression := Expression\_0 Expression\_1 Expression\_2 Expression\_3
+- OscillatorExpression := Expression\_0 Expression\_1 Expression\_2 Expression\_3
 
 ## TypeChecker rules
 
@@ -88,7 +91,7 @@
 - WhileStatement:
 	+ Expression.type = BOOL
 - PrintStatement:
-	+ Expression.type != ARRAY | FORMAT | FILTER
+	+ Expression.type != ARRAY | FORMAT | FILTER | WAVEFORM
 - PlotStatement:
 	+ Expression\_0.type = STRING
 	+ Expression\_1.type = ARRAY
@@ -118,6 +121,8 @@
 	+ Type = STRING
 - FormatExpression:
 	+ Type = FORMAT
+- WaveformExpression:
+	+ Type = WAVEFORM
 - FilterExpression:
 	+ Type = FILTER
 - ReadExpression:
@@ -157,6 +162,12 @@
 - BiquadExpression:
 	+ Type = ARRAY
 	+ Expression\_0.type = ARRAY
-	+ Expression\_1.type = INT | FLOAT | ARRAY
-	+ Expression\_2.type = INT | FLOAT | ARRAY
+	+ Expression\_1.type = FLOAT | ARRAY
+	+ Expression\_2.type = FLOAT | ARRAY
 	+ Expression\_3.type = FILTER
+- OscillatorExpression:
+	+ Type = ARRAY
+	+ Expression\_1.type = INT
+	+ Expression\_2.type = FLOAT | ARRAY
+	+ Expression\_3.type = FLOAT | ARRAY
+	+ Expression\_4.type = WAVEFORM

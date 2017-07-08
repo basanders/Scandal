@@ -3,11 +3,11 @@
 format channels = mono
 string file = "/Users/luisfelipe/Desktop/Scandal/wav/stereoLisa.wav"
 array lisa = read(file, channels)
-/*
+
 array breakpoints = [500, 5000, 500, 5000, 500]
 array cutoff = line(512, breakpoints)
 float resonance = 1.0
 filter mode = hipass
 lisa = biquad(lisa, cutoff, resonance, mode)
-*/
+
 play(lisa, channels)

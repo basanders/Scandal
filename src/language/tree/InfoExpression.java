@@ -1,9 +1,7 @@
-package language.tree.function;
+package language.tree;
 
 import framework.utilities.Settings;
 import language.compiler.Token;
-import language.tree.Expression;
-import language.tree.NodeVisitor;
 
 public class InfoExpression extends Expression {
 	

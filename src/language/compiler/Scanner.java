@@ -127,6 +127,27 @@ public class Scanner {
 		case "biquad": {
 			token = new Token(Kind.KW_BIQUAD, startPos, endPos, lineNum, lineNumPos);
 		} break;
+		case "waveform": {
+			token = new Token(Kind.KW_WAVEFORM, startPos, endPos, lineNum, lineNumPos);
+		} break;
+		case "cosine": {
+			token = new Token(Kind.KW_COSINE, startPos, endPos, lineNum, lineNumPos);
+		} break;
+		case "sawtooth": {
+			token = new Token(Kind.KW_SAWTOOTH, startPos, endPos, lineNum, lineNumPos);
+		} break;
+		case "square": {
+			token = new Token(Kind.KW_SQUARE, startPos, endPos, lineNum, lineNumPos);
+		} break;
+		case "triangle": {
+			token = new Token(Kind.KW_TRIANGLE, startPos, endPos, lineNum, lineNumPos);
+		} break;
+		case "noise": {
+			token = new Token(Kind.KW_NOISE, startPos, endPos, lineNum, lineNumPos);
+		} break;
+		case "oscillator": {
+			token = new Token(Kind.KW_OSCILLATOR, startPos, endPos, lineNum, lineNumPos);
+		} break;
 		default: {
 			token = new Token(Kind.IDENT, substring, startPos, endPos, lineNum, lineNumPos);
 		} break;

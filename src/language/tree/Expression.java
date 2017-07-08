@@ -18,6 +18,7 @@ public abstract class Expression extends Node {
 		case ARRAY: return "[F";
 		case FORMAT: return "I";
 		case FILTER: return "I";
+		case WAVEFORM: return "I";
 		default: return null;
 		}
 	}
