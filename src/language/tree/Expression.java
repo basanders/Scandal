@@ -16,6 +16,8 @@ public abstract class Expression extends Node {
 		case BOOL: return "Z";
 		case STRING: return "Ljava/lang/String;";
 		case ARRAY: return "[F";
+		case FORMAT: return "I";
+		case FILTER: return "I";
 		default: return null;
 		}
 	}

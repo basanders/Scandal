@@ -4,7 +4,7 @@ import language.compiler.Token;
 
 public abstract class Node {
 	
-	public static enum Type { INT, FLOAT, BOOL, STRING, ARRAY, FORMAT }
+	public static enum Type { INT, FLOAT, BOOL, STRING, ARRAY, FORMAT, FILTER }
 
 	public final Token firstToken;
 	public Type type;
@@ -23,6 +23,7 @@ public abstract class Node {
 		case KW_STRING: return Type.STRING;
 		case KW_ARRAY: return Type.ARRAY;
 		case KW_FORMAT: return Type.FORMAT;
+		case KW_FILTER: return Type.FILTER;
 		default: return null;
 		}
 	}
@@ -35,6 +36,7 @@ public abstract class Node {
 		case KW_STRING: return "Ljava/lang/String;";
 		case KW_ARRAY: return "[F";
 		case KW_FORMAT: return "I";
+		case KW_FILTER: return "I";
 		default: return null;
 		}
 	}

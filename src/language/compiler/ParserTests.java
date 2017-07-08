@@ -20,8 +20,8 @@ import language.tree.FloatLitExpression;
 import language.tree.IfStatement;
 import language.tree.IntLitExpression;
 import language.tree.Program;
-import language.tree.ReadExpression;
 import language.tree.WhileStatement;
+import language.tree.function.ReadExpression;
 
 public class ParserTests {
 	

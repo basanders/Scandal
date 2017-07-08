@@ -9,6 +9,7 @@ import org.objectweb.asm.Opcodes;
 
 import language.tree.*;
 import language.tree.Node.Type;
+import language.tree.function.*;
 
 public class BytecodeGenerator implements NodeVisitor, Opcodes {
 
@@ -339,6 +340,22 @@ public class BytecodeGenerator implements NodeVisitor, Opcodes {
 	}
 	
 	@Override
+	public Object visitBiquadExpression(BiquadExpression biquadExpression, Object arg) throws Exception {
+		MethodVisitor mv = (MethodVisitor) arg;
+		mv.visitTypeInsn(NEW, "framework/effects/BiquadConvenience");
+		mv.visitInsn(DUP);
+		mv.visitMethodInsn(INVOKESPECIAL, "framework/effects/BiquadConvenience", "<init>", "()V", false);
+		biquadExpression.array.visit(this, arg);
+		biquadExpression.cutoff.visit(this, arg);
+		String type = biquadExpression.cutoff.getJvmType();
+		biquadExpression.resonance.visit(this, arg);
+		type += biquadExpression.resonance.getJvmType();
+		biquadExpression.method.visit(this, arg);
+		mv.visitMethodInsn(INVOKEVIRTUAL, "framework/effects/BiquadConvenience", "process", "([F" + type + "I)[F", false);
+		return null;
+	}
+	
+	@Override
 	public Object visitLineExpression(LineExpression lineExpression, Object arg) throws Exception {
 		MethodVisitor mv = (MethodVisitor) arg;
 		mv.visitTypeInsn(NEW, "framework/generators/BreakpointFunction");
@@ -372,6 +389,13 @@ public class BytecodeGenerator implements NodeVisitor, Opcodes {
 	public Object visitFormatExpression(FormatExpression formatExpression, Object arg) throws Exception {
 		MethodVisitor mv = (MethodVisitor) arg;
 		mv.visitLdcInsn(formatExpression.channels);
+		return null;
+	}
+	
+	@Override
+	public Object visitFilterExpression(FilterExpression filterExpression, Object arg) throws Exception {
+		MethodVisitor mv = (MethodVisitor) arg;
+		mv.visitLdcInsn(filterExpression.method);
 		return null;
 	}
 

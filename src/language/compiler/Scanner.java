@@ -97,6 +97,36 @@ public class Scanner {
 		case "line": {
 			token = new Token(Kind.KW_LINE, startPos, endPos, lineNum, lineNumPos);
 		} break;
+		case "filter": {
+			token = new Token(Kind.KW_FILTER, startPos, endPos, lineNum, lineNumPos);
+		} break;
+		case "allpass": {
+			token = new Token(Kind.KW_ALLPASS, startPos, endPos, lineNum, lineNumPos);
+		} break;
+		case "bandpass": {
+			token = new Token(Kind.KW_BANDPASS, startPos, endPos, lineNum, lineNumPos);
+		} break;
+		case "bandstop": {
+			token = new Token(Kind.KW_BANDSTOP, startPos, endPos, lineNum, lineNumPos);
+		} break;
+		case "lowpass": {
+			token = new Token(Kind.KW_LOWPASS, startPos, endPos, lineNum, lineNumPos);
+		} break;
+		case "hipass": {
+			token = new Token(Kind.KW_HIPASS, startPos, endPos, lineNum, lineNumPos);
+		} break;
+		case "lowshelf": {
+			token = new Token(Kind.KW_LOWSHELF, startPos, endPos, lineNum, lineNumPos);
+		} break;
+		case "hishelf": {
+			token = new Token(Kind.KW_HISHELF, startPos, endPos, lineNum, lineNumPos);
+		} break;
+		case "peaking": {
+			token = new Token(Kind.KW_PEAKING, startPos, endPos, lineNum, lineNumPos);
+		} break;
+		case "biquad": {
+			token = new Token(Kind.KW_BIQUAD, startPos, endPos, lineNum, lineNumPos);
+		} break;
 		default: {
 			token = new Token(Kind.IDENT, substring, startPos, endPos, lineNum, lineNumPos);
 		} break;

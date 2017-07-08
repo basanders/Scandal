@@ -1,4 +1,4 @@
-### Concrete syntax
+## Concrete syntax
 
 - program := (declaration | statement)\*
 - block := LBRACE ( declaration | statement )\* RBRACE
@@ -30,6 +30,7 @@
 - arrayLitExpression := LBRACKET ((FLOAT\_LIT | INT\_LIT) (COMMA (FLOAT\_LIT | INT\_LIT))\*)\* RBRACKET
 - frameworkExpression := infoExpression | readExpression | formatExpression | gainExpression | lineExpression
 - frameworkExpression := reverseExpression | speedExpression | spliceExpression | loopExpression | delayExpression
+- frameworkExpression := filterExpression | biquadExpression
 - infoExpression := KW\_INFO
 - readExpression := KW\_READ LPAREN expression COMMA expression RPAREN
 - formatExpression := KW\_MONO | KW\_STEREO
@@ -40,8 +41,11 @@
 - spliceExpression := KW\_SPLICE LPAREN expression (COMMA expression)\* RPAREN
 - gainExpression := KW\_GAIN LPAREN expression COMMA expression RPAREN
 - lineExpression := KW\_LINE LPAREN expression COMMA expression RPAREN
+- filterExpression := KW\_ALLPASS | KW\_LOWPASS | KW\_HIPASS | KW\_BANDPASS
+- filterExpression := KW\_BANDSTOP | KW\_LOWSHELF | KW\_HISHELF | KW\_PEAKING
+- biquadExpression := KW\_BIQUAD LPAREN expression COMMA expression COMMA expression COMMA expression RPAREN
 
-### Abstract syntax
+## Abstract syntax
 
 - Program := (Declaration | Statement)\*
 - Block := (Declaration | Statement)\*
@@ -67,8 +71,9 @@
 - SpliceExpression := Expression+
 - GainExpression := Expression\_0 Expression\_1
 - LineExpression := Expression\_0 Expression\_1
+- BiquadExpression := Expression\_0 Expression\_1 Expression\_2 Expression\_3
 
-### TypeChecker rules
+## TypeChecker rules
 
 - UnassignedDeclaration:
 	+ Variable may not be declared more than once in the same scope
@@ -83,7 +88,7 @@
 - WhileStatement:
 	+ Expression.type = BOOL
 - PrintStatement:
-	+ Expression.type != ARRAY | FORMAT
+	+ Expression.type != ARRAY | FORMAT | FILTER
 - PlotStatement:
 	+ Expression\_0.type = STRING
 	+ Expression\_1.type = ARRAY
@@ -95,7 +100,7 @@
 	+ (INT | FLOAT) (MOD | PLUS | MINUS | TIMES | DIV) (FLOAT | INT) ==> FLOAT
 	+ INT (summandOperator | factorOperator) INT ==> INT
 	+ (INT | BOOL) (AND | OR) (BOOL | INT) ==> BOOL
-	+ !(ARRAY | STRING) (termOperator) !(STRING | ARRAY) ==> BOOL
+	+ !(ARRAY | STRING) termOperator !(STRING | ARRAY) ==> BOOL
 - IdentExpression:
 	+ Variable must have been declared in some enclosing scope
 	+ Type = Declaration.type
@@ -113,6 +118,8 @@
 	+ Type = STRING
 - FormatExpression:
 	+ Type = FORMAT
+- FilterExpression:
+	+ Type = FILTER
 - ReadExpression:
 	+ Type = ARRAY
 	+ Expression\_0.type = STRING
@@ -147,3 +154,9 @@
 	+ Type = ARRAY
 	+ Expression\_0.type = INT
 	+ Expression\_1.type = ARRAY
+- BiquadExpression:
+	+ Type = ARRAY
+	+ Expression\_0.type = ARRAY
+	+ Expression\_1.type = INT | FLOAT | ARRAY
+	+ Expression\_2.type = INT | FLOAT | ARRAY
+	+ Expression\_3.type = FILTER

@@ -1,17 +1,25 @@
-package language.tree;
+package language.tree.function;
 
 import language.compiler.Token;
-import language.compiler.Token.Kind;
+import language.tree.Expression;
+import language.tree.NodeVisitor;
 
 public class FormatExpression extends Expression {
 	
-	public int channels;
+	public final int channels;
 
 	public FormatExpression(Token firstToken) {
 		super(firstToken);
 		this.type = Type.FORMAT;
-		if (firstToken.kind == Kind.KW_MONO) this.channels = 1;
-		else if (firstToken.kind == Kind.KW_STEREO) this.channels = 2;
+		this.channels = getChannels(firstToken);
+	}
+	
+	private int getChannels(Token token) {
+		switch (token.kind) {
+		case KW_MONO: return 1;
+		case KW_STEREO: return 2;
+		default: return 0;
+		}
 	}
 
 	@Override

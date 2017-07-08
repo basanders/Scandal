@@ -4,6 +4,21 @@ import static language.tree.Node.Type.*;
 
 import language.tree.*;
 import language.tree.Node.Type;
+import language.tree.function.BiquadExpression;
+import language.tree.function.DelayExpression;
+import language.tree.function.FilterExpression;
+import language.tree.function.FormatExpression;
+import language.tree.function.GainExpression;
+import language.tree.function.InfoExpression;
+import language.tree.function.LineExpression;
+import language.tree.function.LoopExpression;
+import language.tree.function.PlayStatement;
+import language.tree.function.PlotStatement;
+import language.tree.function.PrintStatement;
+import language.tree.function.ReadExpression;
+import language.tree.function.ReverseExpression;
+import language.tree.function.SpeedExpression;
+import language.tree.function.SpliceExpression;
 
 public class TypeChecker implements NodeVisitor {
 
@@ -76,6 +91,7 @@ public class TypeChecker implements NodeVisitor {
 		printStatement.expression.visit(this, null);
 		switch (printStatement.expression.type) {
 		case ARRAY:
+		case FILTER:
 		case FORMAT: {
 			throw new Exception("Invalid PrintStatement");
 		}
@@ -212,6 +228,27 @@ public class TypeChecker implements NodeVisitor {
 	}
 	
 	@Override
+	public Object visitBiquadExpression(BiquadExpression biquadExpression, Object argument) throws Exception {
+		biquadExpression.array.visit(this, null);
+		if (biquadExpression.array.type != ARRAY) throw new Exception("Invalid BiquadExpression");
+		biquadExpression.cutoff.visit(this, null);
+		if (
+				biquadExpression.cutoff.type != INT &&
+				biquadExpression.cutoff.type != FLOAT &&
+				biquadExpression.cutoff.type != ARRAY)
+				throw new Exception("Invalid BiquadExpression");
+		biquadExpression.resonance.visit(this, null);
+		if (
+				biquadExpression.resonance.type != INT &&
+				biquadExpression.resonance.type != FLOAT &&
+				biquadExpression.resonance.type != ARRAY)
+				throw new Exception("Invalid GainExpression");
+		biquadExpression.method.visit(this, null);
+		if (biquadExpression.method.type != FILTER) throw new Exception("Invalid BiquadExpression");
+		return biquadExpression.type;
+	}
+	
+	@Override
 	public Object visitLineExpression(LineExpression lineExpression, Object argument) throws Exception {
 		lineExpression.size.visit(this, null);
 		if (lineExpression.size.type != INT) throw new Exception("Invalid LineExpression");
@@ -232,6 +269,11 @@ public class TypeChecker implements NodeVisitor {
 	@Override
 	public Object visitFormatExpression(FormatExpression formatExpression, Object argument) throws Exception {
 		return formatExpression.type;
+	}
+	
+	@Override
+	public Object visitFilterExpression(FilterExpression filterExpression, Object argument) throws Exception {
+		return filterExpression.type;
 	}
 
 	@Override

@@ -1,5 +1,21 @@
 package language.tree;
 
+import language.tree.function.BiquadExpression;
+import language.tree.function.DelayExpression;
+import language.tree.function.FilterExpression;
+import language.tree.function.FormatExpression;
+import language.tree.function.GainExpression;
+import language.tree.function.InfoExpression;
+import language.tree.function.LineExpression;
+import language.tree.function.LoopExpression;
+import language.tree.function.PlayStatement;
+import language.tree.function.PlotStatement;
+import language.tree.function.PrintStatement;
+import language.tree.function.ReadExpression;
+import language.tree.function.ReverseExpression;
+import language.tree.function.SpeedExpression;
+import language.tree.function.SpliceExpression;
+
 public interface NodeVisitor {
 
 	Object visitProgram(Program program, Object arg) throws Exception;
@@ -53,6 +69,10 @@ public interface NodeVisitor {
 	Object visitLineExpression(LineExpression lineExpression, Object arg) throws Exception;
 
 	Object visitFormatExpression(FormatExpression formatExpression, Object arg) throws Exception;
+	
+	Object visitFilterExpression(FilterExpression filterExpression, Object arg) throws Exception;
+	
+	Object visitBiquadExpression(BiquadExpression biquadExpression, Object arg) throws Exception;
 
 	Object visitBinaryExpression(BinaryExpression binaryExpression, Object arg) throws Exception;
 

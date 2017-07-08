@@ -1,6 +1,9 @@
-package language.tree;
+package language.tree.function;
 
 import language.compiler.Token;
+import language.tree.Expression;
+import language.tree.NodeVisitor;
+import language.tree.Statement;
 
 public class PlotStatement extends Statement {
 	

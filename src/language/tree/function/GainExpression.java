@@ -1,6 +1,8 @@
-package language.tree;
+package language.tree.function;
 
 import language.compiler.Token;
+import language.tree.Expression;
+import language.tree.NodeVisitor;
 
 public class GainExpression extends Expression {
 	
