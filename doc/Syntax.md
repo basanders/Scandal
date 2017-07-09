@@ -30,7 +30,7 @@
 - arrayLitExpression := LBRACKET ((FLOAT\_LIT | INT\_LIT) (COMMA (FLOAT\_LIT | INT\_LIT))\*)\* RBRACKET
 - frameworkExpression := infoExpression | readExpression | formatExpression | gainExpression | lineExpression
 - frameworkExpression := reverseExpression | speedExpression | spliceExpression | loopExpression | delayExpression
-- frameworkExpression := filterExpression | biquadExpression | waveformExpression | oscillatorExpression
+- frameworkExpression := filterExpression | biquadExpression | waveformExpression | oscillatorExpression | tremoloExpression
 - infoExpression := KW\_INFO
 - readExpression := KW\_READ LPAREN expression COMMA expression RPAREN
 - formatExpression := KW\_MONO | KW\_STEREO
@@ -46,6 +46,7 @@
 - biquadExpression := KW\_BIQUAD LPAREN expression COMMA expression COMMA expression COMMA expression RPAREN
 - waveformExpression := KW\_COSINE | KW\_SAWTOOTH | KW\_SQUARE | KW\_TRIANGLE | KW\_NOISE
 - oscillatorExpression := KW\_OSCILLATOR LPAREN expression COMMA expression COMMA expression COMMA expression RPAREN
+- tremoloExpression := KW\_TREMOLO LPAREN expression COMMA expression COMMA expression COMMA expression RPAREN
 
 ## Abstract syntax
 
@@ -75,6 +76,7 @@
 - LineExpression := Expression\_0 Expression\_1
 - BiquadExpression := Expression\_0 Expression\_1 Expression\_2 Expression\_3
 - OscillatorExpression := Expression\_0 Expression\_1 Expression\_2 Expression\_3
+- TremoloExpression := Expression\_0 Expression\_1 Expression\_2 Expression\_3
 
 ## TypeChecker rules
 
@@ -95,7 +97,7 @@
 - PlotStatement:
 	+ Expression\_0.type = STRING
 	+ Expression\_1.type = ARRAY
-	+ Expression\_2.type = INT
+	+ Expression\_2.type = INT | FLOAT
 - PlayStatement:
 	+ Expression\_0.type = ARRAY
 	+ Expression\_1.type = FORMAT
@@ -139,9 +141,9 @@
 - LoopExpression:
 	+ Type = ARRAY
 	+ Expression\_0.type = ARRAY
-	+ Expression\_1.type = INT
-	+ Expression\_2.type = INT
-	+ Expression\_3.type = INT
+	+ Expression\_1.type = INT | FLOAT
+	+ Expression\_2.type = INT | FLOAT
+	+ Expression\_3.type = INT | FLOAT
 - DelayExpression:
 	+ Type = ARRAY
 	+ Expression\_0.type = ARRAY
@@ -157,17 +159,23 @@
 	+ Expression\_1.type = INT | FLOAT | ARRAY
 - LineExpression:
 	+ Type = ARRAY
-	+ Expression\_0.type = INT
+	+ Expression\_0.type = INT | FLOAT
 	+ Expression\_1.type = ARRAY
 - BiquadExpression:
 	+ Type = ARRAY
 	+ Expression\_0.type = ARRAY
-	+ Expression\_1.type = FLOAT | ARRAY
-	+ Expression\_2.type = FLOAT | ARRAY
+	+ Expression\_1.type = INT | FLOAT | ARRAY
+	+ Expression\_2.type = INT | FLOAT | ARRAY
 	+ Expression\_3.type = FILTER
 - OscillatorExpression:
 	+ Type = ARRAY
-	+ Expression\_1.type = INT
-	+ Expression\_2.type = FLOAT | ARRAY
-	+ Expression\_3.type = FLOAT | ARRAY
+	+ Expression\_1.type = INT | FLOAT
+	+ Expression\_2.type = INT | FLOAT | ARRAY
+	+ Expression\_3.type = INT | FLOAT | ARRAY
+	+ Expression\_4.type = WAVEFORM
+- TremoloExpression:
+	+ Type = ARRAY
+	+ Expression\_1.type = ARRAY
+	+ Expression\_2.type = INT | FLOAT | ARRAY
+	+ Expression\_3.type = INT | FLOAT | ARRAY
 	+ Expression\_4.type = WAVEFORM

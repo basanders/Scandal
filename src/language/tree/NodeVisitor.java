@@ -61,6 +61,8 @@ public interface NodeVisitor {
 	Object visitWaveformExpression(WaveformExpression waveformExpression, Object arg) throws Exception;
 	
 	Object visitOscillatorExpression(OscillatorExpression oscillatorExpression, Object arg) throws Exception;
+	
+	Object visitTremoloExpression(TremoloExpression tremoloExpression, Object arg) throws Exception;
 
 	Object visitBinaryExpression(BinaryExpression binaryExpression, Object arg) throws Exception;
 

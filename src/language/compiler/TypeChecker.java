@@ -92,7 +92,8 @@ public class TypeChecker implements NodeVisitor {
 		plotStatement.array.visit(this, null);
 		if (plotStatement.array.type != ARRAY) throw new Exception("Invalid PlotStatement");
 		plotStatement.points.visit(this, null);
-		if (plotStatement.points.type != INT) throw new Exception("Invalid PlotStatement");
+		if (plotStatement.points.type != INT && plotStatement.points.type != FLOAT)
+			throw new Exception("Invalid PlotStatement");
 		return null;
 	}
 	
@@ -175,11 +176,14 @@ public class TypeChecker implements NodeVisitor {
 		loopExpression.array.visit(this, null);
 		if (loopExpression.array.type != ARRAY) throw new Exception("Invalid LoopExpression");
 		loopExpression.start.visit(this, null);
-		if (loopExpression.start.type != INT) throw new Exception("Invalid LoopExpression");
+		if (loopExpression.start.type != INT && loopExpression.start.type != FLOAT)
+			throw new Exception("Invalid LoopExpression");
 		loopExpression.end.visit(this, null);
-		if (loopExpression.end.type != INT) throw new Exception("Invalid LoopExpression");
+		if (loopExpression.end.type != INT && loopExpression.start.type != FLOAT)
+			throw new Exception("Invalid LoopExpression");
 		loopExpression.count.visit(this, null);
-		if (loopExpression.count.type != INT) throw new Exception("Invalid LoopExpression");
+		if (loopExpression.count.type != INT && loopExpression.start.type != FLOAT)
+			throw new Exception("Invalid LoopExpression");
 		return loopExpression.type;
 	}
 
@@ -258,10 +262,32 @@ public class TypeChecker implements NodeVisitor {
 	@Override
 	public Object visitLineExpression(LineExpression lineExpression, Object argument) throws Exception {
 		lineExpression.size.visit(this, null);
-		if (lineExpression.size.type != INT) throw new Exception("Invalid LineExpression");
+		if (lineExpression.size.type != INT && lineExpression.size.type != FLOAT)
+			throw new Exception("Invalid LineExpression");
 		lineExpression.breakpoints.visit(this, null);
 		if (lineExpression.breakpoints.type != ARRAY) throw new Exception("Invalid LineExpression");
 		return lineExpression.type;
+	}
+	
+	@Override
+	public Object visitTremoloExpression(TremoloExpression tremoloExpression, Object arg) throws Exception {
+		tremoloExpression.array.visit(this, null);
+		if (tremoloExpression.array.type != ARRAY) throw new Exception("Invalid TremoloExpression");
+		tremoloExpression.depth.visit(this, null);
+		if (
+				tremoloExpression.depth.type != INT &&
+				tremoloExpression.depth.type != FLOAT &&
+				tremoloExpression.depth.type != ARRAY)
+			throw new Exception("Invalid TremoloExpression");
+		tremoloExpression.speed.visit(this, null);
+		if (
+				tremoloExpression.speed.type != INT &&
+				tremoloExpression.speed.type != FLOAT &&
+				tremoloExpression.speed.type != ARRAY)
+			throw new Exception("Invalid TremoloExpression");
+		tremoloExpression.shape.visit(this, null);
+		if (tremoloExpression.shape.type != WAVEFORM) throw new Exception("Invalid TremoloExpression");
+		return tremoloExpression.type;
 	}
 
 	@Override

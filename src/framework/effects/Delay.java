@@ -4,40 +4,8 @@ import framework.utilities.Settings;
 
 public class Delay implements EffectsProcessor {
 
-	public float[] process(float[] buffer, float time, float feedback) {
-		return process(buffer, time, feedback, 0.5f);
-	}
-	
-	public float[] process(float[] buffer, int time, int feedback, int mix) {
-		return process(buffer, (float) time, (float) feedback, (float) mix);
-	}
-	
-	public float[] process(float[] buffer, float time, int feedback, int mix) {
-		return process(buffer, time, (float) feedback, (float) mix);
-	}
-	
-	public float[] process(float[] buffer, int time, float feedback, int mix) {
-		return process(buffer, (float) time, feedback, (float) mix);
-	}
-	
-	public float[] process(float[] buffer, int time, int feedback, float mix) {
-		return process(buffer, (float) time, (float) feedback, mix);
-	}
-	
-	public float[] process(float[] buffer, float time, float feedback, int mix) {
-		return process(buffer, time, feedback, (float) mix);
-	}
-	
-	public float[] process(float[] buffer, float time, int feedback, float mix) {
-		return process(buffer, time, (float) feedback, mix);
-	}
-	
 	public float[] process(float[] buffer, int time, float feedback, float mix) {
-		return process(buffer, (float) time, feedback, mix);
-	}
-
-	public float[] process(float[] buffer, float time, float feedback, float mix) {
-		float samples = time * (float) Settings.samplingRate / 1000; // ms to samples
+		int samples = time * Settings.samplingRate / 1000; // ms to samples
 		if (samples <= 0 || samples >= buffer.length) return buffer; // sanity check
 		float[] processedBuffer = new float[buffer.length];
 		float[] circularBuffer = new float[buffer.length];
@@ -53,21 +21,9 @@ public class Delay implements EffectsProcessor {
 		}
 		return processedBuffer;
 	}
-	
-	public float[] process(float[] buffer, int time, float[] feedbacks, int mix) {
-		return process(buffer, (float) time, feedbacks, (float) mix);
-	}
-	
-	public float[] process(float[] buffer, int time, float[] feedbacks, float mix) {
-		return process(buffer, (float) time, feedbacks, mix);
-	}
-	
-	public float[] process(float[] buffer, float time, float[] feedbacks, int mix) {
-		return process(buffer, time, feedbacks, (float) mix);
-	}
 
-	public float[] process(float[] buffer, float time, float[] feedbacks, float mix) {
-		float samples = time * (float) Settings.samplingRate / 1000;
+	public float[] process(float[] buffer, int time, float[] feedbacks, float mix) {
+		int samples = time * Settings.samplingRate / 1000;
 		if (samples <= 0 || samples >= buffer.length) return buffer;
 		float[] processedBuffer = new float[buffer.length];
 		float[] circularBuffer = new float[buffer.length];
@@ -86,21 +42,9 @@ public class Delay implements EffectsProcessor {
 		}
 		return processedBuffer;
 	}
-	
-	public float[] process(float[] buffer, int time, int feedback, float[] mixes) {
-		return process(buffer, (float) time, (float) feedback, mixes);
-	}
-	
-	public float[] process(float[] buffer, int time, float feedback, float[] mixes) {
-		return process(buffer, (float) time, feedback, mixes);
-	}
-	
-	public float[] process(float[] buffer, float time, int feedback, float[] mixes) {
-		return process(buffer, time, (float) feedback, mixes);
-	}
 
-	public float[] process(float[] buffer, float time, float feedback, float[] mixes) {
-		float samples = time * (float) Settings.samplingRate / 1000; // ms to samples
+	public float[] process(float[] buffer, int time, float feedback, float[] mixes) {
+		int samples = time * Settings.samplingRate / 1000; // ms to samples
 		if (samples <= 0 || samples >= buffer.length) return buffer; // sanity check
 		float[] processedBuffer = new float[buffer.length];
 		float[] circularBuffer = new float[buffer.length];
@@ -119,13 +63,9 @@ public class Delay implements EffectsProcessor {
 		}
 		return processedBuffer;
 	}
-	
-	public float[] process(float[] buffer, int time, float[] feedbacks, float[] mixes) {
-		return process(buffer, (float) time, feedbacks, mixes);
-	}
 
-	public float[] process(float[] buffer, float time, float[] feedbacks, float[] mixes) {
-		float samples = time * (float) Settings.samplingRate / 1000; // ms to samples
+	public float[] process(float[] buffer, int time, float[] feedbacks, float[] mixes) {
+		int samples = time * Settings.samplingRate / 1000; // ms to samples
 		if (samples <= 0 || samples >= buffer.length) return buffer; // sanity check
 		float[] processedBuffer = new float[buffer.length];
 		float[] circularBuffer = new float[buffer.length];

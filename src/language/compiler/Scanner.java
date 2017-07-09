@@ -148,6 +148,9 @@ public class Scanner {
 		case "oscillator": {
 			token = new Token(Kind.KW_OSCILLATOR, startPos, endPos, lineNum, lineNumPos);
 		} break;
+		case "tremolo": {
+			token = new Token(Kind.KW_TREMOLO, startPos, endPos, lineNum, lineNumPos);
+		} break;
 		default: {
 			token = new Token(Kind.IDENT, substring, startPos, endPos, lineNum, lineNumPos);
 		} break;

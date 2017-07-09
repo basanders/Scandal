@@ -2,8 +2,6 @@ package framework.effects;
 
 public class Loop implements EffectsProcessor {
 
-	// TODO implement variable parameters
-
 	public float[] process(float[] buffer, int start, int end) {
 		int count = buffer.length / (end - start);
 		return process(buffer, start, end, count); // try to preserve the duration

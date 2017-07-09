@@ -4,10 +4,6 @@ public class Speed implements EffectsProcessor {
 	
 	// TODO implement variable parameters
 	
-	public float[] process(float[] buffer, int speed) {
-		return process(buffer, (float) speed);
-	}
-	
 	public float[] process(float[] buffer, float speed) {
 		if (speed == 0) return buffer;
 		if (speed < 0) speed = -speed;

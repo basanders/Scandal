@@ -182,6 +182,7 @@ public class BytecodeGenerator implements NodeVisitor, Opcodes {
 		plotStatement.expression.visit(this, arg);
 		plotStatement.array.visit(this, arg);
 		plotStatement.points.visit(this, arg);
+		if (plotStatement.points.type == Type.FLOAT) mv.visitInsn(F2I);
 		mv.visitMethodInsn(INVOKESPECIAL, "framework/utilities/PlotUtility", "<init>", "(Ljava/lang/String;[FI)V", false);
 		return null;
 	}
@@ -289,8 +290,8 @@ public class BytecodeGenerator implements NodeVisitor, Opcodes {
 		mv.visitMethodInsn(INVOKESPECIAL, "framework/effects/Speed", "<init>", "()V", false);
 		speedExpression.array.visit(this, arg);
 		speedExpression.speed.visit(this, arg);
-		String type = speedExpression.speed.getJvmType();
-		mv.visitMethodInsn(INVOKEVIRTUAL, "framework/effects/Speed", "process", "([F" + type + ")[F", false);
+		if (speedExpression.speed.type == Type.INT) mv.visitInsn(I2F);
+		mv.visitMethodInsn(INVOKEVIRTUAL, "framework/effects/Speed", "process", "([FF)[F", false);
 		return null;
 	}
 
@@ -302,8 +303,11 @@ public class BytecodeGenerator implements NodeVisitor, Opcodes {
 		mv.visitMethodInsn(INVOKESPECIAL, "framework/effects/Loop", "<init>", "()V", false);
 		loopExpression.array.visit(this, arg);
 		loopExpression.start.visit(this, arg);
+		if (loopExpression.start.type == Type.FLOAT) mv.visitInsn(F2I);
 		loopExpression.end.visit(this, arg);
+		if (loopExpression.end.type == Type.FLOAT) mv.visitInsn(F2I);
 		loopExpression.count.visit(this, arg);
+		if (loopExpression.count.type == Type.FLOAT) mv.visitInsn(F2I);
 		mv.visitMethodInsn(INVOKEVIRTUAL, "framework/effects/Loop", "process", "([FIII)[F", false);
 		return null;
 	}
@@ -315,13 +319,18 @@ public class BytecodeGenerator implements NodeVisitor, Opcodes {
 		mv.visitInsn(DUP);
 		mv.visitMethodInsn(INVOKESPECIAL, "framework/effects/Delay", "<init>", "()V", false);
 		delayExpression.array.visit(this, arg);
+		String type = "([FI";
 		delayExpression.time.visit(this, arg);
-		String type = delayExpression.time.getJvmType();
+		if (delayExpression.time.type == Type.FLOAT) mv.visitInsn(F2I);
 		delayExpression.feedback.visit(this, arg);
-		type += delayExpression.feedback.getJvmType();
+		if (delayExpression.feedback.type == Type.INT) mv.visitInsn(I2F);
+		if (delayExpression.feedback.type == Type.ARRAY) type += "[";
+		type += "F";
 		delayExpression.mix.visit(this, arg);
-		type += delayExpression.mix.getJvmType();
-		mv.visitMethodInsn(INVOKEVIRTUAL, "framework/effects/Delay", "process", "([F" + type + ")[F", false);
+		if (delayExpression.mix.type == Type.INT) mv.visitInsn(I2F);
+		if (delayExpression.mix.type == Type.ARRAY) type += "[";
+		type += "F)[F";
+		mv.visitMethodInsn(INVOKEVIRTUAL, "framework/effects/Delay", "process", type, false);
 		return null;
 	}
 	
@@ -331,12 +340,17 @@ public class BytecodeGenerator implements NodeVisitor, Opcodes {
 		mv.visitTypeInsn(NEW, "framework/utilities/WavetableOscillatorUtility");
 		mv.visitInsn(DUP);
 		mv.visitMethodInsn(INVOKESPECIAL, "framework/utilities/WavetableOscillatorUtility", "<init>", "()V", false);
-		String type = "(I";
 		oscillatorExpression.duration.visit(this, arg);
+		if (oscillatorExpression.duration.type == Type.FLOAT) mv.visitInsn(F2I);
+		String type = "(I";
 		oscillatorExpression.amplitude.visit(this, arg);
-		type += oscillatorExpression.amplitude.getJvmType();
+		if (oscillatorExpression.amplitude.type == Type.INT) mv.visitInsn(I2F);
+		if (oscillatorExpression.amplitude.type == Type.ARRAY) type += "[";
+		type += "F";
 		oscillatorExpression.frequency.visit(this, arg);
-		type += oscillatorExpression.frequency.getJvmType();
+		if (oscillatorExpression.frequency.type == Type.INT) mv.visitInsn(I2F);
+		if (oscillatorExpression.frequency.type == Type.ARRAY) type += "[";
+		type += "F";
 		oscillatorExpression.shape.visit(this, arg);
 		type += "I)[F";
 		mv.visitMethodInsn(INVOKEVIRTUAL, "framework/utilities/WavetableOscillatorUtility", "get", type, false);
@@ -351,8 +365,11 @@ public class BytecodeGenerator implements NodeVisitor, Opcodes {
 		mv.visitMethodInsn(INVOKESPECIAL, "framework/effects/Gain", "<init>", "()V", false);
 		gainExpression.array.visit(this, arg);
 		gainExpression.gain.visit(this, arg);
-		String type = gainExpression.gain.getJvmType();
-		mv.visitMethodInsn(INVOKEVIRTUAL, "framework/effects/Gain", "process", "([F" + type + ")[F", false);
+		String type = "([F";
+		if (gainExpression.gain.type == Type.INT) mv.visitInsn(I2F);
+		if (gainExpression.gain.type == Type.ARRAY) type += "[";
+		type += "F)[F";
+		mv.visitMethodInsn(INVOKEVIRTUAL, "framework/effects/Gain", "process", type, false);
 		return null;
 	}
 	
@@ -363,12 +380,40 @@ public class BytecodeGenerator implements NodeVisitor, Opcodes {
 		mv.visitInsn(DUP);
 		mv.visitMethodInsn(INVOKESPECIAL, "framework/utilities/BiquadUtility", "<init>", "()V", false);
 		biquadExpression.array.visit(this, arg);
+		String type = "([F";
 		biquadExpression.cutoff.visit(this, arg);
-		String type = biquadExpression.cutoff.getJvmType();
+		if (biquadExpression.cutoff.type == Type.INT) mv.visitInsn(I2F);
+		if (biquadExpression.cutoff.type == Type.ARRAY) type += "[";
+		type += "F";
 		biquadExpression.resonance.visit(this, arg);
-		type += biquadExpression.resonance.getJvmType();
+		if (biquadExpression.resonance.type == Type.INT) mv.visitInsn(I2F);
+		if (biquadExpression.resonance.type == Type.ARRAY) type += "[";
+		type += "F";
 		biquadExpression.method.visit(this, arg);
-		mv.visitMethodInsn(INVOKEVIRTUAL, "framework/utilities/BiquadUtility", "process", "([F" + type + "I)[F", false);
+		type += "I)[F";
+		mv.visitMethodInsn(INVOKEVIRTUAL, "framework/utilities/BiquadUtility", "process", type, false);
+		return null;
+	}
+	
+	@Override
+	public Object visitTremoloExpression(TremoloExpression tremoloExpression, Object arg) throws Exception {
+		MethodVisitor mv = (MethodVisitor) arg;
+		mv.visitTypeInsn(NEW, "framework/utilities/RingModulatorUtility");
+		mv.visitInsn(DUP);
+		mv.visitMethodInsn(INVOKESPECIAL, "framework/utilities/RingModulatorUtility", "<init>", "()V", false);
+		tremoloExpression.array.visit(this, arg);
+		String type = "([F";
+		tremoloExpression.depth.visit(this, arg);
+		if (tremoloExpression.depth.type == Type.INT) mv.visitInsn(I2F);
+		if (tremoloExpression.depth.type == Type.ARRAY) type += "[";
+		type += "F";
+		tremoloExpression.speed.visit(this, arg);
+		if (tremoloExpression.speed.type == Type.INT) mv.visitInsn(I2F);
+		if (tremoloExpression.speed.type == Type.ARRAY) type += "[";
+		type += "F";
+		tremoloExpression.shape.visit(this, arg);
+		type += "I)[F";
+		mv.visitMethodInsn(INVOKEVIRTUAL, "framework/utilities/RingModulatorUtility", "process", type, false);
 		return null;
 	}
 	
@@ -378,6 +423,7 @@ public class BytecodeGenerator implements NodeVisitor, Opcodes {
 		mv.visitTypeInsn(NEW, "framework/generators/BreakpointFunction");
 		mv.visitInsn(DUP);
 		lineExpression.size.visit(this, arg);
+		if (lineExpression.size.type == Type.FLOAT) mv.visitInsn(F2I);
 		lineExpression.breakpoints.visit(this, arg);
 		mv.visitMethodInsn(INVOKESPECIAL, "framework/generators/BreakpointFunction", "<init>", "(I[F)V", false);
 		mv.visitMethodInsn(INVOKEVIRTUAL, "framework/generators/BreakpointFunction", "get", "()[F", false);		

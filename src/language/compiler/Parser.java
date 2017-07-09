@@ -375,6 +375,19 @@ public class Parser {
 			match(RPAREN);
 			expression = new LineExpression(firstToken, size, breakpoints);
 		} break;
+		case KW_TREMOLO: {
+			consume();
+			match(LPAREN);
+			Expression array = expression();
+			match(COMMA);
+			Expression depth = expression();
+			match(COMMA);
+			Expression speed = expression();
+			match(COMMA);
+			Expression shape = expression();
+			match(RPAREN);
+			expression = new TremoloExpression(firstToken, array, depth, speed, shape);
+		} break;
 		case KW_SPLICE: {
 			consume();
 			match(LPAREN);
