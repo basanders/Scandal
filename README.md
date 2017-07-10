@@ -1,10 +1,9 @@
 # Scandal
 
-[![Build Status](https://travis-ci.org/lufevida/Scandal.svg?branch=master)](https://travis-ci.org/lufevida/Scandal)
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
-
 Scandal is both a Java framework and a domain-specific language designed to manipulate sounds.
 
+[![Build Status](https://travis-ci.org/lufevida/Scandal.svg?branch=master)](https://travis-ci.org/lufevida/Scandal)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 ![Screenshot](https://raw.githubusercontent.com/lufevida/Scandal/master/doc/Screenshot.png)
 
 ## Installation
@@ -349,7 +348,7 @@ System.exit(0);
 
 ```java
 Compiler compiler = new Compiler();
-byte[] bytecode = compiler.compile("doc/Example.scandal", args);
+byte[] bytecode = compiler.compile("doc/Screenshot.scandal", args);
 compiler.print(bytecode);
 compiler.save("bin/Example.class", bytecode);
 ```
@@ -380,7 +379,7 @@ compiler.save("bin/Example.class", bytecode);
 - summandOperator := PLUS | MINUS | OR
 - summand := factor (factorOperator factor)\*
 - factorOperator := TIMES | DIV | MOD | AND
-- factor := LPAREN expression RPAREN | identExpression | literalExpression | frameworkExpression
+- factor := LPAREN expression RPAREN | identExpression | literalExpression | unaryExpression | frameworkExpression
 - identExpression := IDENT
 - literalExpression := intLitExpression | floatLitExpression | boolLitExpression | stringLitExpression | arrayLitExpression
 - intLitExpression := INT\_LIT
@@ -388,6 +387,7 @@ compiler.save("bin/Example.class", bytecode);
 - boolLitExpression := KW\_TRUE | KW\_FALSE
 - stringLitExpression := STRING\_LIT
 - arrayLitExpression := LBRACKET ((FLOAT\_LIT | INT\_LIT) (COMMA (FLOAT\_LIT | INT\_LIT))\*)\* RBRACKET
+- unaryExpression := (KW\_MINUS | KW\_NOT) expression
 - frameworkExpression := infoExpression | readExpression | formatExpression | gainExpression | lineExpression
 - frameworkExpression := reverseExpression | speedExpression | spliceExpression | loopExpression | delayExpression
 - frameworkExpression := filterExpression | biquadExpression | waveformExpression | oscillatorExpression | tremoloExpression
@@ -424,7 +424,8 @@ compiler.save("bin/Example.class", bytecode);
 - PrintStatement := Expression
 - PlotStatement := Expression\_0 Expression\_1 Expression\_2
 - PlayStatement := Expression\_0 Expression\_1
-- Expression := BinaryExpression | IdentExpression | LiteralExpression | FrameworkExpression
+- Expression := BinaryExpression | IdentExpression | LiteralExpression | UnaryExpression | FrameworkExpression
+- UnaryExpression := Expression
 - BinaryExpression := Expression\_0 (termOperator | summandOperator | factorOperator) Expression\_1
 - ReadExpression := Expression\_0 Expression\_1
 - ReverseExpression := Expression
@@ -461,6 +462,9 @@ compiler.save("bin/Example.class", bytecode);
 - PlayStatement:
 	+ Expression\_0.type = ARRAY
 	+ Expression\_1.type = FORMAT
+- UnaryExpression:
+	+ Type = Expression.type
+	+ Expression.type = INT | FLOAT | BOOL
 - BinaryExpression:
 	+ (INT | FLOAT) (MOD | PLUS | MINUS | TIMES | DIV) (FLOAT | INT) ==> FLOAT
 	+ INT (summandOperator | factorOperator) INT ==> INT

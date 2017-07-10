@@ -240,6 +240,12 @@ public class Parser {
 		Expression expression;
 		Token firstToken = token;
 		switch (token.kind) {
+		case MINUS:
+		case NOT: {
+			consume();
+			Expression e = expression();
+			expression = new UnaryExpression(firstToken, e);
+		} break;
 		case IDENT: {
 			consume();
 			expression = new IdentExpression(firstToken);

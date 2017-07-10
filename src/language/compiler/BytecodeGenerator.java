@@ -468,40 +468,121 @@ public class BytecodeGenerator implements NodeVisitor, Opcodes {
 		mv.visitLdcInsn(filterExpression.method);
 		return null;
 	}
+	
+	@Override
+	public Object visitUnaryExpression(UnaryExpression unaryExpression, Object arg) throws Exception {
+		MethodVisitor mv = (MethodVisitor) arg;
+		switch (unaryExpression.type) {
+		case INT: {
+			unaryExpression.e.visit(this, arg);
+			mv.visitInsn(INEG);
+		} break;
+		case FLOAT: {
+			unaryExpression.e.visit(this, arg);
+			mv.visitInsn(FNEG);
+		} break;
+		default: {
+			Label l1 = new Label();
+			Label l2 = new Label();
+			unaryExpression.e.visit(this, arg);
+			mv.visitJumpInsn(IFEQ, l1);
+			mv.visitInsn(ICONST_0);
+			mv.visitJumpInsn(GOTO, l2);
+			mv.visitLabel(l1);
+			mv.visitFrame(Opcodes.F_APPEND, 2, new Object[] {"org/objectweb/asm/MethodVisitor", Opcodes.INTEGER}, 0, null);
+			mv.visitInsn(ICONST_1);
+			mv.visitLabel(l2);
+			mv.visitFrame(Opcodes.F_SAME1, 0, null, 1, new Object[] {Opcodes.INTEGER});
+		} break;
+		}
+		return null;
+	}
 
 	@Override
 	public Object visitBinaryExpression(BinaryExpression binaryExpression, Object arg) throws Exception {
 		MethodVisitor mv = (MethodVisitor) arg;
 		binaryExpression.e0.visit(this, mv);
-		binaryExpression.e1.visit(this, mv);
 		switch (binaryExpression.operator.kind) {
 		case MOD: {
-			if (binaryExpression.type == Type.FLOAT) mv.visitInsn(FREM);
-			else mv.visitInsn(IREM);
+			if (binaryExpression.type == Type.FLOAT) {
+				if (binaryExpression.e0.type == Type.INT) mv.visitInsn(I2F);
+				binaryExpression.e1.visit(this, mv);
+				if (binaryExpression.e1.type == Type.INT) mv.visitInsn(I2F);
+				mv.visitInsn(FREM);
+			}
+			else {
+				if (binaryExpression.e0.type == Type.FLOAT) mv.visitInsn(F2I);
+				binaryExpression.e1.visit(this, mv);
+				if (binaryExpression.e1.type == Type.FLOAT) mv.visitInsn(F2I);
+				mv.visitInsn(IREM);
+			}
 		} break;
 		case PLUS: {
-			if (binaryExpression.type == Type.FLOAT) mv.visitInsn(FADD);
-			else mv.visitInsn(IADD);
+			if (binaryExpression.type == Type.FLOAT) {
+				if (binaryExpression.e0.type == Type.INT) mv.visitInsn(I2F);
+				binaryExpression.e1.visit(this, mv);
+				if (binaryExpression.e1.type == Type.INT) mv.visitInsn(I2F);
+				mv.visitInsn(FADD);
+			}
+			else {
+				if (binaryExpression.e0.type == Type.FLOAT) mv.visitInsn(F2I);
+				binaryExpression.e1.visit(this, mv);
+				if (binaryExpression.e1.type == Type.FLOAT) mv.visitInsn(F2I);
+				mv.visitInsn(IADD);
+			}
 		} break;
 		case MINUS: {
-			if (binaryExpression.type == Type.FLOAT) mv.visitInsn(FSUB);
-			else mv.visitInsn(ISUB);
+			if (binaryExpression.type == Type.FLOAT) {
+				if (binaryExpression.e0.type == Type.INT) mv.visitInsn(I2F);
+				binaryExpression.e1.visit(this, mv);
+				if (binaryExpression.e1.type == Type.INT) mv.visitInsn(I2F);
+				mv.visitInsn(FSUB);
+			}
+			else {
+				if (binaryExpression.e0.type == Type.FLOAT) mv.visitInsn(F2I);
+				binaryExpression.e1.visit(this, mv);
+				if (binaryExpression.e1.type == Type.FLOAT) mv.visitInsn(F2I);
+				mv.visitInsn(ISUB);
+			}
 		} break;
 		case TIMES: {
-			if (binaryExpression.type == Type.FLOAT) mv.visitInsn(FMUL);
-			else mv.visitInsn(IMUL);
+			if (binaryExpression.type == Type.FLOAT) {
+				if (binaryExpression.e0.type == Type.INT) mv.visitInsn(I2F);
+				binaryExpression.e1.visit(this, mv);
+				if (binaryExpression.e1.type == Type.INT) mv.visitInsn(I2F);
+				mv.visitInsn(FMUL);
+			}
+			else {
+				if (binaryExpression.e0.type == Type.FLOAT) mv.visitInsn(F2I);
+				binaryExpression.e1.visit(this, mv);
+				if (binaryExpression.e1.type == Type.FLOAT) mv.visitInsn(F2I);
+				mv.visitInsn(IMUL);
+			}
 		} break;
 		case DIV: {
-			if (binaryExpression.type == Type.FLOAT) mv.visitInsn(FDIV);
-			else mv.visitInsn(IDIV);
+			if (binaryExpression.type == Type.FLOAT) {
+				if (binaryExpression.e0.type == Type.INT) mv.visitInsn(I2F);
+				binaryExpression.e1.visit(this, mv);
+				if (binaryExpression.e1.type == Type.INT) mv.visitInsn(I2F);
+				mv.visitInsn(FDIV);
+			}
+			else {
+				if (binaryExpression.e0.type == Type.FLOAT) mv.visitInsn(F2I);
+				binaryExpression.e1.visit(this, mv);
+				if (binaryExpression.e1.type == Type.FLOAT) mv.visitInsn(F2I);
+				mv.visitInsn(IDIV);
+			}
 		} break;
 		case AND: {
+			binaryExpression.e1.visit(this, mv);
 			mv.visitInsn(IAND);
 		} break;
 		case OR: {
+			binaryExpression.e1.visit(this, mv);
 			mv.visitInsn(IOR);
 		} break;
 		default: {
+			binaryExpression.e1.visit(this, mv);
 			Label l1 = new Label();
 			switch (binaryExpression.operator.kind) {
 			case LT: {

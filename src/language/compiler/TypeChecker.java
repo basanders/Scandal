@@ -313,6 +313,14 @@ public class TypeChecker implements NodeVisitor {
 	public Object visitFilterExpression(FilterExpression filterExpression, Object argument) throws Exception {
 		return filterExpression.type;
 	}
+	
+	@Override
+	public Object visitUnaryExpression(UnaryExpression unaryExpression, Object arg) throws Exception {
+		unaryExpression.e.visit(this, null);
+		if (unaryExpression.e.type != INT && unaryExpression.e.type != FLOAT && unaryExpression.e.type != BOOL)
+			throw new Exception("Invalid UnaryExpression");
+		return unaryExpression.type = unaryExpression.e.type;
+	}
 
 	@Override
 	public Object visitBinaryExpression(BinaryExpression binaryExpression, Object arg) throws Exception {

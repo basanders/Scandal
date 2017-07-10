@@ -63,6 +63,8 @@ public interface NodeVisitor {
 	Object visitOscillatorExpression(OscillatorExpression oscillatorExpression, Object arg) throws Exception;
 	
 	Object visitTremoloExpression(TremoloExpression tremoloExpression, Object arg) throws Exception;
+	
+	Object visitUnaryExpression(UnaryExpression unaryExpression, Object arg) throws Exception;
 
 	Object visitBinaryExpression(BinaryExpression binaryExpression, Object arg) throws Exception;
 
