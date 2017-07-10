@@ -1,8 +1,0 @@
-/* Wave File */
-
-format channels = mono
-array lisa = read("stereoLisa.wav", channels)
-play(lisa, channels)
-string title = "A scandalous wave file"
-int points = 1000
-plot(title, lisa, points)

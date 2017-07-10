@@ -1,8 +1,0 @@
-/* Adjusting and automating the gain */
-
-format channels = mono
-string file = "monoLisa.wav"
-array lisa = read(file, channels)
-
-lisa = reverse(lisa)
-play(lisa, channels)

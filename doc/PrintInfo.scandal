@@ -1,4 +1,0 @@
-/* Print Info */
-
-string devices = info
-print(devices)

@@ -1,4 +1,0 @@
-/* Hello, world! */
-
-string greeting = "Hello, world!"
-print(greeting)

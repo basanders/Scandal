@@ -1,7 +1,0 @@
-
-int duration = 2000
-float amplitude = 0.5
-float frequency = 440.0
-waveform shape = sawtooth
-array saw = oscillator(duration, amplitude, frequency, shape)
-play(saw, mono)
