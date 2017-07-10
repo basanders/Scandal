@@ -195,7 +195,20 @@ public class BytecodeGenerator implements NodeVisitor, Opcodes {
 		mv.visitMethodInsn(INVOKESPECIAL, "framework/generators/AudioTask", "<init>", "()V", false);
 		playStatement.expression.visit(this, arg);
 		playStatement.format.visit(this, arg);
-		mv.visitMethodInsn(INVOKEVIRTUAL, "framework/generators/AudioTask", "play", "([FI)V", false);	
+		mv.visitMethodInsn(INVOKEVIRTUAL, "framework/generators/AudioTask", "play", "([FI)V", false);
+		return null;
+	}
+	
+	@Override
+	public Object visitWriteStatement(WriteStatement writeStatement, Object arg) throws Exception {
+		MethodVisitor mv = (MethodVisitor) arg;
+		mv.visitTypeInsn(NEW, "framework/generators/AudioTask");
+		mv.visitInsn(DUP);
+		mv.visitMethodInsn(INVOKESPECIAL, "framework/generators/AudioTask", "<init>", "()V", false);
+		writeStatement.expression.visit(this, arg);
+		writeStatement.name.visit(this, arg);
+		writeStatement.format.visit(this, arg);
+		mv.visitMethodInsn(INVOKEVIRTUAL, "framework/generators/AudioTask", "export", "([FLjava/lang/String;I)V", false);
 		return null;
 	}
 
@@ -429,6 +442,22 @@ public class BytecodeGenerator implements NodeVisitor, Opcodes {
 		mv.visitMethodInsn(INVOKEVIRTUAL, "framework/generators/BreakpointFunction", "get", "()[F", false);		
 		return null;
 	}
+	
+	@Override
+	public Object visitPanExpression(PanExpression panExpression, Object arg) throws Exception {
+		MethodVisitor mv = (MethodVisitor) arg;
+		mv.visitTypeInsn(NEW, "framework/generators/StereoPanner");
+		mv.visitInsn(DUP);
+		mv.visitMethodInsn(INVOKESPECIAL, "framework/generators/StereoPanner", "<init>", "()V", false);
+		panExpression.array.visit(this, arg);
+		String type = "([F";
+		panExpression.position.visit(this, arg);
+		if (panExpression.position.type == Type.INT) mv.visitInsn(I2F);
+		if (panExpression.position.type == Type.ARRAY) type += "[";
+		type += "F)[F";
+		mv.visitMethodInsn(INVOKEVIRTUAL, "framework/generators/StereoPanner", "process", type, false);
+		return null;
+	}
 
 	@Override
 	public Object visitSpliceExpression(SpliceExpression spliceExpression, Object arg) throws Exception {
@@ -466,6 +495,18 @@ public class BytecodeGenerator implements NodeVisitor, Opcodes {
 	public Object visitFilterExpression(FilterExpression filterExpression, Object arg) throws Exception {
 		MethodVisitor mv = (MethodVisitor) arg;
 		mv.visitLdcInsn(filterExpression.method);
+		return null;
+	}
+	
+	@Override
+	public Object visitRecordExpression(RecordExpression recordExpression, Object arg) throws Exception {
+		MethodVisitor mv = (MethodVisitor) arg;
+		mv.visitTypeInsn(NEW, "framework/generators/AudioTask");
+		mv.visitInsn(DUP);
+		mv.visitMethodInsn(INVOKESPECIAL, "framework/generators/AudioTask", "<init>", "()V", false);
+		recordExpression.duration.visit(this, arg);
+		if (recordExpression.duration.type == Type.FLOAT) mv.visitInsn(F2I);
+		mv.visitMethodInsn(INVOKEVIRTUAL, "framework/generators/AudioTask", "record", "(I)[F", false);
 		return null;
 	}
 	

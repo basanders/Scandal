@@ -123,6 +123,9 @@ public class Parser {
 		case KW_PLAY: {
 			statement = playStatement();
 		} break;
+		case KW_WRITE: {
+			statement = writeStatement();
+		} break;
 		default: throw new Exception("Illegal statement: " + token.lineNumberPosition);
 		}
 		return statement;
@@ -183,6 +186,19 @@ public class Parser {
 		Expression format = expression();
 		match(RPAREN);
 		return new PlayStatement(firstToken, array, format);
+	}
+	
+	public WriteStatement writeStatement() throws Exception {
+		Token firstToken = token;
+		match(KW_WRITE);
+		match(LPAREN);
+		Expression array = expression();
+		match(COMMA);
+		Expression name = expression();
+		match(COMMA);
+		Expression format = expression();
+		match(RPAREN);
+		return new WriteStatement(firstToken, array, name, format);
 	}
 
 	public Expression expression() throws Exception {
@@ -270,9 +286,14 @@ public class Parser {
 			consume();
 			ArrayList<Float> floats = new ArrayList<>();
 			while (token.kind != RBRACKET) {
-				if (token.kind == INT_LIT || token.kind == FLOAT_LIT) {
+				if (token.kind == INT_LIT || token.kind == FLOAT_LIT || token.kind == MINUS) {
 					if (token.kind == INT_LIT) floats.add((float) token.getIntValue());
 					else if (token.kind == FLOAT_LIT) floats.add(token.getFloatValue());
+					else if (token.kind == MINUS) {
+						consume();
+						if (token.kind == INT_LIT) floats.add((float) -token.getIntValue());
+						else if (token.kind == FLOAT_LIT) floats.add(-token.getFloatValue());
+					}
 					consume();
 					try {
 						match(COMMA);
@@ -381,6 +402,15 @@ public class Parser {
 			match(RPAREN);
 			expression = new LineExpression(firstToken, size, breakpoints);
 		} break;
+		case KW_PAN: {
+			consume();
+			match(LPAREN);
+			Expression array = expression();
+			match(COMMA);
+			Expression position = expression();
+			match(RPAREN);
+			expression = new PanExpression(firstToken, array, position);
+		} break;
 		case KW_TREMOLO: {
 			consume();
 			match(LPAREN);
@@ -393,6 +423,13 @@ public class Parser {
 			Expression shape = expression();
 			match(RPAREN);
 			expression = new TremoloExpression(firstToken, array, depth, speed, shape);
+		} break;
+		case KW_RECORD: {
+			consume();
+			match(LPAREN);
+			Expression duration = expression();
+			match(RPAREN);
+			expression = new RecordExpression(firstToken, duration);
 		} break;
 		case KW_SPLICE: {
 			consume();

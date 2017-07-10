@@ -151,6 +151,15 @@ public class Scanner {
 		case "tremolo": {
 			token = new Token(Kind.KW_TREMOLO, startPos, endPos, lineNum, lineNumPos);
 		} break;
+		case "pan": {
+			token = new Token(Kind.KW_PAN, startPos, endPos, lineNum, lineNumPos);
+		} break;
+		case "record": {
+			token = new Token(Kind.KW_RECORD, startPos, endPos, lineNum, lineNumPos);
+		} break;
+		case "write": {
+			token = new Token(Kind.KW_WRITE, startPos, endPos, lineNum, lineNumPos);
+		} break;
 		default: {
 			token = new Token(Kind.IDENT, substring, startPos, endPos, lineNum, lineNumPos);
 		} break;

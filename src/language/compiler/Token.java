@@ -84,6 +84,9 @@ public class Token {
 		KW_NOISE("noise"),
 		KW_OSCILLATOR("oscillator"),
 		KW_TREMOLO("tremolo"),
+		KW_PAN("pan"),
+		KW_RECORD("record"),
+		KW_WRITE("write"),
 		KW_INFO("info");
 
 		final String text;

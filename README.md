@@ -27,12 +27,30 @@ array lisa = read("monoLisa.wav", mono)
 plot("Lisa", lisa, 2000)
 ```
 
+### Capturing audio into a buffer and exporting to a file
+
+```
+/* start talking... */
+array recording = record(3000)
+/* stop talking... */
+play(recording, mono)
+write(recording, "test.wav", mono)
+```
+
 ### Adjusting the gain
 
 ```
 array lisa = read("monoLisa.wav", mono)
 lisa = gain(lisa, 0.5)
 play(lisa, mono)
+```
+
+### Adjusting the panorama
+
+```
+array lisa = read("monoLisa.wav", mono)
+lisa = pan(lisa, -0.3)
+play(lisa, stereo)
 ```
 
 ### Reversing the direction of playback
@@ -138,10 +156,11 @@ plot("A scandalous automation line", envelope, size)
 - assignmentStatement := IDENT ASSIGN expression
 - ifStatement := KW\_IF expression block
 - whileStatement := KW\_WHILE expression block
-- frameworkStatement := printStatement | plotStatement | playStatement
+- frameworkStatement := printStatement | plotStatement | playStatement | writeStatement
 - printStatement := KW\_PRINT LPAREN expression RPAREN
 - plotStatement := KW\_PLOT LPAREN expression COMMA expression COMMA expression RPAREN
 - playStatement := KW\_PLAY LPAREN expression COMMA expression RPAREN
+- writeStatement := KW\_WRITE LPAREN expression COMMA expression COMMA expression RPAREN
 - expression := term (termOperator term)\*
 - termOperator := LT | LE | GT | GE | EQUAL | NOTEQUAL
 - term := summand (summandOperator summand)\*
@@ -160,6 +179,7 @@ plot("A scandalous automation line", envelope, size)
 - frameworkExpression := infoExpression | readExpression | formatExpression | gainExpression | lineExpression
 - frameworkExpression := reverseExpression | speedExpression | spliceExpression | loopExpression | delayExpression
 - frameworkExpression := filterExpression | biquadExpression | waveformExpression | oscillatorExpression | tremoloExpression
+- frameworkExpression := panExpression | recordExpression
 - infoExpression := KW\_INFO
 - readExpression := KW\_READ LPAREN expression COMMA expression RPAREN
 - formatExpression := KW\_MONO | KW\_STEREO
@@ -176,6 +196,8 @@ plot("A scandalous automation line", envelope, size)
 - waveformExpression := KW\_COSINE | KW\_SAWTOOTH | KW\_SQUARE | KW\_TRIANGLE | KW\_NOISE
 - oscillatorExpression := KW\_OSCILLATOR LPAREN expression COMMA expression COMMA expression COMMA expression RPAREN
 - tremoloExpression := KW\_TREMOLO LPAREN expression COMMA expression COMMA expression COMMA expression RPAREN
+- panExpression := KW\_PAN PAREN expression COMMA expression RPAREN
+- recordExpression := KW\_RECORD PAREN expression RPAREN
 
 ### Abstract syntax
 
@@ -189,10 +211,11 @@ plot("A scandalous automation line", envelope, size)
 - AssignmentStatement := IDENT Expression
 - IfStatement := Expression Block
 - WhileStatement := Expression Block
-- FrameworkStatement := PrintStatement | PlotStatement | PlayStatement
+- FrameworkStatement := PrintStatement | PlotStatement | PlayStatement | WriteStatement
 - PrintStatement := Expression
 - PlotStatement := Expression\_0 Expression\_1 Expression\_2
 - PlayStatement := Expression\_0 Expression\_1
+- WriteStatement := Expression\_0 Expression\_1 Expression\_2
 - Expression := BinaryExpression | IdentExpression | LiteralExpression | UnaryExpression | FrameworkExpression
 - UnaryExpression := Expression
 - BinaryExpression := Expression\_0 (termOperator | summandOperator | factorOperator) Expression\_1
@@ -207,6 +230,8 @@ plot("A scandalous automation line", envelope, size)
 - BiquadExpression := Expression\_0 Expression\_1 Expression\_2 Expression\_3
 - OscillatorExpression := Expression\_0 Expression\_1 Expression\_2 Expression\_3
 - TremoloExpression := Expression\_0 Expression\_1 Expression\_2 Expression\_3
+- PanExpression := Expression\_0 Expression\_1
+- RecordExpression := Expression
 
 ### TypeChecker rules
 
@@ -231,6 +256,10 @@ plot("A scandalous automation line", envelope, size)
 - PlayStatement:
 	+ Expression\_0.type = ARRAY
 	+ Expression\_1.type = FORMAT
+- WriteStatement:
+	+ Expression\_0.type = ARRAY
+	+ Expression\_1.type = STRING
+	+ Expression\_2.type = FORMAT
 - UnaryExpression:
 	+ Type = Expression.type
 	+ Expression.type = INT | FLOAT | BOOL
@@ -302,16 +331,23 @@ plot("A scandalous automation line", envelope, size)
 	+ Expression\_3.type = FILTER
 - OscillatorExpression:
 	+ Type = ARRAY
-	+ Expression\_1.type = INT | FLOAT
+	+ Expression\_0.type = INT | FLOAT
+	+ Expression\_1.type = INT | FLOAT | ARRAY
 	+ Expression\_2.type = INT | FLOAT | ARRAY
-	+ Expression\_3.type = INT | FLOAT | ARRAY
-	+ Expression\_4.type = WAVEFORM
+	+ Expression\_3.type = WAVEFORM
 - TremoloExpression:
 	+ Type = ARRAY
-	+ Expression\_1.type = ARRAY
+	+ Expression\_0.type = ARRAY
+	+ Expression\_1.type = INT | FLOAT | ARRAY
 	+ Expression\_2.type = INT | FLOAT | ARRAY
-	+ Expression\_3.type = INT | FLOAT | ARRAY
-	+ Expression\_4.type = WAVEFORM
+	+ Expression\_3.type = WAVEFORM
+- PanExpression:
+	+ Type = ARRAY
+	+ Expression\_0.type = ARRAY
+	+ Expression\_1.type = INT | FLOAT | ARRAY
+- RecordExpression:
+	+ Type = ARRAY
+	+ Expression.type = INT | FLOAT
 
 ## Using the framework
 
@@ -332,12 +368,31 @@ new BiquadPeak().plotMagnitudeResponse(1000, 100, 3);
 new WaveFile("doc/monoLisa.wav").plot(1000);
 ```
 
+### Using the AudioTask class for recording and exporting audio
+
+```java
+AudioTask task = new AudioTask();
+float[] buffer = task.record(2000);
+int channels = 1;
+task.export(buffer, "doc/test.wav", channels);
+task.playMono(buffer);
+```
+
 ### Using the Gain class
 
 ```java
 float[] lisa = new WaveFile("doc/monoLisa.wav").getMonoSum();
 float[] gain = new Gain().process(lisa, 0.5);
 new AudioTask().playMono(gain);
+```
+
+### Using the StereoPanner class
+
+```java
+float[] lisa = new WaveFile("doc/monoLisa.wav").getMonoSum();
+float[] pingPong = new NaiveSquare().getTable(512, 4);
+float[] stereo = new StereoPanner().process(lisa, pingPong);
+new AudioTask().playStereo(stereo);
 ```
 
 ### Using the Reverse class
@@ -451,24 +506,6 @@ for (int i = 0; i < 200; i++) {
 task.stop(); // necessary whenever managing more than one thread
 ```
 
-### Using the StereoPanner class
-
-```java
-double[] lisa = new WaveFile("wav/monoLisa.wav").getMonoSum();
-double[] pan = new BreakpointFunction(512, new double[]{-1, 1}).get();
-double[] stereo = new StereoPanner().process(lisa, pan);
-new AudioTask().playStereo(stereo);
-```
-
-### Creating a stereo ping-pong effect
-
-```java
-double[] lisa = new WaveFile("wav/monoLisa.wav").getMonoSum();
-double[] pingPong = new NaiveSquare().getTable(512, 4);
-double[] stereo = new StereoPanner().process(lisa, pingPong);
-new AudioTask().playStereo(stereo);
-```
-
 ### Using the AudioTrack and StereoMixer classes
 
 ```java
@@ -481,17 +518,10 @@ new AudioTask().playStereo(mixdown);
 new AudioTask().exportStereo("mix.wav", mixdown);
 ```
 
-### Using the AudioTask class for recording
-
-```java
-double[] buffer = new AudioTask().record(2000);
-new AudioTask().playMono(buffer);
-```
-
 ### Using the AudioFlow class for real-time recording
 
 ```java
-AudioFlow flow = new AudioFlow("wav/test.wav", Settings.mono);
+AudioFlow flow = new AudioFlow("doc/test.wav", Settings.mono);
 Thread.sleep(2000);
 flow.quit();
 ```

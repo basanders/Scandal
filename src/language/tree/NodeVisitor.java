@@ -21,6 +21,8 @@ public interface NodeVisitor {
 	Object visitPlotStatement(PlotStatement plotStatement, Object arg) throws Exception;
 
 	Object visitPlayStatement(PlayStatement playStatement, Object arg) throws Exception;
+	
+	Object visitWriteStatement(WriteStatement writeStatement, Object arg) throws Exception;
 
 	Object visitIdentExpression(IdentExpression identExpression, Object arg) throws Exception;
 
@@ -65,6 +67,10 @@ public interface NodeVisitor {
 	Object visitTremoloExpression(TremoloExpression tremoloExpression, Object arg) throws Exception;
 	
 	Object visitUnaryExpression(UnaryExpression unaryExpression, Object arg) throws Exception;
+	
+	Object visitPanExpression(PanExpression panExpression, Object arg) throws Exception;
+	
+	Object visitRecordExpression(RecordExpression recordExpression, Object arg) throws Exception;
 
 	Object visitBinaryExpression(BinaryExpression binaryExpression, Object arg) throws Exception;
 

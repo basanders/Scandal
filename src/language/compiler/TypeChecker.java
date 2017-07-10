@@ -105,6 +105,17 @@ public class TypeChecker implements NodeVisitor {
 		if (playStatement.format.type != FORMAT) throw new Exception("Invalid PlayStatement");
 		return null;
 	}
+	
+	@Override
+	public Object visitWriteStatement(WriteStatement writeStatement, Object arg) throws Exception {
+		writeStatement.expression.visit(this, null);
+		if (writeStatement.expression.type != ARRAY) throw new Exception("Invalid WriteStatement");
+		writeStatement.name.visit(this, null);
+		if (writeStatement.name.type != STRING) throw new Exception("Invalid WriteStatement");
+		writeStatement.format.visit(this, null);
+		if (writeStatement.format.type != FORMAT) throw new Exception("Invalid WriteStatement");
+		return null;
+	}
 
 	@Override
 	public Object visitIdentExpression(IdentExpression identExpression, Object arg) throws Exception {
@@ -289,6 +300,16 @@ public class TypeChecker implements NodeVisitor {
 		if (tremoloExpression.shape.type != WAVEFORM) throw new Exception("Invalid TremoloExpression");
 		return tremoloExpression.type;
 	}
+	
+	@Override
+	public Object visitPanExpression(PanExpression panExpression, Object arg) throws Exception {
+		panExpression.array.visit(this, null);
+		if (panExpression.array.type != ARRAY) throw new Exception("Invalid PanExpression");
+		panExpression.position.visit(this, null);
+		if (panExpression.array.type != INT && panExpression.array.type != FLOAT && panExpression.array.type != ARRAY)
+			throw new Exception("Invalid PanExpression");
+		return panExpression.type;
+	}
 
 	@Override
 	public Object visitSpliceExpression(SpliceExpression spliceExpression, Object argument) throws Exception {
@@ -297,6 +318,14 @@ public class TypeChecker implements NodeVisitor {
 			if (expr.type != ARRAY) throw new Exception("Invalid SpliceExpression");
 		}
 		return spliceExpression.type;
+	}
+	
+	@Override
+	public Object visitRecordExpression(RecordExpression recordExpression, Object arg) throws Exception {
+		recordExpression.duration.visit(this, null);
+		if (recordExpression.duration.type != INT && recordExpression.duration.type != FLOAT)
+			throw new Exception("Invalid RecordExpression");
+		return recordExpression.type;
 	}
 	
 	@Override

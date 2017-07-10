@@ -111,14 +111,15 @@ public class AudioTask {
 		return buffer;
 	}
 
-	public void exportStereo(String name, float[] floats) throws Exception {
-		File file = new File("wav", name);
+	public void export(float[] floats, String name, int channels) throws Exception {
+		File file = new File(name);
 		ByteBuffer buffer = ByteBuffer.allocate(floats.length * Settings.bitDepth / 8);
 		for (int i = 0; i < floats.length; i++) {
 			buffer.putShort((short) (floats[i] * Short.MAX_VALUE));
 		}
 		InputStream is = new ByteArrayInputStream(buffer.array());
-		AudioInputStream ais = new AudioInputStream(is, Settings.stereo, floats.length / 2);
+		AudioFormat format = channels == 1 ? Settings.mono : Settings.stereo;
+		AudioInputStream ais = new AudioInputStream(is, format, floats.length / channels);
 		int result = AudioSystem.write(ais, AudioFileFormat.Type.WAVE, file);
 		System.out.println(result + " bytes written to " + file.getName());
 	}
