@@ -4,13 +4,16 @@ Scandal is both a Java framework and a domain-specific language designed to mani
 
 [![Build Status](https://travis-ci.org/lufevida/Scandal.svg?branch=master)](https://travis-ci.org/lufevida/Scandal)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
-![Screenshot](https://raw.githubusercontent.com/lufevida/Scandal/master/doc/Screenshot.png)
 
 ## Installation
 
 ## Acknowledgments
 
+Scandal utilizes the [ASM](http://asm.ow2.org) allppurpose Java bytecode manipulation and analysis framework for compiling its domain-specific language. Plots are made possible by the [JFreeChart](http://www.jfree.org/jfreechart) and the [JCommon](http://www.jfree.org/jcommon) libraries. Scandal is being developed by [Luis F. Vieira Damiani](http://vieira-damiani.com) under the orientation of [Dr. Beverly Sanders](https://www.cise.ufl.edu/people/faculty/sanders).
+
 ## Using the domain-specific language
+
+![Screenshot](https://raw.githubusercontent.com/lufevida/Scandal/master/doc/Screenshot.png)
 
 ### Printing device and settings information
 
@@ -19,12 +22,9 @@ string devices = info
 print(devices)
 ```
 
-### Plotting waveforms and functions
+### Plotting waveforms
 
 ```
-array breakpoints = [0, 0.5, 0, 1, 0, 1, 0, 0.5, 0]
-array envelope = line(512, breakpoints)
-plot("Envelope", envelope, 512)
 array lisa = read("monoLisa.wav", mono)
 plot("Lisa", lisa, 2000)
 ```
@@ -124,6 +124,8 @@ array envelope = line(size, breakpoints)
 plot("A scandalous automation line", envelope, size)
 ```
 
+![Screenshot](https://raw.githubusercontent.com/lufevida/Scandal/master/doc/Plot.png)
+
 ## Using the framework
 
 ### Printing device, settings and file information
@@ -145,7 +147,7 @@ new WaveFile("doc/monoLisa.wav").plot(1000);
 
 ### Using the Gain class
 
-```
+```java
 float[] lisa = new WaveFile("doc/monoLisa.wav").getMonoSum();
 float[] gain = new Gain().process(lisa, 0.5);
 new AudioTask().playMono(gain);
