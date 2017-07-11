@@ -9,7 +9,11 @@ Scandal is both a Java framework and a domain-specific language designed to mani
 
 ## Installation
 
-Go to the [releases](https://github.com/lufevida/Scandal/releases) page and download the `Scandal.zip` file. Open [Sublime Text](https://www.sublimetext.com), go to `Sublime Text -> Preferences -> Browse Packages...` and drop the decompressed `Scandal` folder in there. To use the framework alone, import the `Scandal.jar` file using your preferred IDE.
+Go to the [releases](https://github.com/lufevida/Scandal/releases) page and download the `Scandal.zip` file. Open [Sublime Text](https://www.sublimetext.com), go to
+```
+Sublime Text -> Preferences -> Browse Packages...
+```
+and drop the decompressed `Scandal` folder in there. To use the framework alone, import the `Scandal.jar` file using your preferred IDE.
 
 ## Acknowledgments
 
