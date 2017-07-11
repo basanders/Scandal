@@ -7,6 +7,10 @@ Scandal is both a Java framework and a domain-specific language designed to mani
 
 ![Screenshot](https://raw.githubusercontent.com/lufevida/Scandal/master/doc/Screenshot.png)
 
+## Installation
+
+Go to the [releases](https://github.com/lufevida/Scandal/releases) page and download the `Scandal.zip` file. Open [Sublime Text](https://www.sublimetext.com), go to `Sublime Text -> Preferences -> Browse Packages...` and drop the decompressed `Scandal` folder in there. To use the framework alone, import the `Scandal.jar` file using your preferred IDE.
+
 ## Acknowledgments
 
 Scandal utilizes the [ASM](http://asm.ow2.org) allppurpose Java bytecode manipulation and analysis framework for compiling its domain-specific language. Plots are made possible by the [JFreeChart](http://www.jfree.org/jfreechart) and the [JCommon](http://www.jfree.org/jcommon) libraries. Scandal is being developed by [Luis F. Vieira Damiani](http://vieira-damiani.com) under the orientation of [Dr. Beverly Sanders](https://www.cise.ufl.edu/people/faculty/sanders).
