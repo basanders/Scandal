@@ -36,6 +36,13 @@ public class AudioTrack {
 	public float[] getVector() {
 		return vector;
 	}
+	
+	public float[] getShiftedVector() {
+		float[] buffer = new float[end];
+		for (int i = 0; i < start; i++) buffer[i] = 0;
+		for (int i = start; i < end; i++) buffer[i] = vector[i - start];
+		return buffer;
+	}
 
 	private void fillVector(float[] buffer, float gain, float pan) {
 		vector = new StereoPanner().process(new Gain().process(buffer, gain), pan);

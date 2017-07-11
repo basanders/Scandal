@@ -321,11 +321,36 @@ public class TypeChecker implements NodeVisitor {
 	}
 	
 	@Override
+	public Object visitMixExpression(MixExpression mixExpression, Object arg) throws Exception {
+		for (Expression track : mixExpression.tracks) {
+			track.visit(this, null);
+			if (track.type != ARRAY) throw new Exception("Invalid TrackExpression");
+		}
+		return mixExpression.type;
+	}
+	
+	@Override
 	public Object visitRecordExpression(RecordExpression recordExpression, Object arg) throws Exception {
 		recordExpression.duration.visit(this, null);
 		if (recordExpression.duration.type != INT && recordExpression.duration.type != FLOAT)
 			throw new Exception("Invalid RecordExpression");
 		return recordExpression.type;
+	}
+	
+	@Override
+	public Object visitTrackExpression(TrackExpression trackExpression, Object arg) throws Exception {
+		trackExpression.array.visit(this, null);
+		if (trackExpression.array.type != ARRAY) throw new Exception("Invalid TrackExpression");
+		trackExpression.start.visit(this, null);
+		if (trackExpression.start.type != INT && trackExpression.start.type != FLOAT)
+			throw new Exception("Invalid TrackExpression");
+		trackExpression.gain.visit(this, null);
+		if (trackExpression.gain.type != INT && trackExpression.gain.type != FLOAT && trackExpression.gain.type != ARRAY)
+			throw new Exception("Invalid TrackExpression");
+		trackExpression.pan.visit(this, null);
+		if (trackExpression.pan.type != INT && trackExpression.pan.type != FLOAT && trackExpression.pan.type != ARRAY)
+			throw new Exception("Invalid TrackExpression");
+		return trackExpression.type;
 	}
 	
 	@Override

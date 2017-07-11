@@ -37,6 +37,26 @@ play(recording, mono)
 write(recording, "test.wav", mono)
 ```
 
+### Embedding an array into an audio track
+
+```
+array lisa = read("monoLisa.wav", mono)
+float amplitude = 0.7
+float panorama = -0.3
+array vocals = track(lisa, 7, amplitude, panorama)
+play(vocals, stereo)
+```
+
+### Mixing tracks
+
+```
+array lisa = read("monoLisa.wav", mono)
+array firstVoice = track(lisa, 1000, 0.7, -0.3)
+array secondVoice = track(reverse(lisa), 1441, 0.5, 0.3)
+array mixdown = mix(firstVoice, secondVoice)
+play(mixdown, stereo)
+```
+
 ### Adjusting the gain
 
 ```
@@ -82,9 +102,9 @@ play(lisa, mono)
 
 ```
 array lisa = read("monoLisa.wav", mono)
-array loop1 = loop(0, 4000, 8)
-array loop2 = loop(4000, 8000, 8)
-array loop3 = loop(8000, 12000, 8)
+array loop1 = loop(lisa, 0, 4000, 8)
+array loop2 = loop(lisa, 4000, 8000, 8)
+array loop3 = loop(lisa, 8000, 12000, 8)
 lisa = splice(loop1, loop2, loop3)
 play(lisa, mono)
 ```
@@ -104,15 +124,17 @@ play(lisa, mono)
 format channels = mono
 array lisa = read("monoLisa.wav", channels)
 float depth = 0.9
-int speed = 12
+int frequency = 12
 waveform shape = cosine
-lisa = tremolo(lisa, depth, speed, shape)
+lisa = tremolo(lisa, depth, frequency, shape)
 play(lisa, channels)
 ```
 
 ### Applying a low-pass filter
 
 ```
+format channels = mono
+array lisa = read("monoLisa.wav", channels)
 int cutoff = 1000
 float resonance = 1.0
 filter mode = hipass /* allpass, bandpass, bandstop, lowpass, hipass, lowshelf, hishelf, peaking */
@@ -179,7 +201,7 @@ plot("A scandalous automation line", envelope, size)
 - frameworkExpression := infoExpression | readExpression | formatExpression | gainExpression | lineExpression
 - frameworkExpression := reverseExpression | speedExpression | spliceExpression | loopExpression | delayExpression
 - frameworkExpression := filterExpression | biquadExpression | waveformExpression | oscillatorExpression | tremoloExpression
-- frameworkExpression := panExpression | recordExpression
+- frameworkExpression := panExpression | recordExpression | trackExpression | mixExpression
 - infoExpression := KW\_INFO
 - readExpression := KW\_READ LPAREN expression COMMA expression RPAREN
 - formatExpression := KW\_MONO | KW\_STEREO
@@ -198,6 +220,8 @@ plot("A scandalous automation line", envelope, size)
 - tremoloExpression := KW\_TREMOLO LPAREN expression COMMA expression COMMA expression COMMA expression RPAREN
 - panExpression := KW\_PAN PAREN expression COMMA expression RPAREN
 - recordExpression := KW\_RECORD PAREN expression RPAREN
+- trackExpression := KW\_TRACK PAREN expression COMMA expression COMMA expression COMMA expression RPAREN
+- mixExpression := KW\_MIX PAREN expression (COMMA expression)\* RPAREN
 
 ### Abstract syntax
 
@@ -232,6 +256,8 @@ plot("A scandalous automation line", envelope, size)
 - TremoloExpression := Expression\_0 Expression\_1 Expression\_2 Expression\_3
 - PanExpression := Expression\_0 Expression\_1
 - RecordExpression := Expression
+- TrackExpression := Expression\_0 Expression\_1 Expression\_2 Expression\_3
+- MixExpression := Expression+
 
 ### TypeChecker rules
 
@@ -348,13 +374,22 @@ plot("A scandalous automation line", envelope, size)
 - RecordExpression:
 	+ Type = ARRAY
 	+ Expression.type = INT | FLOAT
+- TrackExpression:
+	+ Type = ARRAY
+	+ Expression\_0.type = ARRAY
+	+ Expression\_1.type = INT | FLOAT
+	+ Expression\_2.type = INT | FLOAT | ARRAY
+	+ Expression\_3.type = INT | FLOAT | ARRAY
+- MixExpression:
+	+ Type = ARRAY
+	+ Expression.type = ARRAY
 
 ## Using the framework
 
 ### Printing device, settings and file information
 
 ```java
-System.out.println(Settings.getInfo());
+Settings.printInfo()
 new WaveFile("doc/monoLisa.wav").printInfo();
 ```
 
@@ -376,6 +411,18 @@ float[] buffer = task.record(2000);
 int channels = 1;
 task.export(buffer, "doc/test.wav", channels);
 task.playMono(buffer);
+```
+
+### Using the AudioTrack and StereoMixer classes
+
+```java
+double[] saw = new WavetableOscillator(new ClassicSawtooth()).get(4000, 0.7, 880);
+double[] lisa = new WaveFile("wav/monoLisa.wav").getMonoSum();
+AudioTrack sawTrack = new AudioTrack(saw, 3000, 0.2, -0.8);
+AudioTrack lisaTrack = new AudioTrack(lisa, 0, 1, 0.8);
+double[] mixdown = new StereoMixer().render(sawTrack, lisaTrack);
+new AudioTask().playStereo(mixdown);
+new AudioTask().exportStereo("mix.wav", mixdown);
 ```
 
 ### Using the Gain class
@@ -504,18 +551,6 @@ for (int i = 0; i < 200; i++) {
 	}
 }
 task.stop(); // necessary whenever managing more than one thread
-```
-
-### Using the AudioTrack and StereoMixer classes
-
-```java
-double[] saw = new WavetableOscillator(new ClassicSawtooth()).get(4000, 0.7, 880);
-double[] lisa = new WaveFile("wav/monoLisa.wav").getMonoSum();
-AudioTrack sawTrack = new AudioTrack(saw, 3000, 0.2, -0.8);
-AudioTrack lisaTrack = new AudioTrack(lisa, 0, 1, 0.8);
-double[] mixdown = new StereoMixer().render(sawTrack, lisaTrack);
-new AudioTask().playStereo(mixdown);
-new AudioTask().exportStereo("mix.wav", mixdown);
 ```
 
 ### Using the AudioFlow class for real-time recording

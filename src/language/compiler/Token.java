@@ -87,6 +87,8 @@ public class Token {
 		KW_PAN("pan"),
 		KW_RECORD("record"),
 		KW_WRITE("write"),
+		KW_TRACK("track"),
+		KW_MIX("mix"),
 		KW_INFO("info");
 
 		final String text;

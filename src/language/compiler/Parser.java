@@ -431,6 +431,19 @@ public class Parser {
 			match(RPAREN);
 			expression = new RecordExpression(firstToken, duration);
 		} break;
+		case KW_TRACK: {
+			consume();
+			match(LPAREN);
+			Expression array = expression();
+			match(COMMA);
+			Expression start = expression();
+			match(COMMA);
+			Expression gain = expression();
+			match(COMMA);
+			Expression pan = expression();
+			match(RPAREN);
+			expression = new TrackExpression(firstToken, array, start, gain, pan);
+		} break;
 		case KW_SPLICE: {
 			consume();
 			match(LPAREN);
@@ -446,6 +459,22 @@ public class Parser {
 			}
 			match(RPAREN);
 			expression = new SpliceExpression(firstToken, expressions);
+		} break;
+		case KW_MIX: {
+			consume();
+			match(LPAREN);
+			ArrayList<Expression> tracks = new ArrayList<>();
+			while (token.kind != RPAREN) {
+				Expression expr = expression();
+				tracks.add(expr);
+				try {
+					match(COMMA);
+				} catch (Exception e) {
+					break;
+				}
+			}
+			match(RPAREN);
+			expression = new MixExpression(firstToken, tracks);
 		} break;
 		case KW_MONO:
 		case KW_STEREO: {

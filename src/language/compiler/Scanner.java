@@ -160,6 +160,12 @@ public class Scanner {
 		case "write": {
 			token = new Token(Kind.KW_WRITE, startPos, endPos, lineNum, lineNumPos);
 		} break;
+		case "track": {
+			token = new Token(Kind.KW_TRACK, startPos, endPos, lineNum, lineNumPos);
+		} break;
+		case "mix": {
+			token = new Token(Kind.KW_MIX, startPos, endPos, lineNum, lineNumPos);
+		} break;
 		default: {
 			token = new Token(Kind.IDENT, substring, startPos, endPos, lineNum, lineNumPos);
 		} break;

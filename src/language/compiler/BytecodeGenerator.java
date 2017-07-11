@@ -476,6 +476,24 @@ public class BytecodeGenerator implements NodeVisitor, Opcodes {
 		mv.visitMethodInsn(INVOKEVIRTUAL, "framework/effects/Splice", "process", "([[F)[F", false);
 		return null;
 	}
+	
+	@Override
+	public Object visitMixExpression(MixExpression mixExpression, Object arg) throws Exception {
+		MethodVisitor mv = (MethodVisitor) arg;
+		mv.visitTypeInsn(NEW, "framework/generators/StereoMixer");
+		mv.visitInsn(DUP);
+		mv.visitMethodInsn(INVOKESPECIAL, "framework/generators/StereoMixer", "<init>", "()V", false);
+		mv.visitLdcInsn(mixExpression.tracks.size());
+		mv.visitTypeInsn(ANEWARRAY, "[F");
+		for (int i = 0; i < mixExpression.tracks.size(); i++) {
+			mv.visitInsn(DUP);
+			mv.visitLdcInsn(i);
+			mixExpression.tracks.get(i).visit(this, arg);
+			mv.visitInsn(AASTORE);
+		}
+		mv.visitMethodInsn(INVOKEVIRTUAL, "framework/generators/StereoMixer", "render", "([[F)[F", false);
+		return null;
+	}
 
 	@Override
 	public Object visitFormatExpression(FormatExpression formatExpression, Object arg) throws Exception {
@@ -507,6 +525,28 @@ public class BytecodeGenerator implements NodeVisitor, Opcodes {
 		recordExpression.duration.visit(this, arg);
 		if (recordExpression.duration.type == Type.FLOAT) mv.visitInsn(F2I);
 		mv.visitMethodInsn(INVOKEVIRTUAL, "framework/generators/AudioTask", "record", "(I)[F", false);
+		return null;
+	}
+	
+	@Override
+	public Object visitTrackExpression(TrackExpression trackExpression, Object arg) throws Exception {
+		MethodVisitor mv = (MethodVisitor) arg;
+		mv.visitTypeInsn(NEW, "framework/generators/AudioTrack");
+		mv.visitInsn(DUP);
+		trackExpression.array.visit(this, arg);
+		String type = "([FI";
+		trackExpression.start.visit(this, arg);
+		if (trackExpression.start.type == Type.FLOAT) mv.visitInsn(F2I);
+		trackExpression.gain.visit(this, arg);
+		if (trackExpression.gain.type == Type.INT) mv.visitInsn(I2F);
+		if (trackExpression.gain.type == Type.ARRAY) type += "[";
+		type += "F";
+		trackExpression.pan.visit(this, arg);
+		if (trackExpression.pan.type == Type.INT) mv.visitInsn(I2F);
+		if (trackExpression.pan.type == Type.ARRAY) type += "[";
+		type += "F)V";
+		mv.visitMethodInsn(INVOKESPECIAL, "framework/generators/AudioTrack", "<init>", type, false);
+		mv.visitMethodInsn(INVOKEVIRTUAL, "framework/generators/AudioTrack", "getShiftedVector", "()[F", false);
 		return null;
 	}
 	

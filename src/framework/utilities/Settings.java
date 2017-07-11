@@ -23,6 +23,10 @@ public final class Settings {
 		return sharedInstance;
 	}
 	
+	public static void printInfo() {
+		System.out.println(getInfo());
+	}
+	
 	public static String getInfo() {
 		String output = "Sampling rate: " + samplingRate + "\n";
 		output += "Bit depth: " + bitDepth + "\n";

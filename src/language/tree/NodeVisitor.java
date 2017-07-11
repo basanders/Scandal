@@ -71,6 +71,10 @@ public interface NodeVisitor {
 	Object visitPanExpression(PanExpression panExpression, Object arg) throws Exception;
 	
 	Object visitRecordExpression(RecordExpression recordExpression, Object arg) throws Exception;
+	
+	Object visitTrackExpression(TrackExpression trackExpression, Object arg) throws Exception;
+	
+	Object visitMixExpression(MixExpression mixExpression, Object arg) throws Exception;
 
 	Object visitBinaryExpression(BinaryExpression binaryExpression, Object arg) throws Exception;
 

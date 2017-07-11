@@ -18,5 +18,17 @@ public class StereoMixer {
 		}
 		return mixdown;
 	}
+	
+	public float[] render(float[]... buffers) {
+		int duration = 0;
+		for (float[] buffer : buffers) if (buffer.length >= duration) duration = buffer.length;
+		float[] mixdown = new float[duration];
+		for (float[] buffer : buffers) {
+			for (int i = 0; i < buffer.length; i++) {
+				mixdown[i] += buffer[i];
+			}
+		}
+		return mixdown;
+	}
 
 }

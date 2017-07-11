@@ -55,9 +55,14 @@ public class AudioTask {
 	}
 
 	private void playInterleaved(int delay, float[] floats, AudioFormat format) {
-		ByteBuffer buffer = ByteBuffer.allocate(floats.length * Settings.bitDepth / 8);
+		int frames = floats.length;
+		if (frames % 2 != 0) frames++;
+		ByteBuffer buffer = ByteBuffer.allocate(frames * Settings.bitDepth / 8);
 		for (int i = 0; i < floats.length; i++) {
 			buffer.putShort((short) (floats[i] * Short.MAX_VALUE));
+		}
+		for (int i = 0; i < frames - floats.length; i++) {
+			buffer.putShort((short) 0);
 		}
 		scheduler.schedule(() -> {
 			try {

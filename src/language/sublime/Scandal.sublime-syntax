@@ -10,7 +10,10 @@ contexts:
     - match: \b(if|while)\b
       scope: keyword.control.scandal
 
-    - match: \b\s*(\-|\+|\*|\/|\%)\s*\b
+    - match: \b\s*(\*|\/)\s*\b
+      scope: keyword.operator.arithmetic.scandal
+
+    - match: (\-|\+|\%)
       scope: keyword.operator.arithmetic.scandal
 
     - match: (=|->)
@@ -28,13 +31,19 @@ contexts:
     - match: \b[0-9]+\.?[0-9]*(?:(e|E)(\+|-)?[0-9]+)?\b
       scope: constant.numeric.float.decimal.scandal
 
-    - match: \b(true|false|info|mono|stereo)\b
+    - match: \b(true|false|info|mono|stereo|cosine|sawtooth|square|triangle|noise)\b
       scope: constant.language.scandal
 
-    - match: \b(int|float|bool|string|array|format)\b
+    - match: \b(allpass|bandpass|bandstop|lowpass|hipass|lowshelf|hishelf|peaking)\b
+      scope: constant.language.scandal
+
+    - match: \b(int|float|bool|string|array|format|filter|waveform)\b
       scope: storage.type.scandal
 
-    - match: \b(print|plot|read|play)\b
+    - match: \b(print|plot|read|write|play|reverse|speed|loop|splice)\b
+      scope: support.function.scandal
+
+    - match: \b(delay|gain|line|biquad|oscillator|record|track|mix|pan|tremolo)\b
       scope: support.function.scandal
 
     - match: '"'
