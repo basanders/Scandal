@@ -3,9 +3,9 @@
 [![Build Status](https://travis-ci.org/lufevida/Scandal.svg?branch=master)](https://travis-ci.org/lufevida/Scandal)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
-Scandal is both a Java framework and a domain-specific language designed to manipulate sounds. Examples of how to use the language, as well as a complete description of its syntax can be found in the [doc](https://github.com/lufevida/Scandal/blob/master/doc) folder. Examples of how to use the framework can be found in the [framework.examples](https://github.com/lufevida/Scandal/blob/master/src/framework/examples) package.
+Scandal is both a Java framework and a domain-specific language designed to manipulate sounds. Examples of how to use the language, as well as a complete description of its [syntax](https://github.com/lufevida/Scandal/blob/master/doc/Syntax.md) can be found in the [doc](https://github.com/lufevida/Scandal/blob/master/doc) folder. Examples of how to use the framework can be found in the [framework.examples](https://github.com/lufevida/Scandal/blob/master/src/framework/examples) package.
 
-![Screenshot](https://raw.githubusercontent.com/lufevida/Scandal/master/doc/Screenshot.png)
+![Screenshot](https://raw.githubusercontent.com/lufevida/Scandal/master/doc/Screenshot.jpg)
 
 ## Installation
 

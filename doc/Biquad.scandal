@@ -2,6 +2,7 @@ format channels = mono
 array lisa = read("monoLisa.wav", channels)
 int cutoff = 1000
 float resonance = 1.0
-filter mode = hipass /* allpass, bandpass, bandstop, lowpass, hipass, lowshelf, hishelf, peaking */
+/* allpass, bandpass, bandstop, lowpass, hipass, lowshelf, hishelf, peaking */
+filter mode = hipass
 lisa = biquad(lisa, cutoff, resonance, mode)
 play(lisa, channels)

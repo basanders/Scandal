@@ -1,5 +1,3 @@
-/* Naive Prime Finder */
-
 bool result = true
 int p = 571
 int q = 2
