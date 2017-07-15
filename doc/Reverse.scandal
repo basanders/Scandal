@@ -1,0 +1,3 @@
+array lisa = read("monoLisa.wav", mono)
+lisa = reverse(lisa)
+play(lisa, mono)

@@ -1,0 +1,5 @@
+array lisa = read("monoLisa.wav", mono)
+array firstVoice = track(lisa, 1000, 0.7, -0.3)
+array secondVoice = track(reverse(lisa), 1441, 0.5, 0.3)
+array mixdown = mix(firstVoice, secondVoice)
+play(mixdown, stereo)

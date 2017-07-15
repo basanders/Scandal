@@ -3,6 +3,22 @@ package framework.effects;
 import framework.utilities.Settings;
 
 public class Delay implements EffectsProcessor {
+	
+	private float[] runningCircularBuffer = new float[Settings.samplingRate];
+	private int runningReadIndex = 0;
+	
+	public float[] processVector(float[] buffer, int time, float feedback, float mix) {
+		int samples = time * Settings.samplingRate / 1000; // ms to samples
+		float[] processedBuffer = new float[buffer.length];
+		int writeIndex = runningReadIndex + samples;
+		for (int i = 0; i < buffer.length; i++) {
+			if (runningReadIndex >= runningCircularBuffer.length) runningReadIndex -= runningCircularBuffer.length;
+			if (writeIndex >= runningCircularBuffer.length) writeIndex -= runningCircularBuffer.length;
+			processedBuffer[i] = mix * runningCircularBuffer[runningReadIndex] + (1 - mix) * buffer[i];
+			runningCircularBuffer[writeIndex++] = buffer[i] + runningCircularBuffer[runningReadIndex++] * feedback;
+		}
+		return processedBuffer;
+	}
 
 	public float[] process(float[] buffer, int time, float feedback, float mix) {
 		int samples = time * Settings.samplingRate / 1000; // ms to samples
@@ -10,7 +26,7 @@ public class Delay implements EffectsProcessor {
 		float[] processedBuffer = new float[buffer.length];
 		float[] circularBuffer = new float[buffer.length];
 		int readIndex = 0;
-		int writeIndex = (int) samples;
+		int writeIndex = samples;
 		for (int i = 0; i < buffer.length; i++) {
 			processedBuffer[i] = mix * circularBuffer[readIndex] + (1 - mix) * buffer[i];
 			circularBuffer[writeIndex] = buffer[i] + circularBuffer[readIndex] * feedback;
@@ -28,7 +44,7 @@ public class Delay implements EffectsProcessor {
 		float[] processedBuffer = new float[buffer.length];
 		float[] circularBuffer = new float[buffer.length];
 		int readIndex = 0;
-		int writeIndex = (int) samples;
+		int writeIndex = samples;
 		float feedbackIndex = 0;
 		float feedbackIncrement = (float) feedbacks.length / buffer.length;
 		for (int i = 0; i < buffer.length; i++) {
@@ -49,7 +65,7 @@ public class Delay implements EffectsProcessor {
 		float[] processedBuffer = new float[buffer.length];
 		float[] circularBuffer = new float[buffer.length];
 		int readIndex = 0;
-		int writeIndex = (int) samples;
+		int writeIndex = samples;
 		float mixIndex = 0;
 		float mixIncrement = (float) mixes.length / buffer.length;
 		for (int i = 0; i < buffer.length; i++) {
@@ -70,7 +86,7 @@ public class Delay implements EffectsProcessor {
 		float[] processedBuffer = new float[buffer.length];
 		float[] circularBuffer = new float[buffer.length];
 		int readIndex = 0;
-		int writeIndex = (int) samples;
+		int writeIndex = samples;
 		float feedbackIndex = 0;
 		float feedbackIncrement = (float) feedbacks.length / buffer.length;
 		float mixIndex = 0;

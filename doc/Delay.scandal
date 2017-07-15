@@ -1,0 +1,4 @@
+array lisa = read("monoLisa.wav", mono)
+/* Parameters: array, milliseconds, feedback, mix */
+lisa = delay(lisa, 700, 0.5, 0.5)
+play(lisa, mono)

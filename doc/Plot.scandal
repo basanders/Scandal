@@ -1,0 +1,2 @@
+array lisa = read("monoLisa.wav", mono)
+plot("Lisa", lisa, 2000)

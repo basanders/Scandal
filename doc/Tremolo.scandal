@@ -1,0 +1,7 @@
+format channels = mono
+array lisa = read("monoLisa.wav", channels)
+float depth = 0.9
+int frequency = 12
+waveform shape = cosine
+lisa = tremolo(lisa, depth, frequency, shape)
+play(lisa, channels)

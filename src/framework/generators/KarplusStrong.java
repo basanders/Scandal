@@ -1,5 +1,6 @@
 package framework.generators;
 
+import framework.effects.Delay;
 import framework.effects.RingModulator;
 import framework.utilities.Settings;
 import framework.waveforms.WavetableCosine;
@@ -9,6 +10,7 @@ public class KarplusStrong extends PolyphonicSynthesizer {
 
 	private final RingModulator tremolo = new RingModulator(new WavetableCosine());
 	public float tremoloSpeed;
+	private final Delay delay = new Delay();
 
 	public KarplusStrong(int controller) throws Exception {
 		super(controller, new WavetableWhite());
@@ -59,6 +61,7 @@ public class KarplusStrong extends PolyphonicSynthesizer {
 	@Override
 	public void processMasterEffects() {
 		mixVector = tremolo.processVector(mixVector, 0.99f, tremoloSpeed);
+		mixVector = delay.processVector(mixVector, 500, 0.5f, 0.5f);
 	}
 
 	@Override

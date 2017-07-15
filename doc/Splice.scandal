@@ -1,0 +1,6 @@
+array lisa = read("monoLisa.wav", mono)
+array loop1 = loop(lisa, 0, 4000, 8)
+array loop2 = loop(lisa, 4000, 8000, 8)
+array loop3 = loop(lisa, 8000, 12000, 8)
+lisa = splice(loop1, loop2, loop3)
+play(lisa, mono)

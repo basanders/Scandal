@@ -1,0 +1,3 @@
+array lisa = read("monoLisa.wav", mono)
+lisa = gain(lisa, 0.5)
+play(lisa, mono)

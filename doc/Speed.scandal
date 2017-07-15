@@ -1,0 +1,3 @@
+array lisa = read("monoLisa.wav", mono)
+lisa = speed(lisa, 0.7)
+play(lisa, mono)

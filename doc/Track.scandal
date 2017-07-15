@@ -1,0 +1,5 @@
+array lisa = read("monoLisa.wav", mono)
+float amplitude = 0.7
+float panorama = -0.3
+array vocals = track(lisa, 7, amplitude, panorama)
+play(vocals, stereo)
