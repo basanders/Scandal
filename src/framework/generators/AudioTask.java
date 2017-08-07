@@ -58,12 +58,8 @@ public class AudioTask {
 		int frames = floats.length;
 		if (frames % 2 != 0) frames++;
 		ByteBuffer buffer = ByteBuffer.allocate(frames * Settings.bitDepth / 8);
-		for (int i = 0; i < floats.length; i++) {
-			buffer.putShort((short) (floats[i] * Short.MAX_VALUE));
-		}
-		for (int i = 0; i < frames - floats.length; i++) {
-			buffer.putShort((short) 0);
-		}
+		for (int i = 0; i < floats.length; i++) buffer.putShort((short) (floats[i] * Short.MAX_VALUE));
+		for (int i = 0; i < frames - floats.length; i++) buffer.putShort((short) 0);
 		scheduler.schedule(() -> {
 			try {
 				this.playTask(buffer, format);
@@ -119,9 +115,7 @@ public class AudioTask {
 	public void export(float[] floats, String name, int channels) throws Exception {
 		File file = new File(name);
 		ByteBuffer buffer = ByteBuffer.allocate(floats.length * Settings.bitDepth / 8);
-		for (int i = 0; i < floats.length; i++) {
-			buffer.putShort((short) (floats[i] * Short.MAX_VALUE));
-		}
+		for (int i = 0; i < floats.length; i++) buffer.putShort((short) (floats[i] * Short.MAX_VALUE));
 		InputStream is = new ByteArrayInputStream(buffer.array());
 		AudioFormat format = channels == 1 ? Settings.mono : Settings.stereo;
 		AudioInputStream ais = new AudioInputStream(is, format, floats.length / channels);

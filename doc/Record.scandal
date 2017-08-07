@@ -1,5 +1,6 @@
-/* start talking... */
-array recording = record(3000)
-/* stop talking... */
+array recording
+print("Recording...")
+recording = record(3000)
+print("Playing...")
 play(recording, mono)
 write(recording, "test.wav", mono)

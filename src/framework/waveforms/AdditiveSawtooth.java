@@ -16,9 +16,7 @@ public class AdditiveSawtooth extends AdditiveWavetable {
 		float maximum = 0;
 		for (int i = 0; i < tableSize; i++) {
 			radians = i * twoPi / tableSize;
-			for (int j = 1; j <= harmonicCount; j++) {
-				wavetable[i] += Math.sin(radians * j) / j;
-			}
+			for (int j = 1; j <= harmonicCount; j++) wavetable[i] += Math.sin(radians * j) / j;
 			if (wavetable[i] >= maximum) maximum = wavetable[i];
 		}
 		float inverseMaximum = 1 / maximum;

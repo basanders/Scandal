@@ -52,7 +52,7 @@ public class Compiler {
 	}
 
 	public void save(String name, byte[] bytecode) throws Exception {
-		OutputStream output = new FileOutputStream(name);
+		OutputStream output = new FileOutputStream(name + ".class");
 		output.write(bytecode);
 		output.close();
 	}
