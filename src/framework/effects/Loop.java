@@ -1,6 +1,6 @@
 package framework.effects;
 
-public class Loop implements EffectsProcessor {
+public class Loop {
 
 	public float[] process(float[] buffer, int start, int end) {
 		int count = buffer.length / (end - start);

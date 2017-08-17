@@ -1,6 +1,6 @@
 package framework.effects;
 
-public class Gain implements EffectsProcessor {
+public class Gain {
 	
 	public float[] process(float[] buffer, int gain) {
 		return process(buffer, (float) gain);
@@ -16,8 +16,8 @@ public class Gain implements EffectsProcessor {
 
 	public float[] process(float[] buffer, float[] gains) {
 		float[] processedBuffer = new float[buffer.length];
-		float gainIndex = 0;
-		float gainIncrement = (float) gains.length / buffer.length;
+		double gainIndex = 0;
+		double gainIncrement = (double) gains.length / buffer.length;
 		for (int i = 0; i < buffer.length; i++) {
 			processedBuffer[i] = gains[(int) gainIndex] * buffer[i];
 			gainIndex += gainIncrement;

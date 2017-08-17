@@ -3,7 +3,7 @@ package framework.effects;
 import framework.utilities.PlotUtility;
 import framework.utilities.Settings;
 
-public abstract class Biquad implements EffectsProcessor {
+public abstract class Biquad {
 
 	private float b0;
 	private float b1;

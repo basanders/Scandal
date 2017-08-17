@@ -3,7 +3,7 @@ package framework.effects;
 import framework.utilities.Settings;
 import framework.waveforms.Wavetable;
 
-public class RingModulator implements EffectsProcessor {
+public class RingModulator {
 	
 	private Wavetable table;
 	public float runningPhase = 0;

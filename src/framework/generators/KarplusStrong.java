@@ -29,7 +29,7 @@ public class KarplusStrong extends PolyphonicSynthesizer {
 		int nextIndex;
 		final float delaySamples = (float) Math.ceil(Settings.samplingRate / frequency);
 		final float[] circularBuffer = new float[(int) delaySamples];
-		float feedback = 0.99f;
+		float feedback = 0.996f;
 
 		KarplusStrongNote(int midiNoteNumber) {
 			super(midiNoteNumber);

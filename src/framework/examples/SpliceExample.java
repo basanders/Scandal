@@ -11,8 +11,9 @@ public class SpliceExample {
 		float[] lisa = new WaveFile("doc/monoLisa.wav").getMonoSum();
 		float[] loop1 = new Loop().process(lisa, 0, 12000, 8);
 		float[] loop2 = new Loop().process(lisa, 0, 6000, 16);
-		float[] loop3 = new Loop().process(lisa, 0, 3000, 32);
-		float[] splice = new Splice().process(loop1, loop2, loop3);
+		float[] loop3 = new Loop().process(lisa, 0, 3000, 16);
+		float[] loop4 = new Loop().process(lisa, 0, 6000, 8);
+		float[] splice = new Splice().process(loop1, loop2, loop3, loop4);
 		new AudioTask().playMono(splice);
 	}
 

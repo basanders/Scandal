@@ -1,10 +1,7 @@
 package framework.generators;
 
-import framework.utilities.PlotUtility;
-
-public class BreakpointFunction {
+public class BreakpointFunction extends Function {
 	
-	private final int length;
 	public final float[] breakpoints;
 	public final float[] durations;
 	public final float[] weights;
@@ -13,19 +10,13 @@ public class BreakpointFunction {
 	// TODO Exponential functions
 	
 	public BreakpointFunction(int length, float[] breakpoints) {
-		this.length = length; // between each breakpoint
+		super(length); // between each breakpoint
 		this.breakpoints = breakpoints;
 		this.durations = null;
 		this.weights = null;
 	}
 	
-	public BreakpointFunction(int length, float[] breakpoints, float[] durations, float[] weights) {
-		this.length = length; // between each breakpoint
-		this.breakpoints = breakpoints;
-		this.durations = durations;
-		this.weights = weights;
-	}
-	
+	@Override
 	public float[] get() {
 		float[] array = new float[length * (breakpoints.length - 1)];
 		int index = 0;
@@ -41,10 +32,6 @@ public class BreakpointFunction {
 			}
 		}
 		return array;
-	}
-	
-	public void plot() {
-		new PlotUtility(this.getClass().getSimpleName(), get());
 	}
 
 }

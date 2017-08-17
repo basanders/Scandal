@@ -2,7 +2,7 @@ package framework.effects;
 
 import framework.utilities.Settings;
 
-public class Delay implements EffectsProcessor {
+public class Delay {
 	
 	private float[] runningCircularBuffer = new float[Settings.samplingRate];
 	private int runningReadIndex = 0;

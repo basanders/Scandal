@@ -1,6 +1,6 @@
 package framework.effects;
 
-public class Splice implements EffectsProcessor {
+public class Splice {
 	
 	// TODO implement cross fades
 	

@@ -1,6 +1,6 @@
 package framework.effects;
 
-public class Speed implements EffectsProcessor {
+public class Speed {
 	
 	// TODO implement variable parameters
 	

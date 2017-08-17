@@ -1,6 +1,6 @@
 package framework.effects;
 
-public class Reverse implements EffectsProcessor {
+public class Reverse {
 	
 	public float[] process(float[] buffer) {
 		float[] processedBuffer = new float[buffer.length];

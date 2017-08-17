@@ -14,9 +14,8 @@ public class WavetableCosine extends Wavetable {
 
 	@Override
 	public void fillTable() {
-		for (int i = 0; i < tableSize; i++) {
+		for (int i = 0; i < tableSize; i++)
 			wavetable[i] = (float) Math.cos(i * twoPi / tableSize);
-		}
 	}
 
 	@Override
