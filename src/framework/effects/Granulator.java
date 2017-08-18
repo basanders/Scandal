@@ -6,22 +6,23 @@ import framework.generators.HannWindow;
 import framework.utilities.Settings;
 
 public class Granulator {
-	
-	private final float timeScale = Settings.samplingRate * 0.001f;
-	public int playbackPosition = 4410;
-	public int playbackDeviation = 441;
+
+	public int playbackPosition = 0;
+	public int playbackDeviation = 512;
 	public float playbackSpeed = 1;
 	private int grainLength = 4410;
 	public int interGrainTime = 44;
-	private final int grainCount = 256;
+	private final int grainCount = 128;
 	private final int windowSize = 8192;
 	private double windowIncrement = (double) windowSize / grainLength;
 	private final float[] window = new HannWindow(windowSize).get();
-	private final float[] captureBuffer = new float[11025];
+	private final float[] captureBuffer = new float[8192];
 	private int captureBufferIndex = 0;
 	private final ArrayList<Grain> grainArray = new ArrayList<>();
 	private int igtCounter = 0;
 	private int grainArrayCounter = 0;
+	private float grainSample;
+	private final float timeScale = Settings.samplingRate * 0.001f;
 	
 	class Grain {
 		
@@ -36,7 +37,7 @@ public class Granulator {
 		
 		void reset() {
 			isBusy = false;
-			index = playbackPosition + (((float) Math.random() * 2 - 1) * playbackDeviation);
+			index = playbackPosition + ((float) Math.random() * playbackDeviation);
 			windowIndex = 0;
 		}
 		
@@ -71,11 +72,13 @@ public class Granulator {
 		}
 	}
 	
-	public float[] processVector(float[] buffer) {
+	public float[] processVector(float[] buffer, float mix) {
 		for (int i = 0; i < buffer.length; i++) {
 			captureBuffer[captureBufferIndex++] = buffer[i];
 			if (captureBufferIndex >= captureBuffer.length) captureBufferIndex = 0; 
-			for (Grain grain : grainArray) if (grain.isBusy) buffer[i] += grain.getSample();
+			grainSample = 0;
+			for (Grain grain : grainArray) if (grain.isBusy) grainSample += grain.getSample();
+			buffer[i] = (1.0f - mix) * buffer[i] + mix * grainSample;
 			updateGrainArray();
 		}
 		return buffer;

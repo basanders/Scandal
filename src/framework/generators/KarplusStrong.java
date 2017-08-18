@@ -1,6 +1,7 @@
 package framework.generators;
 
 import framework.effects.Delay;
+import framework.effects.Granulator;
 import framework.effects.RingModulator;
 import framework.utilities.Settings;
 import framework.waveforms.WavetableCosine;
@@ -9,8 +10,11 @@ import framework.waveforms.WavetableWhite;
 public class KarplusStrong extends PolyphonicSynthesizer {
 
 	private final RingModulator tremolo = new RingModulator(new WavetableCosine());
-	public float tremoloSpeed;
+	public float tremoloSpeed = 4;
 	private final Delay delay = new Delay();
+	public int delayTime = 500;
+	private final Granulator granulator = new Granulator();
+	public float granulatorMix = 1;
 
 	public KarplusStrong(int controller) throws Exception {
 		super(controller, new WavetableWhite());
@@ -60,17 +64,18 @@ public class KarplusStrong extends PolyphonicSynthesizer {
 	@Override
 	public void processMasterEffects() {
 		mixVector = tremolo.processVector(mixVector, 0.99f, tremoloSpeed);
-		mixVector = delay.processVector(mixVector, 500, 0.5f, 0.5f);
+		mixVector = delay.processVector(mixVector, delayTime, 0.5f, 0.5f);
+		mixVector = granulator.processVector(mixVector, granulatorMix);
 	}
 
 	@Override
 	public void handleModulationWheelChange(int value, int channel) {
-		tremoloSpeed = 0.05f * value;
+		tremoloSpeed = 0.5f * value;
 	}
 	
 	@Override
 	public void handlePitchBend(int lsb, int msb, int channel) {
-		System.out.println((msb * 128.0f + lsb) / 8192 - 1);
+		granulatorMix = (msb * 128.0f + lsb) / 16384;
 	}
 
 }
