@@ -1,16 +1,16 @@
 package framework.examples;
 
 import framework.generators.AudioFlow;
-import framework.generators.PolyphonicSynthesizer;
+import framework.generators.GranularSynthesizer;
 import framework.utilities.Settings;
 import framework.waveforms.ClassicSawtooth;
 
-public class PolyphonicSynthesizerExample {
+public class GranularSynthesizerExample {
 
 	public static void main(String[] args) throws Exception {
-		PolyphonicSynthesizer synth = new PolyphonicSynthesizer(Settings.midiController, new ClassicSawtooth());
+		GranularSynthesizer synth = new GranularSynthesizer(Settings.midiController, new ClassicSawtooth());
 		AudioFlow flow = synth.start();
-		Thread.sleep(10000);
+		Thread.sleep(60000);
 		flow.quit();
 		synth.close();
 		System.exit(0);

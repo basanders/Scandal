@@ -11,10 +11,10 @@ public class GranulatorExample {
 		float[] lisa = new WaveFile("doc/monoLisa.wav").getMonoSum();
 		float position = 2000;
 		float deviation = 50;
-		float grainLength = 150;
-		float interGrainTime = 0.1f;
 		float speed = 1.6f;
-		float[] granulatedLisa = new Granulator().process(lisa, position, deviation, grainLength, interGrainTime, speed);
+		float grainLength = 50;
+		float interGrainTime = 10f;
+		float[] granulatedLisa = new Granulator().process(lisa, position, deviation, speed, grainLength, interGrainTime);
 		new AudioTask().playMono(new Gain().process(granulatedLisa, 0.2f));
 	}
 

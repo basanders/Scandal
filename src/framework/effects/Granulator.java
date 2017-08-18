@@ -5,13 +5,13 @@ import framework.utilities.Settings;
 
 public class Granulator {
 	
-	float timeScale = Settings.samplingRate * 0.001f;
+	private final float timeScale = Settings.samplingRate * 0.001f;
 	
-	public float[] processVector(float[] buffer, float depth, float speed) {
+	public float[] processVector(float[] buffer) {
 		return buffer; // TODO
 	}
 
-	public float[] process(float[] buffer, float position, float deviation, float grainLength, float interGrainTime, float speed) {
+	public float[] process(float[] buffer, float position, float deviation, float speed, float grainLength, float interGrainTime) {
 		if (position + deviation + grainLength >= buffer.length) return buffer;
 		if (position - deviation < 0) return buffer;
 		if (interGrainTime <= 0) return buffer;

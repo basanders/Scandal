@@ -37,9 +37,8 @@ public class KarplusStrong extends PolyphonicSynthesizer {
 		}
 
 		void reset() {
-			for (int i = 0; i < circularBuffer.length; i++) {
+			for (int i = 0; i < circularBuffer.length; i++)
 				circularBuffer[i] = baseWavetable.getSample(0, 0);
-			}
 		}
 
 		@Override
