@@ -7,6 +7,8 @@ import framework.generators.WaveFile;
 
 public class GranulatorExample {
 	
+	// TODO real-time
+	
 	public static void main(String[] args) throws Exception {
 		float[] lisa = new WaveFile("doc/monoLisa.wav").getMonoSum();
 		float position = 2000;

@@ -6,6 +6,8 @@ import framework.waveforms.WavetableWhite;
 
 public class NoiseGenerator {
 
+	// TODO implement RealTimePerformer
+
 	private final WavetableNoise wavetable;
 
 	public NoiseGenerator() {
